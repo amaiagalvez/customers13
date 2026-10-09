@@ -2,9 +2,10 @@
 
 namespace Customers13\Http\Requests;
 
+use Basics13\Http\Requests\SearchableSelectOptionsRequest;
 use Customers13\Models\Customer;
 
-class CustomerSelectOptionsRequest extends \Basics13\Http\Requests\SearchableSelectOptionsRequest
+class CustomerSelectOptionsRequest extends SearchableSelectOptionsRequest
 {
     public function authorize(): bool
     {

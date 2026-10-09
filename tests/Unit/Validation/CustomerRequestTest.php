@@ -2,15 +2,18 @@
 
 namespace Customers13\Tests\Unit\Validation;
 
-use Tests\TestCase;
 use Customers13\Models\Customer;
+use Customers13\Support\Validation\MaxLength;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Tests\TestCase;
 
 class CustomerRequestTest extends TestCase
 {
     public function test_authorize_returns_true_when_creating(): void
     {
-        $request = new class extends FormRequest {
+        $request = new class extends FormRequest
+        {
             protected function authorize(): bool
             {
                 return true;
@@ -19,8 +22,8 @@ class CustomerRequestTest extends TestCase
             public function rules(): array
             {
                 return [
-                    'name' => ['required', 'string', 'min:4', 'max:'.\Customers13\Support\Validation\MaxLength::string(),
-                        \Illuminate\Validation\Rule::unique(Customer::class)->ignore(null)->whereNull('deleted_at')],
+                    'name' => ['required', 'string', 'min:4', 'max:'.MaxLength::string(),
+                        Rule::unique(Customer::class)->ignore(null)->whereNull('deleted_at')],
                 ];
             }
         };

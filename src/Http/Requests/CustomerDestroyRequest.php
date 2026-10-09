@@ -2,13 +2,14 @@
 
 namespace Customers13\Http\Requests;
 
+use Basics13\Http\Requests\TrashDestroyRequest;
 use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends Basics13\Http\Requests\TrashDestroyRequest<Customer>
  */
-final class CustomerDestroyRequest extends \Basics13\Http\Requests\TrashDestroyRequest
+final class CustomerDestroyRequest extends TrashDestroyRequest
 {
     /**
      * @return Customer

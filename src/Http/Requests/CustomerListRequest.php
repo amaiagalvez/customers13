@@ -2,9 +2,10 @@
 
 namespace Customers13\Http\Requests;
 
+use Basics13\Http\Requests\SearchableListRequest;
 use Customers13\Models\Customer;
 
-class CustomerListRequest extends \Basics13\Http\Requests\SearchableListRequest
+class CustomerListRequest extends SearchableListRequest
 {
     public function authorize(): bool
     {

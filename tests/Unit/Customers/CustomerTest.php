@@ -2,8 +2,8 @@
 
 namespace Customers13\Tests\Unit;
 
-use Tests\TestCase;
 use Customers13\Models\Customer;
+use Tests\TestCase;
 
 class CustomerTest extends TestCase
 {

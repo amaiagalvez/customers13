@@ -1,8 +1,8 @@
 <?php
 
 use Customers13\Http\Controllers\CustomerArchivedController;
-use Customers13\Http\Controllers\CustomerTrashController;
 use Customers13\Http\Controllers\CustomerController;
+use Customers13\Http\Controllers\CustomerTrashController;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('customers/archived', [CustomerArchivedController::class, 'index'])->name('customers.archived.index');

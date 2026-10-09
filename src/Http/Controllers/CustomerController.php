@@ -2,15 +2,16 @@
 
 namespace Customers13\Http\Controllers;
 
-use Customers13\Models\Customer;
-use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\RedirectResponse;
-use Customers13\Http\Requests\CustomerRequest;
 use App\Support\Database\UniqueConstraintViolation;
+use Customers13\Http\Requests\CustomerRequest;
+use Customers13\Models\Customer;
 use Customers13\Queries\Customers\CustomerListQuery;
 use Customers13\Transformers\CustomerListTransformer;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CustomerController extends Controller
 {
@@ -52,7 +53,7 @@ class CustomerController extends Controller
 
         try {
             $customer = Customer::create($request->validated());
-        } catch (\Illuminate\Database\QueryException $exception) {
+        } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
@@ -67,7 +68,7 @@ class CustomerController extends Controller
     {
         try {
             $customer->update($request->validated());
-        } catch (\Illuminate\Database\QueryException $exception) {
+        } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 

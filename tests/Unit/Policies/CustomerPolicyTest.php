@@ -2,16 +2,14 @@
 
 namespace Customers13\Tests\Unit;
 
-use Tests\TestCase;
-use Customers13\Models\Customer;
 use Customers13\Policies\CustomerPolicy;
-use App\Models\User;
+use Tests\TestCase;
 
 class CustomerPolicyTest extends TestCase
 {
     public function test_policy_has_all_abilities(): void
     {
-        $policy = new CustomerPolicy();
+        $policy = new CustomerPolicy;
 
         $abilities = ['viewAny', 'create', 'update', 'delete', 'restore', 'forceDelete', 'archive', 'activate'];
 

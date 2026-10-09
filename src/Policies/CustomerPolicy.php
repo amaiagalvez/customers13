@@ -2,8 +2,8 @@
 
 namespace Customers13\Policies;
 
-use Customers13\Models\Customer;
 use App\Models\User;
+use Customers13\Models\Customer;
 
 class CustomerPolicy
 {

@@ -2,13 +2,14 @@
 
 namespace Customers13\Http\Requests;
 
+use Basics13\Http\Requests\RestoreRequest;
 use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @extends Basics13\Http\Requests\RestoreRequest<Customer>
  */
-final class CustomerRestoreRequest extends \Basics13\Http\Requests\RestoreRequest
+final class CustomerRestoreRequest extends RestoreRequest
 {
     /**
      * @return Customer

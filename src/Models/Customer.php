@@ -2,17 +2,14 @@
 
 namespace Customers13\Models;
 
-use Carbon\CarbonImmutable;
-use Customers13\Policies\CustomerPolicy;
 use Basics13\Concerns\TracksAuditColumns;
-use Database\Factories\CustomerFactory as CustomerFactoryBasics;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[Fillable(['name', 'notes'])]
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
@@ -24,12 +21,6 @@ class Customer extends Model
     protected $attributes = [
         'active' => true,
     ];
-
-    /**
-     * @var array{name: string, notes: string|null}
-     */
-    #[Fillable(['name', 'notes'])]
-    protected $fillable = ['name', 'notes'];
 
     /**
      * The table used by the model.
@@ -53,6 +44,6 @@ class Customer extends Model
      */
     public function projects(): HasMany
     {
-        return $this->hasMany(\Customers13\Models\Project::class);
+        return $this->hasMany(Project::class);
     }
 }

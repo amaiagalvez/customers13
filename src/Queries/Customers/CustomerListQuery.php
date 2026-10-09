@@ -5,8 +5,8 @@ namespace Customers13\Queries\Customers;
 use Customers13\Models\Customer;
 use Customers13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @extends ListQueryBase<Customer>

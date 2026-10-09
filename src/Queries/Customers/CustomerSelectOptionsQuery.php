@@ -4,8 +4,8 @@ namespace Customers13\Queries\Customers;
 
 use Customers13\Models\Customer;
 use Customers13\Queries\ListQueryBase;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 
 /**
  * @extends ListQueryBase<Customer>

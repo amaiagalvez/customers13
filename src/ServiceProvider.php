@@ -2,6 +2,9 @@
 
 namespace Customers13;
 
+use Customers13\Http\Controllers\CustomerArchivedController;
+use Customers13\Http\Controllers\CustomerController;
+use Customers13\Http\Controllers\CustomerTrashController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
@@ -37,14 +40,14 @@ class ServiceProvider extends BaseServiceProvider
     protected function registerRoutes(): void
     {
         Route::middleware(['auth', 'verified'])->group(function () {
-            Route::get('customers/archived', [\Customers13\Http\Controllers\CustomerArchivedController::class, 'index'])->name('customers.archived.index');
-            Route::patch('customers/archived/{customer}', [\Customers13\Http\Controllers\CustomerArchivedController::class, 'activate'])->whereNumber('customer')->name('customers.archived.activate');
-            Route::patch('customers/{customer}/archive', [\Customers13\Http\Controllers\CustomerArchivedController::class, 'archive'])->whereNumber('customer')->name('customers.archive');
-            Route::get('customers/trash', [\Customers13\Http\Controllers\CustomerTrashController::class, 'index'])->name('customers.trash.index');
-            Route::patch('customers/trash/{customer}', [\Customers13\Http\Controllers\CustomerTrashController::class, 'restore'])->whereNumber('customer')->name('customers.trash.restore');
-            Route::delete('customers/trash/{customer}', [\Customers13\Http\Controllers\CustomerTrashController::class, 'destroy'])->whereNumber('customer')->name('customers.trash.destroy');
-            Route::get('customers/options', [\Customers13\Http\Controllers\CustomerController::class, 'selectOptions'])->name('customers.options');
-            Route::resource('customers', \Customers13\Http\Controllers\CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
+            Route::get('customers/archived', [CustomerArchivedController::class, 'index'])->name('customers.archived.index');
+            Route::patch('customers/archived/{customer}', [CustomerArchivedController::class, 'activate'])->whereNumber('customer')->name('customers.archived.activate');
+            Route::patch('customers/{customer}/archive', [CustomerArchivedController::class, 'archive'])->whereNumber('customer')->name('customers.archive');
+            Route::get('customers/trash', [CustomerTrashController::class, 'index'])->name('customers.trash.index');
+            Route::patch('customers/trash/{customer}', [CustomerTrashController::class, 'restore'])->whereNumber('customer')->name('customers.trash.restore');
+            Route::delete('customers/trash/{customer}', [CustomerTrashController::class, 'destroy'])->whereNumber('customer')->name('customers.trash.destroy');
+            Route::get('customers/options', [CustomerController::class, 'selectOptions'])->name('customers.options');
+            Route::resource('customers', CustomerController::class)->only(['index', 'store', 'update', 'destroy']);
         });
     }
 }

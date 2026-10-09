@@ -2,8 +2,8 @@
 
 namespace Customers13\Database\Factories;
 
-use Customers13\Models\Customer;
 use Basics13\Database\Factories\HasStates;
+use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

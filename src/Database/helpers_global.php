@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
+
 if (! function_exists('addCommonColumns')) {
     /**
      * Add the columns shared by the application's soft-deleting tables.
      *
-     * @param  \Illuminate\Database\Schema\Blueprint  $table
-     * @return void
+     * @param  Blueprint  $table
      */
     function addCommonColumns($table): void
     {
@@ -21,10 +22,6 @@ if (! function_exists('addCommonColumns')) {
 if (! function_exists('addUniqueActiveNameIndex')) {
     /**
      * Make a table's name unique among the rows that are not soft-deleted.
-     *
-     * @param  string  $table
-     * @param  array  $scope
-     * @return void
      */
     function addUniqueActiveNameIndex(string $table, array $scope = []): void
     {

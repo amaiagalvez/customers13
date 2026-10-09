@@ -2,9 +2,8 @@
 
 namespace Customers13\Tests\Unit;
 
-use Tests\TestCase;
-use Customers13\Models\Customer;
 use Customers13\Queries\Customers\CustomerListQuery;
+use Tests\TestCase;
 
 class CustomerListQueryTest extends TestCase
 {
