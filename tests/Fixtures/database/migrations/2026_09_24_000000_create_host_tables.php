@@ -18,23 +18,23 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('projects', function (Blueprint $table): void {
+        Schema::create('PRO_projects', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('customer_id')->constrained('CUM_customers')->restrictOnDelete();
             $table->string('name');
             addCommonColumns($table);
         });
 
-        Schema::create('epics', function (Blueprint $table): void {
+        Schema::create('PRO_epics', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('project_id')->constrained()->restrictOnDelete();
+            $table->foreignId('project_id')->constrained('PRO_projects')->restrictOnDelete();
             $table->string('name');
             addCommonColumns($table);
         });
 
-        Schema::create('epic_comments', function (Blueprint $table): void {
+        Schema::create('PRO_epic_comments', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('epic_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('epic_id')->constrained('PRO_epics')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained()->restrictOnDelete();
             $table->text('body');
             $table->timestamps();
@@ -43,9 +43,9 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('epic_comments');
-        Schema::dropIfExists('epics');
-        Schema::dropIfExists('projects');
+        Schema::dropIfExists('PRO_epic_comments');
+        Schema::dropIfExists('PRO_epics');
+        Schema::dropIfExists('PRO_projects');
         Schema::dropIfExists('users');
     }
 };

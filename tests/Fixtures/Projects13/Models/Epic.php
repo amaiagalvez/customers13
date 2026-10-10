@@ -12,5 +12,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 #[Fillable(['name', 'project_id', 'active'])]
 class Epic extends Model
 {
+    protected $table = 'PRO_epics';
+
     use SoftDeletes;
 }

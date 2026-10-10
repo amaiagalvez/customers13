@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Fillable(['name', 'customer_id', 'active'])]
 class Project extends Model
 {
+    protected $table = 'PRO_projects';
+
     use SoftDeletes;
 
     /**

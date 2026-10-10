@@ -84,10 +84,10 @@ final class CustomerListQuery extends ListQueryBase
         return $query
             ->select('CUM_customers.*')
             ->withCount([
-                'projects' => fn (Builder $projects) => $projects->where('projects.active', true),
+                'projects' => fn (Builder $projects) => $projects->where('PRO_projects.active', true),
                 'epics' => fn (Builder $epics) => $epics
-                    ->where('epics.active', true)
-                    ->where('projects.active', true),
+                    ->where('PRO_epics.active', true)
+                    ->where('PRO_projects.active', true),
             ])
             ->selectSub($this->activeCommentsCount(), 'comments_count');
     }
@@ -102,12 +102,12 @@ final class CustomerListQuery extends ListQueryBase
     {
         return EpicComment::query()
             ->selectRaw('count(*)')
-            ->join('epics', 'epics.id', '=', 'epic_comments.epic_id')
-            ->join('projects', 'projects.id', '=', 'epics.project_id')
-            ->whereColumn('projects.customer_id', 'CUM_customers.id')
-            ->where('projects.active', true)
-            ->whereNull('projects.deleted_at')
-            ->where('epics.active', true)
-            ->whereNull('epics.deleted_at');
+            ->join('PRO_epics', 'PRO_epics.id', '=', 'PRO_epic_comments.epic_id')
+            ->join('PRO_projects', 'PRO_projects.id', '=', 'PRO_epics.project_id')
+            ->whereColumn('PRO_projects.customer_id', 'CUM_customers.id')
+            ->where('PRO_projects.active', true)
+            ->whereNull('PRO_projects.deleted_at')
+            ->where('PRO_epics.active', true)
+            ->whereNull('PRO_epics.deleted_at');
     }
 }

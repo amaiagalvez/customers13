@@ -6,4 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 
 #[Fillable(['epic_id', 'user_id', 'body'])]
-class EpicComment extends Model {}
+class EpicComment extends Model
+{
+    protected $table = 'PRO_epic_comments';
+}
