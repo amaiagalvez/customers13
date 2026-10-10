@@ -11,10 +11,10 @@
         }
     ],
     "require": {
+        "amaia/basics13": "^1.0",
         "php": "^8.3"
     },
     "require-dev": {
-        "amaia/basics13": "*",
         "larastan/larastan": "^3.9",
         "laravel/pint": "^1.27",
         "mockery/mockery": "^1.6",

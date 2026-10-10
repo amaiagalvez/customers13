@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Models\Project;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CustomerCrudTest extends TestCase
@@ -54,7 +56,7 @@ class CustomerCrudTest extends TestCase
             ->assertSee('customer-create')
             ->assertSee('aria-labelledby="customer-form-heading"', false)
             ->assertSee('id="customer-form-heading"', false)
-            ->assertSee('customer-edit-'.$customer->id);
+            ->assertSee('customer-edit-' . $customer->id);
 
         $this->put(route('customers.update', $customer), ['name' => 'Jon Bezeroa'])
             ->assertRedirect(route('customers.index'))
@@ -94,6 +96,25 @@ class CustomerCrudTest extends TestCase
 
         $this->assertNotSoftDeleted($customer);
         $this->assertSoftDeleted($project);
+    }
+
+    public function test_direct_model_delete_keeps_the_guard_inside_its_transaction(): void
+    {
+        $customer = Customer::factory()->create();
+        $transactionLevel = null;
+
+        DB::listen(static function (QueryExecuted $query) use (&$transactionLevel): void {
+            if (str_starts_with($query->sql, 'select') && str_contains($query->sql, 'CUM_customers')) {
+                $transactionLevel = DB::transactionLevel();
+            }
+        });
+
+        $initialTransactionLevel = DB::transactionLevel();
+
+        $customer->delete();
+
+        $this->assertSame($initialTransactionLevel + 2, $transactionLevel);
+        $this->assertSoftDeleted($customer);
     }
 
     public function test_invalid_customer_names_are_rejected(): void
