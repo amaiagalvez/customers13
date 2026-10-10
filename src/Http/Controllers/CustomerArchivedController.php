@@ -2,12 +2,12 @@
 
 namespace Customers13\Http\Controllers;
 
-use Customers13\Http\Requests\CustomerListRequest;
+use Illuminate\View\View;
 use Customers13\Models\Customer;
+use Illuminate\Http\RedirectResponse;
+use Customers13\Http\Requests\CustomerListRequest;
 use Customers13\Queries\Customers\CustomerListQuery;
 use Customers13\Transformers\CustomerListTransformer;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 
 /**
  * @extends ArchivedController<Customer>
@@ -44,11 +44,11 @@ class CustomerArchivedController extends \Basics13\Http\Controllers\ArchivedCont
 
     protected function activeRoute(): string
     {
-        return 'customers13.customers.index';
+        return 'customers.index';
     }
 
     protected function archivedRoute(): string
     {
-        return 'customers13.customers.archived.index';
+        return 'customers.archived.index';
     }
 }

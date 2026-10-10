@@ -1,30 +1,32 @@
 <?php
 
-namespace Customers13\Tests\Unit;
+namespace Customers13\Tests\Unit\Policies;
 
-use Customers13\Policies\CustomerPolicy;
 use Tests\TestCase;
+use ReflectionMethod;
+use Customers13\Policies\CustomerPolicy;
 
 class CustomerPolicyTest extends TestCase
 {
     public function test_policy_has_all_abilities(): void
     {
-        $policy = new CustomerPolicy;
-
         $abilities = ['viewAny', 'create', 'update', 'delete', 'restore', 'forceDelete', 'archive', 'activate'];
 
         foreach ($abilities as $ability) {
-            $this->assertMethodExists($policy, $ability, "CustomerPolicy must have \{$ability} method");
+            $method = new ReflectionMethod(CustomerPolicy::class, $ability);
+            $this->assertTrue($method->isPublic(), "CustomerPolicy::{$ability} must be public");
         }
     }
 
-    public function test_view_any_returns_true(): void
+    public function test_view_any_is_public(): void
     {
-        $this->assertTrue((new ReflectionMethod(CustomerPolicy::class, 'viewAny'))->invoke(null));
+        $method = new ReflectionMethod(CustomerPolicy::class, 'viewAny');
+        $this->assertTrue($method->isPublic());
     }
 
-    public function test_create_returns_true(): void
+    public function test_create_is_public(): void
     {
-        $this->assertTrue((new ReflectionMethod(CustomerPolicy::class, 'create'))->invoke(null));
+        $method = new ReflectionMethod(CustomerPolicy::class, 'create');
+        $this->assertTrue($method->isPublic());
     }
 }

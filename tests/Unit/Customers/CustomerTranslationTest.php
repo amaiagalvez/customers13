@@ -1,6 +1,6 @@
 <?php
 
-namespace Customers13\Tests\Unit;
+namespace Customers13\Tests\Unit\Customers;
 
 use Tests\TestCase;
 

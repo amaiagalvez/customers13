@@ -3,9 +3,9 @@
 namespace Customers13\Queries\Customers;
 
 use Customers13\Models\Customer;
-use Customers13\Queries\ListQueryBase;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Basics13\Queries\ListQueryBase;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @extends ListQueryBase<Customer>
@@ -22,11 +22,11 @@ final class CustomerSelectOptionsQuery extends ListQueryBase
         return Customer::query()
             ->where('active', true)
             ->when($search !== '', fn (Builder $query) => $query->whereRaw(
-                'customers.name LIKE ? ESCAPE \''.self::LIKE_ESCAPE.'\'',
+                'CUM_customers.name LIKE ? ESCAPE \''.self::LIKE_ESCAPE.'\'',
                 [$pattern],
             ))
-            ->orderBy('customers.name')
-            ->orderBy('customers.id')
+            ->orderBy('CUM_customers.name')
+            ->orderBy('CUM_customers.id')
             ->limit(self::PER_PAGE)
             ->get(['id', 'name'])
             ->map(fn (Customer $customer): array => [

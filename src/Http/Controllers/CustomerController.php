@@ -2,16 +2,20 @@
 
 namespace Customers13\Http\Controllers;
 
-use App\Support\Database\UniqueConstraintViolation;
-use Customers13\Http\Requests\CustomerRequest;
+use Illuminate\View\View;
 use Customers13\Models\Customer;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\QueryException;
+use Basics13\Http\Controllers\Controller;
+use Customers13\Http\Requests\CustomerRequest;
+use Customers13\Http\Requests\CustomerListRequest;
 use Customers13\Queries\Customers\CustomerListQuery;
 use Customers13\Transformers\CustomerListTransformer;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
+use Basics13\Support\Database\UniqueConstraintViolation;
+use Customers13\Http\Requests\CustomerSelectOptionsRequest;
+use Customers13\Queries\Customers\CustomerSelectOptionsQuery;
 
 class CustomerController extends Controller
 {
@@ -35,7 +39,7 @@ class CustomerController extends Controller
 
     public function selectOptions(
         CustomerSelectOptionsRequest $request,
-        Customers13\Queries\Customers\CustomerSelectOptionsQuery $query,
+        CustomerSelectOptionsQuery $query,
     ): JsonResponse {
         return response()->json([
             'results' => $query->search($request->search()),
@@ -61,7 +65,7 @@ class CustomerController extends Controller
             return response()->json($customer->only(['id', 'name']), 201);
         }
 
-        return to_route('customers13.customers.index')->with('status', __('customers13::messages.created'));
+        return to_route('customers.index')->with('status', __('customers13::messages.created'));
     }
 
     public function update(CustomerRequest $request, Customer $customer): RedirectResponse
@@ -72,7 +76,7 @@ class CustomerController extends Controller
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
-        return to_route('customers13.customers.index')->with('status', __('customers13::messages.updated'));
+        return to_route('customers.index')->with('status', __('customers13::messages.updated'));
     }
 
     public function destroy(Customer $customer): RedirectResponse
@@ -84,10 +88,10 @@ class CustomerController extends Controller
         $deleted = DB::transaction(static fn (): bool => $customer->delete() !== false);
 
         if (! $deleted) {
-            return to_route('customers13.customers.index')
+            return to_route('customers.index')
                 ->with('error', __('Cannot be deleted while it has related records.'));
         }
 
-        return to_route('customers13.customers.index')->with('status', __('customers13::messages.moved_to_trash'));
+        return to_route('customers.index')->with('status', __('customers13::messages.moved_to_trash'));
     }
 }

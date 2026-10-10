@@ -2,8 +2,8 @@
 
 namespace Customers13\Tests\Unit\Validation;
 
-use Customers13\Http\Requests\CustomerRestoreRequest;
 use Tests\TestCase;
+use Customers13\Http\Requests\CustomerRestoreRequest;
 
 class CustomerRestoreRequestTest extends TestCase
 {

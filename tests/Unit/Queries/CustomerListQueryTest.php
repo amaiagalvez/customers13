@@ -1,9 +1,9 @@
 <?php
 
-namespace Customers13\Tests\Unit;
+namespace Customers13\Tests\Unit\Queries;
 
-use Customers13\Queries\Customers\CustomerListQuery;
 use Tests\TestCase;
+use Customers13\Queries\Customers\CustomerListQuery;
 
 class CustomerListQueryTest extends TestCase
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Customers13\Tests\Unit;
+namespace Customers13\Tests\Unit\Customers;
 
-use Customers13\Models\Customer;
 use Tests\TestCase;
+use Customers13\Models\Customer;
 
 class CustomerTest extends TestCase
 {

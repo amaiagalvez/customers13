@@ -2,10 +2,10 @@
 
 namespace Customers13\Http\Requests;
 
-use Basics13\Support\Validation\MaxLength;
-use Customers13\Models\Customer;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Customers13\Models\Customer;
+use Basics13\Support\Validation\MaxLength;
+use Illuminate\Foundation\Http\FormRequest;
 
 class CustomerRequest extends FormRequest
 {

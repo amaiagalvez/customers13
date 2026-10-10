@@ -2,11 +2,11 @@
 
 namespace Customers13\Tests\Unit\Validation;
 
-use Customers13\Models\Customer;
-use Customers13\Support\Validation\MaxLength;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use Tests\TestCase;
+use Illuminate\Validation\Rule;
+use Customers13\Models\Customer;
+use Illuminate\Foundation\Http\FormRequest;
+use Customers13\Support\Validation\MaxLength;
 
 class CustomerRequestTest extends TestCase
 {

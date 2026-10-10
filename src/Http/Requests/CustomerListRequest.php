@@ -2,8 +2,8 @@
 
 namespace Customers13\Http\Requests;
 
-use Basics13\Http\Requests\SearchableListRequest;
 use Customers13\Models\Customer;
+use Basics13\Http\Requests\SearchableListRequest;
 
 class CustomerListRequest extends SearchableListRequest
 {

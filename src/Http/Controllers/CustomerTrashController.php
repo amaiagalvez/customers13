@@ -2,15 +2,15 @@
 
 namespace Customers13\Http\Controllers;
 
-use Customers13\Http\Requests\CustomerDestroyRequest;
-use Customers13\Http\Requests\CustomerListRequest;
-use Customers13\Http\Requests\CustomerRestoreRequest;
-use Customers13\Models\Customer;
-use Customers13\Queries\Customers\CustomerListQuery;
-use Customers13\Transformers\CustomerListTransformer;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
+use Customers13\Models\Customer;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Database\Eloquent\Model;
+use Customers13\Http\Requests\CustomerListRequest;
+use Customers13\Queries\Customers\CustomerListQuery;
+use Customers13\Http\Requests\CustomerDestroyRequest;
+use Customers13\Http\Requests\CustomerRestoreRequest;
+use Customers13\Transformers\CustomerListTransformer;
 
 /**
  * @extends TrashController<Customer>
@@ -68,6 +68,6 @@ class CustomerTrashController extends \Basics13\Http\Controllers\TrashController
 
     protected function trashRoute(): string
     {
-        return 'customers13.customers.trash.index';
+        return 'customers.trash.index';
     }
 }

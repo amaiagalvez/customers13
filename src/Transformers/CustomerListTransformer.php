@@ -4,12 +4,13 @@ namespace Customers13\Transformers;
 
 use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
+use Basics13\Transformers\ListTransformer;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @extends ListTransformer<Customer>
  */
-class CustomerListTransformer extends \Basics13\Transformers\ListTransformer
+class CustomerListTransformer extends ListTransformer
 {
     /**
      * @param  LengthAwarePaginator<int, Customer>  $customers
@@ -86,7 +87,7 @@ class CustomerListTransformer extends \Basics13\Transformers\ListTransformer
             'projectsCount' => $projectsCount,
             // The projects list searches customer names, so the row count can link to its own slice.
             'projectsUrl' => $projectsCount > 0
-                ? route('customers13.projects.index', ['search' => $customer->name])
+                ? route('projects.index', ['search' => $customer->name])
                 : null,
             'epicsCount' => (int) $customer->epics_count,
             'commentsCount' => (int) $customer->comments_count,
@@ -129,14 +130,14 @@ class CustomerListTransformer extends \Basics13\Transformers\ListTransformer
     protected function routes(): array
     {
         return [
-            'active' => 'customers13.customers.index',
-            'archived' => 'customers13.customers.archived.index',
-            'trash' => 'customers13.customers.trash.index',
-            'destroy' => 'customers13.customers.destroy',
-            'archive' => 'customers13.customers.archive',
-            'activate' => 'customers13.customers.archived.activate',
-            'restore' => 'customers13.customers.trash.restore',
-            'trashDestroy' => 'customers13.customers.trash.destroy',
+            'active' => 'customers.index',
+            'archived' => 'customers.archived.index',
+            'trash' => 'customers.trash.index',
+            'destroy' => 'customers.destroy',
+            'archive' => 'customers.archive',
+            'activate' => 'customers.archived.activate',
+            'restore' => 'customers.trash.restore',
+            'trashDestroy' => 'customers.trash.destroy',
         ];
     }
 }

@@ -3,10 +3,10 @@
 namespace Customers13\Queries\Customers;
 
 use Customers13\Models\Customer;
-use Customers13\Queries\ListQueryBase;
+use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
  * @extends ListQueryBase<Customer>
@@ -81,7 +81,7 @@ final class CustomerListQuery extends ListQueryBase
     private function withActiveCounts(Builder $query): Builder
     {
         return $query
-            ->select('customers.*')
+            ->select('CUM_customers.*')
             ->withCount([
                 'projects' => fn (Builder $projects) => $projects->where('projects.active', true),
                 'epics' => fn (Builder $epics) => $epics
@@ -99,11 +99,11 @@ final class CustomerListQuery extends ListQueryBase
      */
     private function activeCommentsCount(): Builder
     {
-        return \EpicComment::query()
+        return \App\Models\EpicComment::query()
             ->selectRaw('count(*)')
             ->join('epics', 'epics.id', '=', 'epic_comments.epic_id')
             ->join('projects', 'projects.id', '=', 'epics.project_id')
-            ->whereColumn('projects.customer_id', 'customers.id')
+            ->whereColumn('projects.customer_id', 'CUM_customers.id')
             ->where('projects.active', true)
             ->whereNull('projects.deleted_at')
             ->where('epics.active', true)

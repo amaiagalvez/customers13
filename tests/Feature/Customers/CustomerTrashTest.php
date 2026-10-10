@@ -1,10 +1,10 @@
 <?php
 
-namespace Customers13\Tests\Feature;
+namespace Customers13\Tests\Feature\Customers;
 
+use Tests\TestCase;
 use Customers13\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class CustomerTrashTest extends TestCase
 {
@@ -16,7 +16,7 @@ class CustomerTrashTest extends TestCase
         Customer::factory()->create(['name' => 'Matching customer']);
         Customer::factory()->create(['name' => 'Other customer']);
 
-        $response = $this->get(route('customers13.customers.index', ['search' => 'Matching']));
+        $response = $this->get(route('customers.index', ['search' => 'Matching']));
         $response->assertOk();
         $response->assertSeeInOrder(['data-test="customer-active-link"', '>2</span>'], false);
     }

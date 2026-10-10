@@ -1,9 +1,9 @@
 <?php
 
 use Basics13\Support\Database\Helpers;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -14,8 +14,10 @@ return new class extends Migration
             $table->string('name');
 
             Helpers::addCommonColumns($table);
-            Helpers::addUniqueActiveNameIndex('CUM_customers');
+            Helpers::addAuditColumns($table);
         });
+
+        Helpers::addUniqueActiveNameIndex('CUM_customers');
     }
 
     public function down(): void

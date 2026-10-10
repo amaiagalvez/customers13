@@ -1,10 +1,11 @@
 <?php
 
-use Customers13\Http\Controllers\CustomerArchivedController;
+use Illuminate\Support\Facades\Route;
 use Customers13\Http\Controllers\CustomerController;
 use Customers13\Http\Controllers\CustomerTrashController;
+use Customers13\Http\Controllers\CustomerArchivedController;
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['web', 'auth', 'verified'])->group(function () {
     Route::get('customers/archived', [CustomerArchivedController::class, 'index'])->name('customers.archived.index');
     Route::patch('customers/archived/{customer}', [CustomerArchivedController::class, 'activate'])->whereNumber('customer')->name('customers.archived.activate');
     Route::patch('customers/{customer}/archive', [CustomerArchivedController::class, 'archive'])->whereNumber('customer')->name('customers.archive');
