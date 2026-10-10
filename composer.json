@@ -29,6 +29,7 @@
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/Fixtures/App/",
+            "Projects13\\Models\\": "tests/Fixtures/Projects13/Models/",
             "Customers13\\Tests\\": "tests/"
         }
     },

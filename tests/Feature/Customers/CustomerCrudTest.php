@@ -3,7 +3,7 @@
 namespace Customers13\Tests\Feature\Customers;
 
 use App\Models\User;
-use App\Models\Project;
+use Projects13\Models\Project;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
 use Illuminate\Support\Facades\DB;
@@ -69,6 +69,110 @@ class CustomerCrudTest extends TestCase
         $this->assertSoftDeleted($customer);
     }
 
+    public function test_json_customer_creation_trims_the_name_and_returns_the_created_record(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+
+        $this->postJson(route('customers.store'), ['name' => '  Ane Bezeroa  '])
+            ->assertCreated()
+            ->assertJsonStructure(['id', 'name'])
+            ->assertJsonPath('name', 'Ane Bezeroa');
+
+        $this->assertDatabaseHas('CUM_customers', ['name' => 'Ane Bezeroa']);
+    }
+
+    public function test_html_creation_opens_the_restore_conflict_for_a_trashed_name(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+        $customer = Customer::factory()->create(['name' => 'Reused customer']);
+        $customer->delete();
+
+        $this->post(route('customers.store'), ['name' => $customer->name])
+            ->assertRedirect(route('customers.index'))
+            ->assertSessionHas('deleted_customer_conflict', [
+                'id' => $customer->id,
+                'name' => $customer->name,
+            ]);
+
+        $this->assertSame(0, Customer::query()->where('name', $customer->name)->count());
+    }
+
+    public function test_json_creation_requires_explicit_reuse_of_a_trashed_name(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+        $customer = Customer::factory()->create(['name' => 'Reused customer']);
+        $customer->delete();
+
+        $this->postJson(route('customers.store'), ['name' => $customer->name])
+            ->assertConflict()
+            ->assertJsonPath('errors.name.0', __('basics13::messages.deleted_name_conflict', ['name' => $customer->name]));
+
+        $this->postJson(route('customers.store'), [
+            'name' => $customer->name,
+            'reuse_deleted_name' => true,
+        ])
+            ->assertCreated()
+            ->assertJsonPath('name', $customer->name);
+
+        $this->assertSoftDeleted($customer);
+        $this->assertSame(1, Customer::query()->where('name', $customer->name)->count());
+    }
+
+    public function test_store_converts_a_concurrent_duplicate_name_into_a_validation_error(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+        $name = 'Concurrent customer';
+        $this->createDuplicateNameAfterValidation($name);
+
+        $this->postJson(route('customers.store'), ['name' => $name])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('name');
+
+        $this->assertDatabaseCount('CUM_customers', 1);
+        $this->assertDatabaseHas('CUM_customers', ['name' => $name]);
+    }
+
+    public function test_update_converts_a_concurrent_duplicate_name_into_a_validation_error(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+        $customer = Customer::factory()->create(['name' => 'Original customer']);
+        $name = 'Concurrent customer';
+        $this->createDuplicateNameAfterValidation($name);
+
+        $this->putJson(route('customers.update', $customer), ['name' => $name])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('name');
+
+        $this->assertDatabaseHas('CUM_customers', ['id' => $customer->id, 'name' => 'Original customer']);
+        $this->assertDatabaseHas('CUM_customers', ['name' => $name]);
+        $this->assertDatabaseCount('CUM_customers', 2);
+    }
+
     public function test_customer_with_a_project_cannot_be_deleted(): void
     {
         $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
@@ -125,5 +229,25 @@ class CustomerCrudTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors('name');
         $this->assertDatabaseCount('CUM_customers', 0);
+    }
+
+    private function createDuplicateNameAfterValidation(string $name): void
+    {
+        $table = (new Customer)->getTable();
+        $competitorCreated = false;
+
+        DB::listen(static function (QueryExecuted $query) use ($name, $table, &$competitorCreated): void {
+            if (
+                $competitorCreated
+                || ! str_starts_with(strtolower(ltrim($query->sql)), 'select')
+                || ! str_contains(strtolower($query->sql), strtolower($table))
+                || ! in_array($name, $query->bindings, true)
+            ) {
+                return;
+            }
+
+            $competitorCreated = true;
+            Customer::factory()->create(['name' => $name]);
+        });
     }
 }

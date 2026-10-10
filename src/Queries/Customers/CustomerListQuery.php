@@ -2,8 +2,8 @@
 
 namespace Customers13\Queries\Customers;
 
-use App\Models\EpicComment;
 use Customers13\Models\Customer;
+use Projects13\Models\EpicComment;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;

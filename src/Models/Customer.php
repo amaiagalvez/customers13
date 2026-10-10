@@ -2,9 +2,9 @@
 
 namespace Customers13\Models;
 
-use App\Models\Epic;
-use App\Models\Project;
+use Projects13\Models\Epic;
 use Illuminate\Support\Carbon;
+use Projects13\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Customers13\Policies\CustomerPolicy;
 use Basics13\Concerns\TracksAuditColumns;

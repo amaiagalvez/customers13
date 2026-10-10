@@ -4,7 +4,7 @@
 
 `customers13` does use `basics13` as its foundation: it reuses shared controllers, request classes, list-query and transformer bases, audit tracking, and common migration helpers. Customer-specific models, policies, routes, queries, and presentation remain in `customers13`; this is appropriate specialization rather than duplicated generic CRUD behavior.
 
-The package uses Basics13 for shared CRUD behavior rather than duplicating it. The three actionable findings from the review have now been corrected: Basics13 is a runtime dependency, the partial-index SQL quotes identifiers, and direct customer deletion keeps the guard and soft delete in one transaction. The package test harness is also repaired. Current automated checks pass; the earlier `runAll.sh cus` failures with `tempnam()` warnings did not reproduce in the final no-coverage suite.
+The package uses Basics13 for shared CRUD behavior rather than duplicating it. The three actionable findings from the review have now been corrected: Basics13 is a runtime dependency, the partial-index SQL quotes identifiers, and direct customer deletion keeps the guard and soft delete in one transaction. Customer-specific selector and archive tests now live in the package, including deleted-name conflict/reuse and trash-list behavior. Current automated checks pass; the earlier `runAll.sh cus` failures with `tempnam()` warnings did not reproduce.
 
 ## Detected Stack
 
@@ -18,11 +18,10 @@ The package uses Basics13 for shared CRUD behavior rather than duplicating it. T
 
 ## Checks Executed
 
-- Customer PHPUnit suite without coverage — passed: 25 tests, 102 assertions.
-- Customer PHPUnit suite with Xdebug coverage — passed: 25 tests, 102 assertions; coverage output was written inside the disposable container.
+- Customer PHPUnit suite with Xdebug coverage — passed: 42 tests, 171 assertions; 100% line coverage (251/251), 100% method coverage (58/58), and 100% class coverage (15/15). Coverage output was written inside the disposable container.
 - Basics13 database-helper unit tests — passed: 9 tests, 16 assertions.
 - PHPStan — passed for both `customers13` and `basics13` with no errors.
-- Pint `--test` — passed for the two changed PHP files in each package.
+- Pint `--test` — passed for the changed package tests and the retained Project-Customer integration tests.
 - Composer `update amaia/basics13 --no-install --no-interaction` — completed without changing other package versions; `composer validate --no-check-publish` passed, with only the existing version-field warning.
 - The previous `runAll.sh cus` execution reported 4 failures with `tempnam()` warnings; these did not reproduce in either final complete PHPUnit run. The cause of that earlier result was not established.
 - Dusk and live PostgreSQL/MariaDB migration runs were not performed; the focused migration-helper test ran on SQLite.
