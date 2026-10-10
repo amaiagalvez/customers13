@@ -28,8 +28,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "../../demo13/app/",
-            "Database\\Factories\\": "../../demo13/database/factories/",
+            "App\\": "tests/Fixtures/App/",
             "Customers13\\Tests\\": "tests/"
         }
     },
