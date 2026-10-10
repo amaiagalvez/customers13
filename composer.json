@@ -49,7 +49,7 @@
             "pestphp/pest-plugin": true
         }
     },
-        "repositories": [
+    "repositories": [
         {
             "type": "path",
             "url": "../packages/basics13",
