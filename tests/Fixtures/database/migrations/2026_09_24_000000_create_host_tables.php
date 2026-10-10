@@ -34,8 +34,8 @@ return new class extends Migration
 
         Schema::create('PRO_epic_comments', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('epic_id')->constrained('PRO_epics')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained()->restrictOnDelete();
+            $table->foreignId('epic_id')->constrained('PRO_epics');
+            $table->foreignId('user_id')->constrained('users');
             $table->text('body');
             $table->timestamps();
         });
