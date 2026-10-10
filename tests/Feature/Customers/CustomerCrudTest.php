@@ -56,7 +56,7 @@ class CustomerCrudTest extends TestCase
             ->assertSee('customer-create')
             ->assertSee('aria-labelledby="customer-form-heading"', false)
             ->assertSee('id="customer-form-heading"', false)
-            ->assertSee('customer-edit-' . $customer->id);
+            ->assertSee('customer-edit-'.$customer->id);
 
         $this->put(route('customers.update', $customer), ['name' => 'Jon Bezeroa'])
             ->assertRedirect(route('customers.index'))
