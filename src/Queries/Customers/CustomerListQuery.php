@@ -2,6 +2,7 @@
 
 namespace Customers13\Queries\Customers;
 
+use App\Models\EpicComment;
 use Customers13\Models\Customer;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
@@ -99,7 +100,7 @@ final class CustomerListQuery extends ListQueryBase
      */
     private function activeCommentsCount(): Builder
     {
-        return \App\Models\EpicComment::query()
+        return EpicComment::query()
             ->selectRaw('count(*)')
             ->join('epics', 'epics.id', '=', 'epic_comments.epic_id')
             ->join('projects', 'projects.id', '=', 'epics.project_id')

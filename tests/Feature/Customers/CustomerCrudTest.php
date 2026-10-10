@@ -2,9 +2,9 @@
 
 namespace Customers13\Tests\Feature\Customers;
 
-use Tests\TestCase;
 use App\Models\User;
 use App\Models\Project;
+use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

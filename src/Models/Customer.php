@@ -38,6 +38,7 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 #[UseFactory(CustomerFactory::class)]
 class Customer extends Model
 {
+    /** @use HasFactory<CustomerFactory> */
     use HasFactory, SoftDeletes, TracksAuditColumns;
 
     /**

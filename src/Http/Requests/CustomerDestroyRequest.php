@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Requests\TrashDestroyRequest;
 
 /**
- * @extends Basics13\Http\Requests\TrashDestroyRequest<Customer>
+ * @extends TrashDestroyRequest<Customer>
  */
 final class CustomerDestroyRequest extends TrashDestroyRequest
 {

@@ -5,15 +5,15 @@ namespace Customers13\Database\Factories;
 use Customers13\Models\Customer;
 use Basics13\Database\Factories\HasStates;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Attributes\UseModel;
 
 /**
  * @extends Factory<Customer>
  */
-#[UseModel(Customer::class)]
 class CustomerFactory extends Factory
 {
     use HasStates;
+
+    protected $model = Customer::class;
 
     /**
      * Define the model's default state.

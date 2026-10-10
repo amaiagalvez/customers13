@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Customers13\Models\Customer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
+use Basics13\Http\Controllers\TrashController;
 use Customers13\Http\Requests\CustomerListRequest;
 use Customers13\Queries\Customers\CustomerListQuery;
 use Customers13\Http\Requests\CustomerDestroyRequest;
@@ -15,7 +16,7 @@ use Customers13\Transformers\CustomerListTransformer;
 /**
  * @extends TrashController<Customer>
  */
-class CustomerTrashController extends \Basics13\Http\Controllers\TrashController
+class CustomerTrashController extends TrashController
 {
     public function index(
         CustomerListRequest $request,

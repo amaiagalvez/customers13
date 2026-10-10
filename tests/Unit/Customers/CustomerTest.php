@@ -2,7 +2,7 @@
 
 namespace Customers13\Tests\Unit\Customers;
 
-use Tests\TestCase;
+use PHPUnit\Framework\TestCase;
 use Customers13\Models\Customer;
 
 class CustomerTest extends TestCase

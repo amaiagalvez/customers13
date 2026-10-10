@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Requests\RestoreRequest;
 
 /**
- * @extends Basics13\Http\Requests\RestoreRequest<Customer>
+ * @extends RestoreRequest<Customer>
  */
 final class CustomerRestoreRequest extends RestoreRequest
 {

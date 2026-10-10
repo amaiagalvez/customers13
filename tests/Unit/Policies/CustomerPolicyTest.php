@@ -2,8 +2,8 @@
 
 namespace Customers13\Tests\Unit\Policies;
 
-use Tests\TestCase;
 use ReflectionMethod;
+use PHPUnit\Framework\TestCase;
 use Customers13\Policies\CustomerPolicy;
 
 class CustomerPolicyTest extends TestCase
