@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'attributes' => [
+        'customer_id' => 'ID del cliente',
+    ],
     'name' => [
         'required' => 'El campo :attribute es obligatorio.',
         'min' => 'El campo :attribute debe tener al menos :min caracteres.',

@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'attributes' => [
+        'customer_id' => 'bezeroaren ID',
+    ],
     'name' => [
         'required' => 'Herrialde Laguna deskribapena beharrezkoa da.',
         'min' => 'Herrialde Laguna gutxienez :min Letrak egon behar da.',

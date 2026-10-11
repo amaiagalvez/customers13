@@ -14,6 +14,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'customers13');
         $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'customers13');
+        $this->loadTranslationsFrom(__DIR__.'/../resources/lang');
 
         $this->publishes([
             __DIR__.'/../config/customers13.php' => config_path('customers13.php'),
