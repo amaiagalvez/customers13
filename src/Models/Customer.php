@@ -65,11 +65,6 @@ class Customer extends Model
         ];
     }
 
-    public function delete(): ?bool
-    {
-        return $this->getConnection()->transaction(fn (): ?bool => parent::delete());
-    }
-
     /**
      * @return HasMany<Project, $this>
      */
