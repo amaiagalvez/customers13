@@ -217,7 +217,7 @@ class CustomerCrudTest extends TestCase
 
         $customer->delete();
 
-        $this->assertSame($initialTransactionLevel + 2, $transactionLevel);
+        $this->assertSame($initialTransactionLevel + 1, $transactionLevel);
         $this->assertSoftDeleted($customer);
     }
 
