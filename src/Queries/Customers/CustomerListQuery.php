@@ -3,11 +3,10 @@
 namespace Customers13\Queries\Customers;
 
 use Customers13\Models\Customer;
-use Projects13\Models\EpicComment;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
+use Customers13\Contracts\CustomerIntegration;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
  * @extends ListQueryBase<Customer>
@@ -15,39 +14,28 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 final class CustomerListQuery extends ListQueryBase
 {
     /**
-     * Search columns for the active list.
-     *
-     * @var list<string>
+     * The list the columns below belong to. Passed to the integration so one binding can tell an
+     * active row from an archived or trashed one, which is all it needs to count the right slice.
      */
-    protected const SEARCH_COLUMNS = ['name'];
+    private const SCOPE_ACTIVE = 'active';
 
-    /**
-     * Search columns for the archived list.
-     *
-     * @var list<string>
-     */
-    protected const SEARCH_COLUMNS_ARCHIVED = ['name', 'updated_at'];
+    private const SCOPE_ARCHIVED = 'archived';
 
-    /**
-     * Search columns for the trashed list.
-     *
-     * @var list<string>
-     */
-    protected const SEARCH_COLUMNS_TRASHED = ['name', 'deleted_at'];
+    private const SCOPE_TRASHED = 'trashed';
+
+    public function __construct(private readonly CustomerIntegration $integration) {}
 
     /**
      * @return LengthAwarePaginator<int, Customer>
      */
     public function active(string $search): LengthAwarePaginator
     {
+        // Unique names among non-deleted customers keep the ordering total on its own; the id
+        // is here so this list breaks ties the same way the archived and trash lists do.
         return $this->paginate(
-            $this->withActiveCounts(
-                // Unique names among non-deleted customers keep the ordering total on its own; the id
-                // is here so this list breaks ties the same way the archived and trash lists do.
-                Customer::query()->where('active', true)->orderBy('name')->orderBy('id'),
-            )->withExists(['projects' => fn (Builder $query) => $query->withoutGlobalScope(SoftDeletingScope::class)]),
+            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('active', true)->orderBy('name')->orderBy('id')),
             $search,
-            searchColumns: self::SEARCH_COLUMNS,
+            searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['name']),
         );
     }
 
@@ -57,9 +45,9 @@ final class CustomerListQuery extends ListQueryBase
     public function archived(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withActiveCounts(Customer::query()->where('active', false)->orderBy('name')->orderBy('id')),
+            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('active', false)->orderBy('name')->orderBy('id')),
             $search,
-            searchColumns: self::SEARCH_COLUMNS_ARCHIVED,
+            searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['name', 'updated_at']),
         );
     }
 
@@ -69,9 +57,9 @@ final class CustomerListQuery extends ListQueryBase
     public function trashed(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withActiveCounts(Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
+            $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
             $search,
-            searchColumns: self::SEARCH_COLUMNS_TRASHED,
+            searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['name', 'deleted_at']),
         );
     }
 
@@ -94,41 +82,31 @@ final class CustomerListQuery extends ListQueryBase
     }
 
     /**
-     * Only the live slice of the customer is counted: active projects, the active epics they own and
-     * the comments written on those epics; deleted records are excluded by the joins below.
+     * Hand the query to the integration before anything searches or orders it, so the columns it
+     * contributes to the search and the ordering are already there.
      *
      * @param  Builder<Customer>  $query
      * @return Builder<Customer>
      */
-    private function withActiveCounts(Builder $query): Builder
+    private function scoped(string $scope, Builder $query): Builder
     {
-        return $query
-            ->select('CUM_customers.*')
-            ->withCount([
-                'projects' => fn (Builder $projects) => $projects->where('PRO_projects.active', true),
-                'epics' => fn (Builder $epics) => $epics
-                    ->where('PRO_epics.active', true)
-                    ->where('PRO_projects.active', true),
-            ])
-            ->selectSub($this->activeCommentsCount(), 'comments_count');
+        $this->integration->scope($query, $scope, 'customer_projects');
+
+        return $query;
     }
 
     /**
-     * Comments live two hops away from the customer, which `withCount` cannot express, so the
-     * correlated subquery walks projects and epics explicitly.
+     * Base search columns for a list, with whatever the integration contributes appended. Keeping
+     * the base list first means the search order does not move when an integration is installed.
      *
-     * @return Builder<EpicComment>
+     * @param  non-empty-list<literal-string>  $columns
+     * @return non-empty-list<literal-string>
      */
-    private function activeCommentsCount(): Builder
+    private function searchColumns(string $scope, array $columns): array
     {
-        return EpicComment::query()
-            ->selectRaw('count(*)')
-            ->join('PRO_epics', 'PRO_epics.id', '=', 'PRO_epic_comments.epic_id')
-            ->join('PRO_projects', 'PRO_projects.id', '=', 'PRO_epics.project_id')
-            ->whereColumn('PRO_projects.customer_id', 'CUM_customers.id')
-            ->where('PRO_projects.active', true)
-            ->whereNull('PRO_projects.deleted_at')
-            ->where('PRO_epics.active', true)
-            ->whereNull('PRO_epics.deleted_at');
+        /** @var non-empty-list<literal-string> $columns An integration appends to the base columns; it never replaces them. */
+        $columns = $this->integration->searchColumns($scope, $columns);
+
+        return $columns;
     }
 }

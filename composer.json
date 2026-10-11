@@ -1,6 +1,6 @@
 {
     "name": "amaia/customers13",
-    "description": "Customer management for Laravel 13: CRUD, soft deletes, archive, trash, select options, and planning chips with Flux.",
+    "description": "Customer management for Laravel 13: CRUD, soft deletes, archive, trash and select options.",
     "type": "library",
     "license": "MIT",
     "version": "1.0.0",
@@ -18,12 +18,11 @@
     "autoload": {
         "psr-4": {
             "Customers13\\": "src/"
-        }       
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/Fixtures/App/",
-            "Projects13\\Models\\": "tests/Fixtures/Projects13/Models/",
             "Customers13\\Tests\\": "tests/"
         }
     },

@@ -2,20 +2,16 @@
 
 namespace Customers13\Models;
 
-use Projects13\Models\Epic;
 use Illuminate\Support\Carbon;
-use Projects13\Models\Project;
 use Illuminate\Database\Eloquent\Model;
 use Customers13\Policies\CustomerPolicy;
 use Basics13\Concerns\TracksAuditColumns;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Customers13\Database\Factories\CustomerFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 /**
  * @property int $id
@@ -28,10 +24,6 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  * @property-read Carbon|null $created_at
  * @property-read Carbon|null $updated_at
  * @property-read Carbon|null $deleted_at
- * @property-read bool $projects_exists
- * @property-read int $projects_count
- * @property-read int $epics_count
- * @property-read int $comments_count
  */
 #[Fillable(['name', 'notes'])]
 #[UsePolicy(CustomerPolicy::class)]
@@ -66,20 +58,19 @@ class Customer extends Model
     }
 
     /**
-     * @return HasMany<Project, $this>
-     */
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
-    }
-
-    /**
-     * Epics reached through the projects of this customer; trashed projects are excluded.
+     * Soft deletes inside a transaction on the model's own connection.
      *
-     * @return HasManyThrough<Epic, Project, $this>
+     * The transaction itself belongs to no rule: what it buys is that a guard registered by an
+     * optional integration package —which refuses the delete while the customer has children, and
+     * locks the row to decide— keeps its lock from the guard's own inner transaction until the
+     * soft delete is actually written. Without this, a child created between the guard's check and
+     * the delete would slip through on any path that does not open a transaction itself, including
+     * a plain `$customer->delete()` outside a controller.
+     *
+     * @return bool|null
      */
-    public function epics(): HasManyThrough
+    public function delete()
     {
-        return $this->hasManyThrough(Epic::class, Project::class, 'customer_id', 'project_id');
+        return $this->getConnection()->transaction(fn (): ?bool => parent::delete());
     }
 }

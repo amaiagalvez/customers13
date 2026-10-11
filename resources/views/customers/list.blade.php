@@ -69,9 +69,7 @@
                 <x-basics13::list.table prefix="customer" :paginator="$customers">
                     <flux:table.columns>
                         <flux:table.column scope="col">{{ __('Name') }}</flux:table.column>
-                        <flux:table.column scope="col">{{ __('Projects') }}</flux:table.column>
-                        <flux:table.column scope="col">{{ __('Epics') }}</flux:table.column>
-                        <flux:table.column scope="col">{{ __('Comments') }}</flux:table.column>
+                        @includeIf(config('customers13.views.customer_list.columns'))
                         <flux:table.column scope="col" align="end" sticky class="text-end">
                             <span class="sr-only">{{ __('Actions') }}</span>
                         </flux:table.column>
@@ -86,22 +84,7 @@
                                         title="{{ $row['name'] }}"
                                         data-test="customer-name-{{ $row['id'] }}">{{ $row['name'] }}</span>
                                 </flux:table.cell>
-                                <flux:table.cell>
-                                    <x-basics13::list.count icon="briefcase" :count="$row['projectsCount']"
-                                        :url="$row['projectsUrl']"
-                                        :label="__('View :count projects', ['count' => $row['projectsCount']])"
-                                        data-test="customer-projects-count-{{ $row['id'] }}" />
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                    <x-basics13::list.count icon="flag" :count="$row['epicsCount']"
-                                        :label="__('Epics: :count', ['count' => $row['epicsCount']])"
-                                        data-test="customer-epics-count-{{ $row['id'] }}" />
-                                </flux:table.cell>
-                                <flux:table.cell>
-                                    <x-basics13::list.count icon="chat-bubble-left" :count="$row['commentsCount']"
-                                        :label="__('Comments: :count', ['count' => $row['commentsCount']])"
-                                        data-test="customer-comments-count-{{ $row['id'] }}" />
-                                </flux:table.cell>
+                                @includeIf(config('customers13.views.customer_list.cells'))
                                 <flux:table.cell align="end" sticky
                                     class="bg-white dark:bg-zinc-900">
                                     <x-basics13::list.row-actions :actions="$row['actions']" prefix="customer"
@@ -109,7 +92,7 @@
                                 </flux:table.cell>
                             </flux:table.row>
                         @empty
-                            <x-basics13::list.empty-state :colspan="5" :message="$list['emptyMessage']">
+                            <x-basics13::list.empty-state :colspan="2 + (int) config('customers13.views.customer_list.count', 0)" :message="$list['emptyMessage']">
                                 @if ($list['create'] && $list['search']['value'] === '')
                                     <flux:modal.trigger name="customer-form">
                                         <flux:button size="sm" variant="primary" icon="plus"

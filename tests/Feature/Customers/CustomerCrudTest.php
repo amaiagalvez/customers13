@@ -3,7 +3,6 @@
 namespace Customers13\Tests\Feature\Customers;
 
 use App\Models\User;
-use Projects13\Models\Project;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
 use Illuminate\Support\Facades\DB;
@@ -173,42 +172,18 @@ class CustomerCrudTest extends TestCase
         $this->assertDatabaseCount('CUM_customers', 2);
     }
 
-    public function test_customer_with_a_project_cannot_be_deleted(): void
-    {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
-        $customer = Customer::factory()->create();
-        $project = Project::create(['name' => 'Test project', 'customer_id' => $customer->id]);
-
-        $this->delete(route('customers.destroy', $customer))
-            ->assertRedirect(route('customers.index'))
-            ->assertSessionHas('error', __('Cannot be deleted while it has related records.'));
-
-        $this->assertNotSoftDeleted($customer);
-        $this->assertModelExists($project);
-    }
-
-    public function test_customer_with_a_trashed_project_cannot_be_deleted(): void
-    {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
-        $customer = Customer::factory()->create();
-        $project = Project::create(['name' => 'Trashed project', 'customer_id' => $customer->id]);
-        $project->delete();
-
-        $this->delete(route('customers.destroy', $customer))
-            ->assertRedirect(route('customers.index'))
-            ->assertSessionHas('error', __('Cannot be deleted while it has related records.'));
-
-        $this->assertNotSoftDeleted($customer);
-        $this->assertSoftDeleted($project);
-    }
-
-    public function test_direct_model_delete_keeps_the_guard_inside_its_transaction(): void
+    /**
+     * The soft delete has to happen inside a transaction even when no rule asks for one, because a
+     * guard registered by an optional integration package takes its row lock in a transaction of its
+     * own and would otherwise let go of it before the delete is written.
+     */
+    public function test_direct_model_delete_runs_the_soft_delete_inside_a_transaction(): void
     {
         $customer = Customer::factory()->create();
         $transactionLevel = null;
 
         DB::listen(static function (QueryExecuted $query) use (&$transactionLevel): void {
-            if (str_starts_with($query->sql, 'select') && str_contains($query->sql, 'CUM_customers')) {
+            if (str_starts_with($query->sql, 'update') && str_contains($query->sql, 'CUM_customers')) {
                 $transactionLevel = DB::transactionLevel();
             }
         });

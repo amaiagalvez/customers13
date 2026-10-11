@@ -5,6 +5,8 @@ namespace Customers13\Tests\Unit\Queries;
 use ReflectionClass;
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
+use Customers13\Contracts\CustomerIntegration;
+use Customers13\Contracts\NullCustomerIntegration;
 use Customers13\Queries\Customers\CustomerListQuery;
 
 class CustomerListQueryTest extends TestCase
@@ -21,33 +23,28 @@ class CustomerListQueryTest extends TestCase
         $this->assertTrue((new ReflectionMethod(CustomerListQuery::class, 'findTrashedByName'))->isPublic());
     }
 
-    public function test_search_columns_constant_exists(): void
+    public function test_the_query_is_built_on_the_integration_contract(): void
     {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
-        $this->assertTrue($reflection->hasConstant('SEARCH_COLUMNS'));
-        $columns = $reflection->getConstant('SEARCH_COLUMNS');
-        $this->assertIsArray($columns);
-        $this->assertContains('name', $columns);
+        $constructor = (new ReflectionClass(CustomerListQuery::class))->getConstructor();
+
+        $this->assertNotNull($constructor);
+        $this->assertCount(1, $constructor->getParameters());
+
+        $type = $constructor->getParameters()[0]->getType();
+
+        $this->assertInstanceOf(\ReflectionNamedType::class, $type);
+        $this->assertSame(CustomerIntegration::class, $type->getName());
     }
 
-    public function test_search_columns_archived_constant_exists(): void
+    /**
+     * The base lists search their own columns, and nothing else: a column only gets into a search
+     * because an integration asked for it.
+     */
+    public function test_search_columns_are_the_ones_the_base_defines(): void
     {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
-        $this->assertTrue($reflection->hasConstant('SEARCH_COLUMNS_ARCHIVED'));
-        $columns = $reflection->getConstant('SEARCH_COLUMNS_ARCHIVED');
-        $this->assertIsArray($columns);
-        $this->assertContains('name', $columns);
-        $this->assertContains('updated_at', $columns);
-    }
-
-    public function test_search_columns_trashed_constant_exists(): void
-    {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
-        $this->assertTrue($reflection->hasConstant('SEARCH_COLUMNS_TRASHED'));
-        $columns = $reflection->getConstant('SEARCH_COLUMNS_TRASHED');
-        $this->assertIsArray($columns);
-        $this->assertContains('name', $columns);
-        $this->assertContains('deleted_at', $columns);
+        $this->assertSame(['name'], $this->searchColumns('active'));
+        $this->assertSame(['name', 'updated_at'], $this->searchColumns('archived'));
+        $this->assertSame(['name', 'deleted_at'], $this->searchColumns('trashed'));
     }
 
     public function test_state_counts_method_exists(): void
@@ -58,7 +55,7 @@ class CustomerListQueryTest extends TestCase
 
     public function test_state_counts_returns_array_with_expected_keys(): void
     {
-        $query = new CustomerListQuery;
+        $query = new CustomerListQuery(new NullCustomerIntegration);
         $result = $query->stateCounts(10, 5, 3);
 
         $this->assertSame(
@@ -67,17 +64,37 @@ class CustomerListQueryTest extends TestCase
         );
     }
 
-    public function test_with_active_counts_method_exists(): void
+    /**
+     * The counts the rows used to carry lived in the query and read the projects tables. None of
+     * that is here any more, so the methods are asserted gone rather than left to rot.
+     */
+    public function test_the_project_counts_are_gone_from_the_base_query(): void
     {
         $reflection = new ReflectionClass(CustomerListQuery::class);
-        $this->assertTrue($reflection->hasMethod('withActiveCounts'));
-        $this->assertTrue($reflection->getMethod('withActiveCounts')->isPrivate());
+
+        $this->assertFalse($reflection->hasMethod('withActiveCounts'));
+        $this->assertFalse($reflection->hasMethod('activeCommentsCount'));
     }
 
-    public function test_active_comments_count_method_exists(): void
+    /**
+     * @return list<string>
+     */
+    private function searchColumns(string $scope): array
     {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
-        $this->assertTrue($reflection->hasMethod('activeCommentsCount'));
-        $this->assertTrue($reflection->getMethod('activeCommentsCount')->isPrivate());
+        $method = new ReflectionMethod(CustomerListQuery::class, 'searchColumns');
+        $method->setAccessible(true);
+
+        /** @var list<string> $columns */
+        $columns = $method->invoke(
+            new CustomerListQuery(new NullCustomerIntegration),
+            $scope,
+            match ($scope) {
+                'active' => ['name'],
+                'archived' => ['name', 'updated_at'],
+                default => ['name', 'deleted_at'],
+            },
+        );
+
+        return $columns;
     }
 }

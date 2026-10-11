@@ -2,8 +2,8 @@
 
 namespace Customers13;
 
-use Customers13\Models\Customer;
-use Illuminate\Support\Facades\DB;
+use Customers13\Contracts\CustomerIntegration;
+use Customers13\Contracts\NullCustomerIntegration;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 class ServiceProvider extends BaseServiceProvider
@@ -29,34 +29,14 @@ class ServiceProvider extends BaseServiceProvider
         ], 'customers13-lang');
 
         $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-
-        $this->blockDeletionWithChildren();
     }
 
     public function register(): void
     {
-        //
-    }
+        $this->mergeConfigFrom(__DIR__.'/../config/customers13.php', 'customers13');
 
-    /**
-     * A customer cannot reach the trash while it has projects; trashed projects
-     * count too. The row is locked inside the guard's own transaction, so a
-     * project that appears between the check and the delete makes the delete wait
-     * and then fail.
-     *
-     * The hook is what makes this safe, not the caller: it holds the guarantee for
-     * every path that soft deletes a customer, including a plain `$model->delete()`
-     * outside a controller.
-     */
-    protected function blockDeletionWithChildren(): void
-    {
-        Customer::deleting(function (Customer $customer): bool {
-            $locked = DB::transaction(static fn (): Customer => Customer::withTrashed()
-                ->whereKey($customer->getKey())
-                ->lockForUpdate()
-                ->firstOrFail());
-
-            return ! $locked->projects()->withTrashed()->exists();
-        });
+        // Bound only if nobody else has: an integration package registers after this one and
+        // replaces it, and doing so does not depend on Composer's provider order being right.
+        $this->app->singletonIf(CustomerIntegration::class, NullCustomerIntegration::class);
     }
 }

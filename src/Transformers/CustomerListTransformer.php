@@ -5,6 +5,7 @@ namespace Customers13\Transformers;
 use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
+use Customers13\Contracts\CustomerIntegration;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
@@ -12,6 +13,14 @@ use Illuminate\Pagination\LengthAwarePaginator;
  */
 class CustomerListTransformer extends ListTransformer
 {
+    /**
+     * Row key an integration sets when something hangs from the customer, which is what turns the
+     * delete action into an archive one. Optional: without it the row is always deletable.
+     */
+    private const BLOCKS_DELETE = 'projects_exists';
+
+    public function __construct(private readonly CustomerIntegration $integration) {}
+
     /**
      * @param  LengthAwarePaginator<int, Customer>  $customers
      * @param  array{active: int, archived: int, trashed: int}|null  $counts
@@ -21,16 +30,20 @@ class CustomerListTransformer extends ListTransformer
     {
         return [
             ...$this->envelope('active', $search, $counts),
-            'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
-                ...$this->columns($customer),
-                'extraDate' => $customer->created_at?->toIso8601String(),
-                'actions' => [
-                    $this->editAction($customer),
-                    $customer->projects_exists
-                        ? $this->archiveAction($customer, __('basics13::messages.archive_instead_of_delete'))
-                        : $this->deleteAction($customer),
-                ],
-            ])->all(),
+            'rows' => collect($customers->items())->map(function (Customer $customer): array {
+                $extra = $this->integration->row($customer);
+
+                return [
+                    ...$this->columns($customer, $extra),
+                    'extraDate' => $customer->created_at?->toIso8601String(),
+                    'actions' => [
+                        $this->editAction($customer),
+                        ($extra[self::BLOCKS_DELETE] ?? false)
+                            ? $this->archiveAction($customer, __('basics13::messages.archive_instead_of_delete'))
+                            : $this->deleteAction($customer),
+                    ],
+                ];
+            })->all(),
         ];
     }
 
@@ -44,7 +57,7 @@ class CustomerListTransformer extends ListTransformer
         return [
             ...$this->envelope('archived', $search, $counts),
             'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
-                ...$this->columns($customer),
+                ...$this->columns($customer, $this->integration->row($customer)),
                 'extraDate' => $customer->updated_at?->toIso8601String(),
                 'actions' => [$this->activateAction($customer)],
             ])->all(),
@@ -61,7 +74,7 @@ class CustomerListTransformer extends ListTransformer
         return [
             ...$this->envelope('trash', $search, $counts),
             'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
-                ...$this->columns($customer),
+                ...$this->columns($customer, $this->integration->row($customer)),
                 'extraDate' => $customer->deleted_at?->toIso8601String(),
                 'actions' => [
                     $this->restoreAction($customer, $customer->active),
@@ -72,23 +85,19 @@ class CustomerListTransformer extends ListTransformer
     }
 
     /**
-     * @return array{id: int, name: string, projectsCount: int, projectsUrl: string|null, epicsCount: int, commentsCount: int, editPayload: array{id: int, name: string, notes: string|null}}
+     * The integration's fields are merged last so it can override anything the base put here,
+     * which is the only way a row can carry a column the base knows nothing about.
+     *
+     * @param  array<string, mixed>  $extra
+     * @return array<string, mixed>
      */
-    private function columns(Customer $customer): array
+    private function columns(Customer $customer, array $extra): array
     {
-        $projectsCount = (int) $customer->projects_count;
-
         return [
             'id' => $customer->id,
             'name' => $customer->name,
-            'projectsCount' => $projectsCount,
-            // The projects list searches customer names, so the row count can link to its own slice.
-            'projectsUrl' => $projectsCount > 0
-                ? route('projects.index', ['search' => $customer->name])
-                : null,
-            'epicsCount' => (int) $customer->epics_count,
-            'commentsCount' => (int) $customer->comments_count,
             'editPayload' => $this->editPayload($customer),
+            ...$extra,
         ];
     }
 
