@@ -5,11 +5,11 @@ namespace Customers13\Tests\Feature\Customers;
 use App\Models\User;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
 class CustomerArchivedTest extends TestCase
 {
-    use RefreshDatabase;
+    use LazilyRefreshDatabase;
 
     public function test_archived_customers_are_not_shown_in_the_active_list(): void
     {
