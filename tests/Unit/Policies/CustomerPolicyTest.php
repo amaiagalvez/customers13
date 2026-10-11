@@ -2,31 +2,80 @@
 
 namespace Customers13\Tests\Unit\Policies;
 
-use ReflectionMethod;
-use PHPUnit\Framework\TestCase;
+use App\Models\User;
+use Customers13\Tests\TestCase;
+use Customers13\Models\Customer;
 use Customers13\Policies\CustomerPolicy;
 
 class CustomerPolicyTest extends TestCase
 {
-    public function test_policy_has_all_abilities(): void
-    {
-        $abilities = ['viewAny', 'create', 'update', 'delete', 'restore', 'forceDelete', 'archive', 'activate'];
+    private CustomerPolicy $policy;
 
-        foreach ($abilities as $ability) {
-            $method = new ReflectionMethod(CustomerPolicy::class, $ability);
-            $this->assertTrue($method->isPublic(), "CustomerPolicy::{$ability} must be public");
-        }
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->policy = new CustomerPolicy;
     }
 
-    public function test_view_any_is_public(): void
+    public function test_view_any_returns_true(): void
     {
-        $method = new ReflectionMethod(CustomerPolicy::class, 'viewAny');
-        $this->assertTrue($method->isPublic());
+        $user = new User;
+
+        $this->assertTrue($this->policy->viewAny($user));
     }
 
-    public function test_create_is_public(): void
+    public function test_create_returns_true(): void
     {
-        $method = new ReflectionMethod(CustomerPolicy::class, 'create');
-        $this->assertTrue($method->isPublic());
+        $user = new User;
+
+        $this->assertTrue($this->policy->create($user));
+    }
+
+    public function test_update_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->update($user, $customer));
+    }
+
+    public function test_delete_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->delete($user, $customer));
+    }
+
+    public function test_restore_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->restore($user, $customer));
+    }
+
+    public function test_force_delete_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->forceDelete($user, $customer));
+    }
+
+    public function test_archive_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->archive($user, $customer));
+    }
+
+    public function test_activate_returns_true(): void
+    {
+        $user = new User;
+        $customer = new Customer(['name' => 'Customer under test']);
+
+        $this->assertTrue($this->policy->activate($user, $customer));
     }
 }

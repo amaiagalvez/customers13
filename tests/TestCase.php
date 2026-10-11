@@ -8,11 +8,14 @@ use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Livewire\LivewireServiceProvider;
+use Customers13\Tests\Concerns\ValidatesFormRequests;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;
 use Customers13\ServiceProvider as Customers13ServiceProvider;
 
 abstract class TestCase extends TestbenchTestCase
 {
+    use ValidatesFormRequests;
+
     /**
      * Loads the package so its config, translations and views are available to the tests.
      *

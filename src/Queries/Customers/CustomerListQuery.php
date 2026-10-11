@@ -15,6 +15,27 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 final class CustomerListQuery extends ListQueryBase
 {
     /**
+     * Search columns for the active list.
+     *
+     * @var list<string>
+     */
+    protected const SEARCH_COLUMNS = ['name'];
+
+    /**
+     * Search columns for the archived list.
+     *
+     * @var list<string>
+     */
+    protected const SEARCH_COLUMNS_ARCHIVED = ['name', 'updated_at'];
+
+    /**
+     * Search columns for the trashed list.
+     *
+     * @var list<string>
+     */
+    protected const SEARCH_COLUMNS_TRASHED = ['name', 'deleted_at'];
+
+    /**
      * @return LengthAwarePaginator<int, Customer>
      */
     public function active(string $search): LengthAwarePaginator
@@ -26,7 +47,7 @@ final class CustomerListQuery extends ListQueryBase
                 Customer::query()->where('active', true)->orderBy('name')->orderBy('id'),
             )->withExists(['projects' => fn (Builder $query) => $query->withoutGlobalScope(SoftDeletingScope::class)]),
             $search,
-            searchColumns: ['name'],
+            searchColumns: self::SEARCH_COLUMNS,
         );
     }
 
@@ -38,7 +59,7 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->withActiveCounts(Customer::query()->where('active', false)->orderBy('name')->orderBy('id')),
             $search,
-            searchColumns: ['name', 'updated_at'],
+            searchColumns: self::SEARCH_COLUMNS_ARCHIVED,
         );
     }
 
@@ -50,7 +71,7 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->withActiveCounts(Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
             $search,
-            searchColumns: ['name', 'deleted_at'],
+            searchColumns: self::SEARCH_COLUMNS_TRASHED,
         );
     }
 

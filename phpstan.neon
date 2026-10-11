@@ -8,3 +8,22 @@ parameters:
         - tests/
 
     level: 9
+
+    reportUnmatchedIgnoredErrors: false
+
+    ignoreErrors:
+        # Test files use Orchestra Testbench which is not fully understood by PHPStan
+        - identifier: class.notFound
+          path: tests/**
+        - identifier: class.noParent
+          path: tests/**
+        - identifier: method.notFound
+          path: tests/**
+        - identifier: property.notFound
+          path: tests/**
+        - identifier: varTag.differentVariable
+          path: tests/**
+        - identifier: missingType.parameter
+          path: tests/**
+        - identifier: staticMethod.notFound
+          path: tests/**
