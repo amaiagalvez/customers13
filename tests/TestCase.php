@@ -8,7 +8,7 @@ use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Livewire\LivewireServiceProvider;
-use Customers13\Tests\Concerns\ValidatesFormRequests;
+use Basics13\Support\Testing\ValidatesFormRequests;
 use Orchestra\Testbench\TestCase as TestbenchTestCase;
 use Customers13\ServiceProvider as Customers13ServiceProvider;
 

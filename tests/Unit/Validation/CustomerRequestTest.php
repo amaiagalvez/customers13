@@ -25,7 +25,6 @@ class CustomerRequestTest extends TestCase
         parent::setUp();
         $config = $this->app->make('config');
         $config->set('basics13.validation.max_length', ['string' => 123, 'longtext' => 456]);
-        /** @var Application $app */
         $gate = new Gate($this->app, static fn (): null => null);
         $gate->policy(Customer::class, CustomerPolicy::class);
         $this->app->instance(GateContract::class, $gate);
