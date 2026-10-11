@@ -58,6 +58,5 @@ abstract class TestCase extends TestbenchTestCase
     {
         parent::setUp();
         Blade::anonymousComponentPath(__DIR__.'/Fixtures/views/layouts', 'layouts');
-        Blade::anonymousComponentPath(__DIR__.'/Fixtures/views/components');
     }
 }

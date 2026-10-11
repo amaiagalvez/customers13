@@ -24,13 +24,10 @@ class CustomerListTransformer extends ListTransformer
             'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
                 ...$this->columns($customer),
                 'extraDate' => $customer->created_at?->toIso8601String(),
-                'actionHint' => $customer->projects_exists
-                    ? __('Cannot be deleted while it has related records.')
-                    : null,
                 'actions' => [
                     $this->editAction($customer),
                     $customer->projects_exists
-                        ? $this->archiveAction($customer)
+                        ? $this->archiveAction($customer, __('basics13::messages.archive_instead_of_delete'))
                         : $this->deleteAction($customer),
                 ],
             ])->all(),
