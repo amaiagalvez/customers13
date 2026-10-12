@@ -3,10 +3,8 @@
 return [
     'Active customers' => 'Active customers',
     'Create a new customer' => 'Create a new customer',
-    'Create customer' => 'Create customer',
     'Customers' => 'Customers',
     'Edit customer' => 'Edit customer',
-    'No customers found' => 'No customers found.',
     'No customers match your search' => 'No customers match your search.',
     'No customers yet' => 'No customers yet.',
     'Projects: :count' => 'Projects: :count',
@@ -18,6 +16,4 @@ return [
     'Saved customer' => 'Saved customer',
     'Updated customer' => 'Updated customer',
     'moved to trash' => 'moved to trash',
-    'Unable to load customers' => 'Unable to load customers.',
-    'Unable to create customer.' => 'Unable to create customer.',
 ];

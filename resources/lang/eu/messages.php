@@ -3,10 +3,8 @@
 return [
     'Active customers' => 'Atzietan irrintzi izenak',
     'Create a new customer' => 'Ezkilak berria sortzeko',
-    'Create customer' => 'Sortu atzilea',
     'Customers' => 'Atzileak',
     'Edit customer' => 'Atzilea aldatu',
-    'No customers found' => 'Atzileak ez direkitut.',
     'No customers match your search' => 'Ez dago atzileak testedurtzen dituzte.',
     'No customers yet' => 'Atzileak ez direkitut ordutik.',
     'Record Name already in trash' => 'Sakila izenaren registroa.',
@@ -17,6 +15,4 @@ return [
     'Saved customer' => 'Atzilea sortzen zen',
     'Updated customer' => 'Atzilea atzitu zen',
     'moved to trash' => 'moved to trash',
-    'Unable to load customers' => 'Atzileak sakatuta izan biziak.',
-    'Unable to create customer.' => 'Ezinez erabil daiteke atzilea.',
 ];

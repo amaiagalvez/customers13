@@ -42,9 +42,9 @@ class CustomerListQueryTest extends TestCase
      */
     public function test_search_columns_are_the_ones_the_base_defines(): void
     {
-        $this->assertSame(['name'], $this->searchColumns('active'));
-        $this->assertSame(['name', 'updated_at'], $this->searchColumns('archived'));
-        $this->assertSame(['name', 'deleted_at'], $this->searchColumns('trashed'));
+        $this->assertSame(['CUM_customers.name'], $this->searchColumns('active'));
+        $this->assertSame(['CUM_customers.name', 'CUM_customers.updated_at'], $this->searchColumns('archived'));
+        $this->assertSame(['CUM_customers.name', 'CUM_customers.deleted_at'], $this->searchColumns('trashed'));
     }
 
     public function test_state_counts_method_exists(): void
@@ -89,9 +89,9 @@ class CustomerListQueryTest extends TestCase
             new CustomerListQuery(new NullCustomerIntegration),
             $scope,
             match ($scope) {
-                'active' => ['name'],
-                'archived' => ['name', 'updated_at'],
-                default => ['name', 'deleted_at'],
+                'active' => ['CUM_customers.name'],
+                'archived' => ['CUM_customers.name', 'CUM_customers.updated_at'],
+                default => ['CUM_customers.name', 'CUM_customers.deleted_at'],
             },
         );
 

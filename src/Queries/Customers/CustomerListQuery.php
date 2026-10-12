@@ -33,9 +33,9 @@ final class CustomerListQuery extends ListQueryBase
         // Unique names among non-deleted customers keep the ordering total on its own; the id
         // is here so this list breaks ties the same way the archived and trash lists do.
         return $this->paginate(
-            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('active', true)->orderBy('name')->orderBy('id')),
+            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('CUM_customers.active', true)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
-            searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['name']),
+            searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['CUM_customers.name']),
         );
     }
 
@@ -45,9 +45,9 @@ final class CustomerListQuery extends ListQueryBase
     public function archived(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('active', false)->orderBy('name')->orderBy('id')),
+            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('CUM_customers.active', false)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
-            searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['name', 'updated_at']),
+            searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['CUM_customers.name', 'CUM_customers.updated_at']),
         );
     }
 
@@ -59,7 +59,7 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
             $search,
-            searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['name', 'deleted_at']),
+            searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['CUM_customers.name', 'CUM_customers.deleted_at']),
         );
     }
 
