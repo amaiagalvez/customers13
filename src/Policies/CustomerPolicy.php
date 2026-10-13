@@ -2,8 +2,8 @@
 
 namespace Customers13\Policies;
 
-use App\Models\User;
 use Customers13\Models\Customer;
+use Illuminate\Contracts\Auth\Authenticatable as User;
 
 class CustomerPolicy
 {
