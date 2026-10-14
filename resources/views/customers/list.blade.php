@@ -80,9 +80,14 @@
                             <flux:table.row :key="$row['id']"
                                 class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                                 <flux:table.cell class="max-w-[16rem]">
-                                    <span class="block max-w-full truncate text-start font-medium text-zinc-900 dark:text-zinc-100"
-                                        title="{{ $row['name'] }}"
-                                        data-test="customer-name-{{ $row['id'] }}">{{ $row['name'] }}</span>
+                                    <flux:modal.trigger name="customer-form">
+                                        <button type="button"
+                                            class="block max-w-full truncate text-start font-medium text-zinc-900 hover:underline dark:text-zinc-100"
+                                            x-on:click="editCustomer(JSON.parse($el.dataset.payload))"
+                                            data-payload="{{ json_encode($row['editPayload']) }}"
+                                            title="{{ $row['name'] }}"
+                                            data-test="customer-name-{{ $row['id'] }}">{{ $row['name'] }}</button>
+                                    </flux:modal.trigger>
                                 </flux:table.cell>
                                 @includeIf(config('customers13.views.customer_list.cells'))
                                 <flux:table.cell align="end" sticky
