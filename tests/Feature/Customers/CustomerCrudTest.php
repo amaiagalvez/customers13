@@ -68,6 +68,24 @@ class CustomerCrudTest extends TestCase
         $this->assertSoftDeleted($customer);
     }
 
+    /**
+     * Nothing in this package hangs from a customer, so the refusal comes from the hook an
+     * integration package registers on the model. What this package owns is the outcome: the
+     * customer stays put and the redirect says why.
+     */
+    public function test_a_refused_delete_reports_the_error_and_leaves_the_customer_out_of_the_trash(): void
+    {
+        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $customer = Customer::factory()->create();
+        Customer::deleting(static fn (): bool => false);
+
+        $this->delete(route('customers.destroy', $customer))
+            ->assertRedirect(route('customers.index'))
+            ->assertSessionHas('error', __('Cannot be deleted while it has related records.'));
+
+        $this->assertNotSoftDeleted($customer);
+    }
+
     public function test_json_customer_creation_trims_the_name_and_returns_the_created_record(): void
     {
         $this->actingAs(User::create([
