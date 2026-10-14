@@ -52,6 +52,7 @@ class CustomerController extends Controller
         $deletedCustomer = $query->findTrashedByName($name);
 
         if ($deletedCustomer !== null && ! $request->boolean('reuse_deleted_name')) {
+            /** @phpstan-ignore argument.type */
             return $this->deletedNameConflict($request, $deletedCustomer, 'customers.index', 'deleted_customer_conflict');
         }
 

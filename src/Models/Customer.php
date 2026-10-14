@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Customers13\Policies\CustomerPolicy;
 use Basics13\Concerns\TracksAuditColumns;
+use Basics13\Concerns\TransactionalDelete;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Customers13\Database\Factories\CustomerFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -31,7 +32,7 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
 class Customer extends Model
 {
     /** @use HasFactory<CustomerFactory> */
-    use HasFactory, SoftDeletes, TracksAuditColumns;
+    use HasFactory, SoftDeletes, TracksAuditColumns, TransactionalDelete;
 
     /**
      * The table associated with the model.
@@ -55,22 +56,5 @@ class Customer extends Model
         return [
             'active' => 'boolean',
         ];
-    }
-
-    /**
-     * Soft deletes inside a transaction on the model's own connection.
-     *
-     * The transaction itself belongs to no rule: what it buys is that a guard registered by an
-     * optional integration package —which refuses the delete while the customer has children, and
-     * locks the row to decide— keeps its lock from the guard's own inner transaction until the
-     * soft delete is actually written. Without this, a child created between the guard's check and
-     * the delete would slip through on any path that does not open a transaction itself, including
-     * a plain `$customer->delete()` outside a controller.
-     *
-     * @return bool|null
-     */
-    public function delete()
-    {
-        return $this->getConnection()->transaction(fn (): ?bool => parent::delete());
     }
 }

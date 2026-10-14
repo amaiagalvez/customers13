@@ -35,6 +35,7 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('CUM_customers.active', true)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
+            /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['CUM_customers.name']),
         );
     }
@@ -47,6 +48,7 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('CUM_customers.active', false)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
+            /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['CUM_customers.name', 'CUM_customers.updated_at']),
         );
     }
@@ -59,26 +61,22 @@ final class CustomerListQuery extends ListQueryBase
         return $this->paginate(
             $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
             $search,
+            /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['CUM_customers.name', 'CUM_customers.deleted_at']),
         );
     }
 
-    public function findTrashedByName(string $name): ?Customer
+    /**
+     * @return class-string<Customer>
+     */
+    protected function getModelClass(): string
     {
-        return $this->firstTrashedByName(Customer::onlyTrashed(), $name);
+        return Customer::class;
     }
 
-    /**
-     * Number of records in each list state, shown as the badge of the state tabs.
-     *
-     * @return array{active: int, archived: int, trashed: int}
-     */
-    public function stateCounts(
-        ?int $activeTotal = null,
-        ?int $archivedTotal = null,
-        ?int $trashedTotal = null,
-    ): array {
-        return $this->countStates(Customer::class, $activeTotal, $archivedTotal, $trashedTotal);
+    protected function integration(): CustomerIntegration
+    {
+        return $this->integration;
     }
 
     /**
@@ -93,20 +91,5 @@ final class CustomerListQuery extends ListQueryBase
         $this->integration->scope($query, $scope, 'customer_projects');
 
         return $query;
-    }
-
-    /**
-     * Base search columns for a list, with whatever the integration contributes appended. Keeping
-     * the base list first means the search order does not move when an integration is installed.
-     *
-     * @param  non-empty-list<literal-string>  $columns
-     * @return non-empty-list<literal-string>
-     */
-    private function searchColumns(string $scope, array $columns): array
-    {
-        /** @var non-empty-list<literal-string> $columns An integration appends to the base columns; it never replaces them. */
-        $columns = $this->integration->searchColumns($scope, $columns);
-
-        return $columns;
     }
 }

@@ -6,12 +6,15 @@ use Customers13\Models\Customer;
 use Illuminate\Support\Collection;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
+use Customers13\Contracts\CustomerIntegration;
 
 /**
  * @extends ListQueryBase<Customer>
  */
 final class CustomerSelectOptionsQuery extends ListQueryBase
 {
+    public function __construct(private readonly CustomerIntegration $integration) {}
+
     /**
      * @return Collection<int, array{id: int, text: string}>
      */
@@ -33,5 +36,18 @@ final class CustomerSelectOptionsQuery extends ListQueryBase
                 'id' => $customer->id,
                 'text' => $customer->name,
             ]);
+    }
+
+    /**
+     * @return class-string<Customer>
+     */
+    protected function getModelClass(): string
+    {
+        return Customer::class;
+    }
+
+    protected function integration(): CustomerIntegration
+    {
+        return $this->integration;
     }
 }
