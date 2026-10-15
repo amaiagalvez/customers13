@@ -6,7 +6,6 @@ use Customers13\Models\Customer;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
 use Customers13\Contracts\CustomerIntegration;
-use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * @extends ListTransformer<Customer>
@@ -22,83 +21,53 @@ class CustomerListTransformer extends ListTransformer
     public function __construct(private readonly CustomerIntegration $integration) {}
 
     /**
-     * @param  LengthAwarePaginator<int, Customer>  $customers
-     * @param  array{active: int, archived: int, trashed: int}|null  $counts
-     * @return array<string, mixed>
-     */
-    public function active(LengthAwarePaginator $customers, string $search, ?array $counts = null): array
-    {
-        return [
-            ...$this->envelope('active', $search, $counts),
-            'rows' => collect($customers->items())->map(function (Customer $customer): array {
-                $extra = $this->integration->row($customer);
-
-                return [
-                    ...$this->columns($customer, $extra),
-                    'extraDate' => $customer->created_at?->toIso8601String(),
-                    'actions' => [
-                        $this->editAction($customer),
-                        ($extra[self::BLOCKS_DELETE] ?? false)
-                            ? $this->archiveAction($customer, __('basics13::messages.archive_instead_of_delete'))
-                            : $this->deleteAction($customer),
-                    ],
-                ];
-            })->all(),
-        ];
-    }
-
-    /**
-     * @param  LengthAwarePaginator<int, Customer>  $customers
-     * @param  array{active: int, archived: int, trashed: int}|null  $counts
-     * @return array<string, mixed>
-     */
-    public function archived(LengthAwarePaginator $customers, string $search, ?array $counts = null): array
-    {
-        return [
-            ...$this->envelope('archived', $search, $counts),
-            'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
-                ...$this->columns($customer, $this->integration->row($customer)),
-                'extraDate' => $customer->updated_at?->toIso8601String(),
-                'actions' => [$this->activateAction($customer)],
-            ])->all(),
-        ];
-    }
-
-    /**
-     * @param  LengthAwarePaginator<int, Customer>  $customers
-     * @param  array{active: int, archived: int, trashed: int}|null  $counts
-     * @return array<string, mixed>
-     */
-    public function trash(LengthAwarePaginator $customers, string $search, ?array $counts = null): array
-    {
-        return [
-            ...$this->envelope('trash', $search, $counts),
-            'rows' => collect($customers->items())->map(fn (Customer $customer): array => [
-                ...$this->columns($customer, $this->integration->row($customer)),
-                'extraDate' => $customer->deleted_at?->toIso8601String(),
-                'actions' => [
-                    $this->restoreAction($customer, $customer->active),
-                    $this->forceDeleteAction($customer),
-                ],
-            ])->all(),
-        ];
-    }
-
-    /**
-     * The integration's fields are merged last so it can override anything the base put here,
-     * which is the only way a row can carry a column the base knows nothing about.
-     *
      * @param  array<string, mixed>  $extra
      * @return array<string, mixed>
      */
-    private function columns(Customer $customer, array $extra): array
+    protected function columns(Model $record, array $extra): array
     {
         return [
-            'id' => $customer->id,
-            'name' => $customer->name,
-            'editPayload' => $this->editPayload($customer),
+            'id' => $record->id,
+            'name' => $record->name,
+            'editPayload' => $this->editPayload($record),
             ...$extra,
         ];
+    }
+
+    protected function getDeleteBlockCondition(Model $record): bool
+    {
+        $extra = $this->integration->row($record);
+
+        return $extra[self::BLOCKS_DELETE] ?? false;
+    }
+
+    protected function getForceDeleteBlockCondition(Model $record): bool
+    {
+        return false;
+    }
+
+    protected function getForceDeleteBlockHint(Model $record): string
+    {
+        return '';
+    }
+
+    protected function getExtraDate(Model $record, string $scope): ?string
+    {
+        return match ($scope) {
+            'active' => $record->created_at?->toIso8601String(),
+            'archived' => $record->updated_at?->toIso8601String(),
+            'trash' => $record->deleted_at?->toIso8601String(),
+        };
+    }
+
+    protected function integrationRow(Model $record): array
+    {
+        return $this->integration->row($record);
+    }
+
+    protected function getRestoreActive(Model $record): bool
+    {
+        return $record->active;
     }
 
     /**

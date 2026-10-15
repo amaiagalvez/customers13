@@ -2,7 +2,7 @@
 
 namespace Customers13\Models;
 
-use Illuminate\Support\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
 use Customers13\Policies\CustomerPolicy;
 use Basics13\Concerns\TracksAuditColumns;
@@ -22,9 +22,9 @@ use Illuminate\Database\Eloquent\Attributes\UseFactory;
  * @property int|null $created_by
  * @property int|null $updated_by
  * @property int|null $deleted_by
- * @property-read Carbon|null $created_at
- * @property-read Carbon|null $updated_at
- * @property-read Carbon|null $deleted_at
+ * @property-read CarbonImmutable|null $created_at
+ * @property-read CarbonImmutable|null $updated_at
+ * @property-read CarbonImmutable|null $deleted_at
  */
 #[Fillable(['name', 'notes'])]
 #[UsePolicy(CustomerPolicy::class)]

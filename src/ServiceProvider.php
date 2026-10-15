@@ -3,8 +3,13 @@
 namespace Customers13;
 
 use Customers13\Contracts\CustomerIntegration;
-use Customers13\Contracts\NullCustomerIntegration;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+
+/**
+ * Default implementation of CustomerIntegration with empty implementations.
+ * Used when no integration package is installed.
+ */
+final class DefaultCustomerIntegration extends CustomerIntegration {}
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -37,6 +42,6 @@ class ServiceProvider extends BaseServiceProvider
 
         // Bound only if nobody else has: an integration package registers after this one and
         // replaces it, and doing so does not depend on Composer's provider order being right.
-        $this->app->singletonIf(CustomerIntegration::class, NullCustomerIntegration::class);
+        $this->app->singletonIf(CustomerIntegration::class, DefaultCustomerIntegration::class);
     }
 }

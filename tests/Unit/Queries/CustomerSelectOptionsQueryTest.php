@@ -5,7 +5,7 @@ namespace Customers13\Tests\Unit\Queries;
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
 use Customers13\Models\Customer;
-use Customers13\Contracts\NullCustomerIntegration;
+use Customers13\Contracts\CustomerIntegration;
 use Customers13\Queries\Customers\CustomerSelectOptionsQuery;
 
 /**
@@ -23,16 +23,21 @@ class CustomerSelectOptionsQueryTest extends TestCase
 
         $this->assertSame(
             Customer::class,
-            $method->invoke(new CustomerSelectOptionsQuery(new NullCustomerIntegration)),
+            $method->invoke(new CustomerSelectOptionsQuery($this->nullIntegration())),
         );
     }
 
     public function test_the_query_answers_the_base_with_the_integration_it_was_given(): void
     {
-        $integration = new NullCustomerIntegration;
+        $integration = $this->nullIntegration();
         $method = new ReflectionMethod(CustomerSelectOptionsQuery::class, 'integration');
         $method->setAccessible(true);
 
         $this->assertSame($integration, $method->invoke(new CustomerSelectOptionsQuery($integration)));
+    }
+
+    private function nullIntegration(): CustomerIntegration
+    {
+        return new class extends CustomerIntegration {};
     }
 }

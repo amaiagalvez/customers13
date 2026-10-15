@@ -12,7 +12,7 @@ use Customers13\Contracts\CustomerIntegration;
  * customer, which is the row key the active list reads to offer the archive action instead of the
  * delete one. What that something is belongs to the integration, so the key is all this fake needs.
  */
-class CustomerWithChildrenIntegration implements CustomerIntegration
+class CustomerWithChildrenIntegration extends CustomerIntegration
 {
     public function scope(Builder $query, string $scope, string $alias): void
     {

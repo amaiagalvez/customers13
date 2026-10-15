@@ -6,6 +6,7 @@ use App\Models\User;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -66,6 +67,34 @@ class CustomerCrudTest extends TestCase
             ->assertRedirect(route('customers.index'))
             ->assertSessionHas('status', __('customers13::messages.moved_to_trash'));
         $this->assertSoftDeleted($customer);
+    }
+
+    public function test_customer_store_persists_only_validated_attributes(): void
+    {
+        $user = $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+
+        $this->post(route('customers.store'), [
+            'name' => 'Validated customer',
+            'id' => 999999,
+            'created_at' => '2000-01-01 00:00:00',
+        ])->assertRedirect(route('customers.index'));
+
+        $this->assertDatabaseHas('CUM_customers', [
+            'name' => 'Validated customer',
+        ]);
+        $this->assertDatabaseMissing('CUM_customers', [
+            'name' => 'Validated customer',
+            'id' => 999999,
+        ]);
+        $this->assertDatabaseMissing('CUM_customers', [
+            'name' => 'Validated customer',
+            'created_at' => '2000-01-01 00:00:00',
+        ]);
     }
 
     /**
@@ -222,6 +251,55 @@ class CustomerCrudTest extends TestCase
             ->assertUnprocessable()
             ->assertJsonValidationErrors('name');
         $this->assertDatabaseCount('CUM_customers', 0);
+    }
+
+    public function test_creation_requires_authorization(): void
+    {
+        $user = User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]);
+        $this->actingAs($user);
+        Gate::before(static fn (): bool => false);
+
+        $this->post(route('customers.store'), [])->assertForbidden();
+
+        $this->assertDatabaseCount('CUM_customers', 0);
+    }
+
+    public function test_customer_name_with_non_latin_characters_can_be_stored_and_searched(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+        $name = 'Cliente Ñandú クライアント';
+
+        $this->post(route('customers.store'), ['name' => $name])
+            ->assertRedirect(route('customers.index'));
+
+        $this->assertDatabaseHas('CUM_customers', ['name' => $name]);
+
+        $this->get(route('customers.index', ['search' => $name]))
+            ->assertOk()
+            ->assertSee($name);
+    }
+
+    public function test_customer_search_is_kept_in_pagination_links(): void
+    {
+        $this->actingAs(User::create([
+            'name' => 'Test user',
+            'email' => 'test@example.test',
+            'password' => 'unused',
+            'email_verified_at' => now(),
+        ]));
+
+        foreach (range(1, 30) as $index) {
+            Customer::factory()->create(['name' => "Repeat customer {$index}"]);
+        }
+
+        $this->get(route('customers.index', ['search' => 'Repeat']))
+            ->assertOk()
+            ->assertSee('search=Repeat', false);
     }
 
     private function createDuplicateNameAfterValidation(string $name): void

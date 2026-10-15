@@ -6,7 +6,6 @@ use ReflectionClass;
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
 use Customers13\Contracts\CustomerIntegration;
-use Customers13\Contracts\NullCustomerIntegration;
 use Customers13\Queries\Customers\CustomerListQuery;
 
 class CustomerListQueryTest extends TestCase
@@ -55,7 +54,7 @@ class CustomerListQueryTest extends TestCase
 
     public function test_state_counts_returns_array_with_expected_keys(): void
     {
-        $query = new CustomerListQuery(new NullCustomerIntegration);
+        $query = new CustomerListQuery($this->nullIntegration());
         $result = $query->stateCounts(10, 5, 3);
 
         $this->assertSame(
@@ -86,7 +85,7 @@ class CustomerListQueryTest extends TestCase
 
         /** @var list<string> $columns */
         $columns = $method->invoke(
-            new CustomerListQuery(new NullCustomerIntegration),
+            new CustomerListQuery($this->nullIntegration()),
             $scope,
             match ($scope) {
                 'active' => ['CUM_customers.name'],
@@ -96,5 +95,10 @@ class CustomerListQueryTest extends TestCase
         );
 
         return $columns;
+    }
+
+    private function nullIntegration(): CustomerIntegration
+    {
+        return new class extends CustomerIntegration {};
     }
 }
