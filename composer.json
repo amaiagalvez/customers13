@@ -18,6 +18,8 @@
     },
     "autoload": {
         "psr-4": {
+            "Customers13\\Database\\Factories\\": "database/factories/",
+            "Customers13\\Database\\Seeders\\": "database/seeders/",
             "Customers13\\": "src/"
         }
     },

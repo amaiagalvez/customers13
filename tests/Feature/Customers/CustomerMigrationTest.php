@@ -33,7 +33,7 @@ class CustomerMigrationTest extends TestCase
                 $table->id();
             });
 
-            $migration = require dirname(__DIR__, 3).'/src/Database/Migrations/2026_09_25_000000_create_cum_customers_table.php';
+            $migration = require dirname(__DIR__, 3).'/database/migrations/2026_09_25_000000_create_cum_customers_table.php';
             $migration->up();
 
             $this->assertTrue(Schema::hasTable('CUM_customers'));
