@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
  * @property int $id
@@ -56,5 +57,18 @@ class Customer extends Model
         return [
             'active' => 'boolean',
         ];
+    }
+
+    /**
+     * The types this customer is categorised with. A customer holds as many as it needs, and the
+     * pivot row survives the customer's soft delete so the type stays in use while it is in the
+     * trash.
+     *
+     * @return BelongsToMany<CustomerType, $this>
+     */
+    public function customerTypes(): BelongsToMany
+    {
+        return $this->belongsToMany(CustomerType::class, 'CUM_customer_customer_type', 'customer_id', 'customer_type_id')
+            ->withTimestamps();
     }
 }

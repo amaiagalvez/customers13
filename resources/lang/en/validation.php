@@ -3,6 +3,10 @@
 return [
     'attributes' => [
         'customer_id' => 'customer ID',
+        'name_eu' => 'name in Euskera',
+        'name_es' => 'name in Spanish',
+        'name_fr' => 'name in French',
+        'name_en' => 'name in English',
     ],
     'name' => [
         'required' => 'The :attribute field is required.',

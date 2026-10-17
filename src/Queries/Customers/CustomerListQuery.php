@@ -33,7 +33,7 @@ final class CustomerListQuery extends ListQueryBase
         // Unique names among non-deleted customers keep the ordering total on its own; the id
         // is here so this list breaks ties the same way the archived and trash lists do.
         return $this->paginate(
-            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('CUM_customers.active', true)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
+            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('CUM_customers.active', true)->with('customerTypes')->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
             /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['CUM_customers.name']),
@@ -46,7 +46,7 @@ final class CustomerListQuery extends ListQueryBase
     public function archived(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('CUM_customers.active', false)->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
+            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('CUM_customers.active', false)->with('customerTypes')->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
             $search,
             /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['CUM_customers.name', 'CUM_customers.updated_at']),
@@ -59,7 +59,7 @@ final class CustomerListQuery extends ListQueryBase
     public function trashed(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->latest('deleted_at')->orderBy('id')),
+            $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->with('customerTypes')->latest('deleted_at')->orderBy('id')),
             $search,
             /** @phpstan-ignore argument.type */
             searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['CUM_customers.name', 'CUM_customers.deleted_at']),

@@ -26,9 +26,11 @@ class CustomerListTransformer extends ListTransformer
      */
     protected function columns(Model $record, array $extra): array
     {
+        /** @var Customer $record */
         return [
             'id' => $record->id,
             'name' => $record->name,
+            'types' => $record->customerTypes->pluck('name_eu')->all(),
             'editPayload' => $this->editPayload($record),
             ...$extra,
         ];
@@ -71,12 +73,22 @@ class CustomerListTransformer extends ListTransformer
     }
 
     /**
+     * The type ids come back as strings because that is what an HTML `<option>` value is: the
+     * drawer binds the multi-select with x-model, which compares the option values by identity.
+     *
      * @param  Customer  $record
-     * @return array{id: int, name: string, notes: string|null}
+     * @return array{id: int, name: string, notes: string|null, customer_type_ids: list<string>}
      */
     protected function editPayload(Model $record): array
     {
-        return $record->only(['id', 'name', 'notes']);
+        return [
+            ...$record->only(['id', 'name', 'notes']),
+            'customer_type_ids' => $record->customerTypes
+                ->pluck('id')
+                ->map(static fn (int $id): string => (string) $id)
+                ->values()
+                ->all(),
+        ];
     }
 
     protected function resourceLabel(): string

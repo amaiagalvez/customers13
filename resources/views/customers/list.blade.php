@@ -6,6 +6,7 @@
             'id' => $editingCustomer ? old('_customer_id') : null,
             'name' => old('name', ''),
             'notes' => old('notes', ''),
+            'customer_type_ids' => old('customer_type_ids', []),
             'context' => $editingCustomer ? old('_customer_form') : 'create',
             'method' => $editingCustomer ? 'PUT' : 'POST',
             'action' => $editingCustomer
@@ -27,6 +28,7 @@
                 id: null,
                 name: '',
                 notes: '',
+                customer_type_ids: [],
                 context: 'create',
                 method: 'POST',
                 action: this.storeUrl,
@@ -69,6 +71,7 @@
                 <x-basics13::list.table prefix="customer" :paginator="$customers">
                     <flux:table.columns>
                         <flux:table.column scope="col">{{ __('Name') }}</flux:table.column>
+                        <flux:table.column scope="col">{{ __('Types') }}</flux:table.column>
                         @includeIf(config('customers13.views.customer_list.columns'))
                         <flux:table.column scope="col" align="end" sticky class="text-end">
                             <span class="sr-only">{{ __('Actions') }}</span>
@@ -89,6 +92,19 @@
                                             data-test="customer-name-{{ $row['id'] }}">{{ $row['name'] }}</button>
                                     </flux:modal.trigger>
                                 </flux:table.cell>
+                                <flux:table.cell class="max-w-[16rem]">
+                                    @if ($row['types'] === [])
+                                        <span class="text-zinc-400 dark:text-zinc-500"
+                                            data-test="customer-types-{{ $row['id'] }}">—</span>
+                                    @else
+                                        <span class="flex flex-wrap gap-1"
+                                            data-test="customer-types-{{ $row['id'] }}">
+                                            @foreach ($row['types'] as $type)
+                                                <flux:badge size="sm">{{ $type }}</flux:badge>
+                                            @endforeach
+                                        </span>
+                                    @endif
+                                </flux:table.cell>
                                 @includeIf(config('customers13.views.customer_list.cells'))
                                 <flux:table.cell align="end" sticky
                                     class="bg-white dark:bg-zinc-900">
@@ -97,7 +113,7 @@
                                 </flux:table.cell>
                             </flux:table.row>
                         @empty
-                            <x-basics13::list.empty-state :colspan="2 + (int) config('customers13.views.customer_list.count', 0)" :message="$list['emptyMessage']">
+                            <x-basics13::list.empty-state :colspan="3 + (int) config('customers13.views.customer_list.count', 0)" :message="$list['emptyMessage']">
                                 @if ($list['create'] && $list['search']['value'] === '')
                                     <flux:modal.trigger name="customer-form">
                                         <flux:button size="sm" variant="primary" icon="plus"

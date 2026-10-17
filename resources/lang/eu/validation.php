@@ -3,6 +3,10 @@
 return [
     'attributes' => [
         'customer_id' => 'bezeroaren ID',
+        'name_eu' => 'euskarazko izena',
+        'name_es' => 'gaztelaniazko izena',
+        'name_fr' => 'frantsesezko izena',
+        'name_en' => 'ingelesezko izena',
     ],
     'name' => [
         'required' => 'Herrialde Laguna deskribapena beharrezkoa da.',

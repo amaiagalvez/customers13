@@ -6,6 +6,7 @@ use Illuminate\View\View;
 use Customers13\Models\Customer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Customers13\Models\CustomerType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
@@ -29,6 +30,10 @@ class CustomerController extends Controller
 
         return $this->listView($request, 'customers13::customers.list', [
             'customers' => $customers,
+            // The form offers the types that can be picked, archived ones included: one of those may
+            // already be held by the customer being edited, and leaving it out of the checkboxes
+            // would drop it the moment the form is saved.
+            'customerTypes' => CustomerType::query()->orderBy('name_eu')->orderBy('id')->get(),
             'list' => $transformer->active(
                 $customers,
                 $search,
@@ -56,7 +61,12 @@ class CustomerController extends Controller
         }
 
         try {
-            $customer = Customer::create($request->validated());
+            $customer = DB::transaction(function () use ($request): Customer {
+                $customer = Customer::create($this->attributes($request));
+                $customer->customerTypes()->sync($this->typeIds($request));
+
+                return $customer;
+            });
         } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
@@ -65,18 +75,21 @@ class CustomerController extends Controller
             return response()->json($customer->only(['id', 'name']), 201);
         }
 
-        return to_route('customers.index')->with('status', __('customers13::messages.created'));
+        return to_route('customers.index')->with('status', __('basics13::messages.created'));
     }
 
     public function update(CustomerRequest $request, Customer $customer): RedirectResponse
     {
         try {
-            $customer->update($request->validated());
+            DB::transaction(function () use ($request, $customer): void {
+                $customer->update($this->attributes($request));
+                $customer->customerTypes()->sync($this->typeIds($request));
+            });
         } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
-        return to_route('customers.index')->with('status', __('customers13::messages.updated'));
+        return to_route('customers.index')->with('status', __('basics13::messages.updated'));
     }
 
     public function destroy(Customer $customer): RedirectResponse
@@ -92,6 +105,38 @@ class CustomerController extends Controller
                 ->with('error', __('Cannot be deleted while it has related records.'));
         }
 
-        return to_route('customers.index')->with('status', __('customers13::messages.moved_to_trash'));
+        return to_route('customers.index')->with('status', __('basics13::messages.moved_to_trash'));
+    }
+
+    /**
+     * The customer columns, without the types: those live in the pivot table and are written by the
+     * relation, not assigned to the model.
+     *
+     * @return array<string, mixed>
+     */
+    private function attributes(CustomerRequest $request): array
+    {
+        $attributes = $request->validated();
+        unset($attributes['customer_type_ids']);
+
+        return $attributes;
+    }
+
+    /**
+     * The form always posts the whole set of checkboxes, so an absent field means a customer with no
+     * types rather than one whose types were left alone. The pivot rows of a customer in the trash
+     * are kept, which is what stops a type in use from being deleted.
+     *
+     * @return list<int>
+     */
+    private function typeIds(CustomerRequest $request): array
+    {
+        /** @var list<int> $ids */
+        $ids = array_map(
+            static fn (mixed $id): int => (int) $id,
+            (array) $request->validated('customer_type_ids', []),
+        );
+
+        return $ids;
     }
 }

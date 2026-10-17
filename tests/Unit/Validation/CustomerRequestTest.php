@@ -141,8 +141,19 @@ class CustomerRequestTest extends TestCase
 
         $this->assertArrayHasKey('name', $rules);
         $this->assertArrayHasKey('notes', $rules);
+        $this->assertArrayHasKey('customer_type_ids', $rules);
+        $this->assertArrayHasKey('customer_type_ids.*', $rules);
         $this->assertArrayHasKey('reuse_deleted_name', $rules);
-        $this->assertCount(3, $rules);
+        $this->assertCount(5, $rules);
+    }
+
+    public function test_customer_type_ids_rule_is_optional_and_an_array(): void
+    {
+        $request = new CustomerRequest;
+        $rules = $request->rules();
+
+        $this->assertContains('sometimes', $rules['customer_type_ids']);
+        $this->assertContains('array', $rules['customer_type_ids']);
     }
 
     public function test_name_rule_contains_required_string_min_max_unique(): void
