@@ -15,13 +15,13 @@ class DevelopCustomerTypeSeederTest extends TestCase
     {
         app(DevelopCustomerTypeSeeder::class)->run(20);
 
-        $this->assertDatabaseCount('CUM_customer_types', 20);
-        $this->assertSame(12, CustomerType::query()->where('active', true)->count());
-        $this->assertSame(5, CustomerType::query()->where('active', false)->count());
-        $this->assertSame(3, CustomerType::onlyTrashed()->count());
+        $this->assertDatabaseCount('CUM_customer_types', 25);
+        $this->assertSame(15, CustomerType::query()->where('active', true)->count());
+        $this->assertSame(6, CustomerType::query()->where('active', false)->count());
+        $this->assertSame(4, CustomerType::onlyTrashed()->count());
     }
 
-    public function test_it_names_every_type_in_the_four_languages(): void
+    public function test_it_names_each_bulk_type_in_the_four_languages(): void
     {
         app(DevelopCustomerTypeSeeder::class)->run(1);
 
@@ -33,10 +33,10 @@ class DevelopCustomerTypeSeederTest extends TestCase
         ]);
     }
 
-    public function test_it_creates_twenty_types_by_default(): void
+    public function test_it_creates_twenty_bulk_types_and_five_example_types_by_default(): void
     {
         $this->seed(DevelopCustomerTypeSeeder::class);
 
-        $this->assertDatabaseCount('CUM_customer_types', 20);
+        $this->assertDatabaseCount('CUM_customer_types', 25);
     }
 }

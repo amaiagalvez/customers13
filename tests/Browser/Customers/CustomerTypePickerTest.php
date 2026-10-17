@@ -157,11 +157,6 @@ class CustomerTypePickerTest extends DuskTestCase
         return 'document.querySelector('.json_encode($this->typeInput($typeId)).').checked === true';
     }
 
-    private function pickerTextIncludes(int $typeId, string $text): string
-    {
-        return 'document.querySelector('.json_encode($this->typeInput($typeId).' + span').').textContent.includes('.json_encode($text).')';
-    }
-
     private function pickerScrolls(): string
     {
         return 'document.querySelector('.json_encode(self::PICKER).').scrollHeight'

@@ -76,18 +76,16 @@ class CustomerListTransformer extends ListTransformer
      * The type ids come back as strings because that is what an HTML `<option>` value is: the
      * drawer binds the multi-select with x-model, which compares the option values by identity.
      *
-     * @param  Customer  $record
      * @return array{id: int, name: string, notes: string|null, customer_type_ids: list<string>}
      */
     protected function editPayload(Model $record): array
     {
         return [
             ...$record->only(['id', 'name', 'notes']),
-            'customer_type_ids' => $record->customerTypes
+            'customer_type_ids' => array_values($record->customerTypes
                 ->pluck('id')
                 ->map(static fn (int $id): string => (string) $id)
-                ->values()
-                ->all(),
+                ->all()),
         ];
     }
 

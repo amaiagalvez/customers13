@@ -5,15 +5,15 @@ namespace Customers13\Tests\Feature\Seeders;
 use Customers13\Tests\TestCase;
 use Customers13\Models\CustomerType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Customers13\Database\Seeders\EdgeCaseCustomerTypeSeeder;
+use Customers13\Database\Seeders\DevelopCustomerTypeSeeder;
 
-class EdgeCaseCustomerTypeSeederTest extends TestCase
+class DevelopCustomerTypeEdgeCaseTest extends TestCase
 {
     use RefreshDatabase;
 
     public function test_it_creates_the_example_types_and_the_customer_that_holds_them(): void
     {
-        $this->seed(EdgeCaseCustomerTypeSeeder::class);
+        app(DevelopCustomerTypeSeeder::class)->run(0);
 
         $this->assertDatabaseCount('CUM_customer_types', 5);
         $this->assertSame(1, CustomerType::onlyTrashed()->count());
@@ -25,7 +25,7 @@ class EdgeCaseCustomerTypeSeederTest extends TestCase
 
     public function test_it_seeds_a_type_that_only_has_an_euskera_name(): void
     {
-        $this->seed(EdgeCaseCustomerTypeSeeder::class);
+        app(DevelopCustomerTypeSeeder::class)->run(0);
 
         $this->assertSame(1, CustomerType::query()
             ->where('name_eu', 'Bezero mota euskaraz bakarrik')
@@ -37,7 +37,7 @@ class EdgeCaseCustomerTypeSeederTest extends TestCase
 
     public function test_the_seeded_customer_keeps_the_types_it_holds_from_being_deleted(): void
     {
-        $this->seed(EdgeCaseCustomerTypeSeeder::class);
+        app(DevelopCustomerTypeSeeder::class)->run(0);
 
         $held = CustomerType::query()->where('name_eu', 'Bezero mota erabilia')->firstOrFail();
         $archivedHeld = CustomerType::query()->where('name_eu', 'Bezero mota zaharkitua erabilia')->firstOrFail();
