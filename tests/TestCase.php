@@ -22,6 +22,7 @@ abstract class TestCase extends Basics13TestCase
     protected function getPackageProviders($app): array
     {
         return [
+            ...parent::getPackageProviders($app),
             FluxServiceProvider::class,
             Customers13ServiceProvider::class,
         ];

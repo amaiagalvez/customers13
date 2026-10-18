@@ -154,7 +154,7 @@ class CustomerTypeTrashTest extends TestCase
 
         $competitorCreated = false;
 
-        DB::listen(static function (QueryExecuted $query) use ($deleted, &$competitorCreated): void {
+        DB::listen(static function (QueryExecuted $query) use ($deleted, $name, &$competitorCreated): void {
             $sql = strtolower(ltrim($query->sql));
             $bindings = $query->bindings;
 
