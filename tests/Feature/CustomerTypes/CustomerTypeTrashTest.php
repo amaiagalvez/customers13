@@ -5,10 +5,10 @@ namespace Customers13\Tests\Feature\CustomerTypes;
 use App\Models\User;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
+use Illuminate\Support\Facades\DB;
 use Customers13\Models\CustomerType;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Support\Facades\DB;
 
 class CustomerTypeTrashTest extends TestCase
 {

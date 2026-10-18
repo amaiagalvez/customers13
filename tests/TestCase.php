@@ -3,10 +3,10 @@
 namespace Customers13\Tests;
 
 use App\Models\User;
-use Basics13\Tests\TestCase as Basics13TestCase;
 use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
+use Basics13\Tests\TestCase as Basics13TestCase;
 use Basics13\Support\Testing\ValidatesFormRequests;
 use Customers13\ServiceProvider as Customers13ServiceProvider;
 

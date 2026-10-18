@@ -10,7 +10,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CustomerTypeRequest extends FormRequest
 {
-
     /**
      * Trim every name, and turn a blank translation into an absent one: a language with no name is
      * stored as NULL so the unique index of that column does not see an empty string as a value.

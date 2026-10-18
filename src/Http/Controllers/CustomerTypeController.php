@@ -19,7 +19,6 @@ use Customers13\Queries\CustomerTypes\CustomerTypeSelectOptionsQuery;
 
 class CustomerTypeController extends Controller
 {
-
     public function index(
         CustomerTypeListRequest $request,
         CustomerTypeListQuery $query,
