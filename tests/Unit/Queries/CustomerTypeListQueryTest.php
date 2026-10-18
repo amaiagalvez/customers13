@@ -84,5 +84,9 @@ class CustomerTypeListQueryTest extends TestCase
 
         $this->assertTrue($method->isProtected());
         $this->assertSame(CustomerTypeListQuery::class, $method->getDeclaringClass()->getName());
+
+        $integration = $this->nullIntegration();
+
+        $this->assertSame($integration, $method->invoke(new CustomerTypeListQuery($integration)));
     }
 }

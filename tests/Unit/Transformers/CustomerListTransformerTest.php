@@ -56,6 +56,16 @@ final class CustomerListTransformerTest extends TestCase
         $this->assertSame('The record is referenced by other data.', $blockedAction['hint']);
     }
 
+    public function test_trash_list_uses_an_empty_hint_when_no_force_delete_hint_is_defined(): void
+    {
+        $transformer = new BlockingForceDeleteCustomerListTransformer;
+        $result = $transformer->trash($this->records(), '');
+        $blockedAction = $result['rows'][0]['actions'][1];
+
+        $this->assertSame('blocked', $blockedAction['type']);
+        $this->assertSame('', $blockedAction['hint']);
+    }
+
     /**
      * @return LengthAwarePaginator<int, Customer>
      */
@@ -83,5 +93,13 @@ final class BlockingCustomerListTransformer extends CustomerListTransformer
     protected function getForceDeleteBlockHint(Model $record): string
     {
         return 'The record is referenced by other data.';
+    }
+}
+
+final class BlockingForceDeleteCustomerListTransformer extends CustomerListTransformer
+{
+    protected function getForceDeleteBlockCondition(Model $record): bool
+    {
+        return true;
     }
 }

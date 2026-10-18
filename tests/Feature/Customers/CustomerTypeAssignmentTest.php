@@ -171,6 +171,32 @@ class CustomerTypeAssignmentTest extends TestCase
         $this->assertDatabaseCount('CUM_customers', 0);
     }
 
+    public function test_a_type_trashed_after_validation_is_not_assigned(): void
+    {
+        $this->actingAs($this->user());
+        $customerType = CustomerType::factory()->create();
+        Customer::creating(static function () use ($customerType): void {
+            $customerType->delete();
+        });
+        $this->withoutExceptionHandling();
+
+        $exception = null;
+
+        try {
+            $this->post(route('customers.store'), [
+                'name' => 'Bezeroa',
+                'customer_type_ids' => [$customerType->id],
+            ]);
+        } catch (\RuntimeException $caught) {
+            $exception = $caught;
+        }
+
+        $this->assertInstanceOf(\RuntimeException::class, $exception);
+        $this->assertSame('Cannot associate a deleted customer type.', $exception->getMessage());
+        $this->assertDatabaseCount('CUM_customers', 0);
+        $this->assertNotSoftDeleted($customerType);
+    }
+
     public function test_a_type_that_does_not_exist_cannot_be_assigned(): void
     {
         $this->actingAs($this->user());

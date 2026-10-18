@@ -277,6 +277,30 @@ class CustomerTypeCrudTest extends TestCase
         $this->assertDatabaseCount('CUM_customer_types', 1);
     }
 
+    public function test_store_uses_the_euskera_field_for_an_unrecognized_unique_constraint(): void
+    {
+        $this->actingAs($this->user());
+        $existingType = CustomerType::factory()->create([
+            'name_eu' => 'Mota gordea',
+            'name_es' => null,
+            'name_fr' => null,
+            'name_en' => null,
+        ]);
+        CustomerType::creating(static function (CustomerType $customerType) use ($existingType): void {
+            $customerType->id = $existingType->id;
+        });
+
+        $this->postJson(route('customer-types.store'), ['name_eu' => 'Beste mota'])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors('name_eu');
+
+        $this->assertDatabaseCount('CUM_customer_types', 1);
+        $this->assertDatabaseHas('CUM_customer_types', [
+            'id' => $existingType->id,
+            'name_eu' => 'Mota gordea',
+        ]);
+    }
+
     public function test_update_converts_a_concurrent_duplicate_name_into_a_validation_error(): void
     {
         $this->actingAs($this->user());
