@@ -6,7 +6,9 @@ use App\Models\User;
 use Customers13\Tests\TestCase;
 use Customers13\Models\Customer;
 use Customers13\Models\CustomerType;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 class CustomerTypeTrashTest extends TestCase
 {
@@ -133,6 +135,53 @@ class CustomerTypeTrashTest extends TestCase
             ->assertSee('data-test="customer-type-force-delete-blocked-'.$customerType->id.'"', false)
             ->assertDontSee('data-test="customer-type-force-delete-'.$customerType->id.'"', false)
             ->assertSee(__('basics13::messages.cannot_force_delete_related'));
+    }
+
+    public function test_restore_converts_a_concurrent_duplicate_name_to_a_conflict(): void
+    {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            $this->markTestSkipped('The concurrent restore guard requires MySQL row locks.');
+        }
+
+        $this->actingAs($this->user());
+        $name = 'Concurrent Restore CustomerType';
+        $deleted = CustomerType::factory()->trashed()->create([
+            'name_eu' => $name,
+            'name_es' => $name,
+            'name_fr' => $name,
+            'name_en' => $name,
+        ]);
+
+        $competitorCreated = false;
+
+        DB::listen(static function (QueryExecuted $query) use ($deleted, &$competitorCreated): void {
+            $sql = strtolower(ltrim($query->sql));
+            $bindings = $query->bindings;
+
+            if (
+                $competitorCreated
+                || ! str_starts_with($sql, 'select')
+                || ! str_contains($sql, 'cum_customer_types')
+                || ! in_array($deleted->name_eu, $bindings, true)
+            ) {
+                return;
+            }
+
+            $competitorCreated = true;
+            CustomerType::factory()->create([
+                'name_eu' => $name,
+                'name_es' => $name,
+                'name_fr' => $name,
+                'name_en' => $name,
+            ]);
+        });
+
+        $this->patch(route('customer-types.trash.restore', $deleted->id))
+            ->assertRedirect(route('customer-types.trash.index'))
+            ->assertSessionHas('error', __('basics13::messages.cannot_restore_name_taken'));
+
+        $this->assertSoftDeleted($deleted);
+        $this->assertDatabaseHas('CUM_customer_types', ['name_eu' => $name, 'deleted_at' => null]);
     }
 
     private function user(): User
