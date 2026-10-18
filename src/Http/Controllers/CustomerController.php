@@ -62,7 +62,7 @@ class CustomerController extends Controller
         try {
             $customer = DB::transaction(function () use ($request): Customer {
                 $customer = Customer::create($this->attributes($request));
-                $customer->customerTypes()->sync($this->typeIds($request));
+                $this->syncTypes($customer, $this->typeIds($request));
 
                 return $customer;
             });
@@ -82,13 +82,45 @@ class CustomerController extends Controller
         try {
             DB::transaction(function () use ($request, $customer): void {
                 $customer->update($this->attributes($request));
-                $customer->customerTypes()->sync($this->typeIds($request));
+                $this->syncTypes($customer, $this->typeIds($request));
             });
         } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
         return to_route('customers.index')->with('status', __('basics13::messages.updated'));
+    }
+
+    /**
+     * Sync customer types after locking them to prevent a race where a type is associated
+     * after it has been soft-deleted.
+     *
+     * @param  list<int>  $typeIds
+     */
+    private function syncTypes(Customer $customer, array $typeIds): void
+    {
+        if ($typeIds === []) {
+            $customer->customerTypes()->sync([]);
+
+            return;
+        }
+
+        // Lock the types to prevent concurrent soft-delete while we are associating them.
+        $lockedTypes = DB::transaction(static fn (): array => CustomerType::withTrashed()
+            ->whereKey($typeIds)
+            ->lockForUpdate()
+            ->get()
+            ->keyBy('id')
+            ->all());
+
+        // Ensure none of the types are soft-deleted.
+        foreach ($typeIds as $id) {
+            if (isset($lockedTypes[$id]) && $lockedTypes[$id]->trashed()) {
+                throw new \RuntimeException('Cannot associate a deleted customer type.');
+            }
+        }
+
+        $customer->customerTypes()->sync($typeIds);
     }
 
     public function destroy(Customer $customer): RedirectResponse

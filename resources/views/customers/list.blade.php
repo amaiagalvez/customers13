@@ -100,7 +100,15 @@
                                         <span class="flex flex-wrap gap-1"
                                             data-test="customer-types-{{ $row['id'] }}">
                                             @foreach ($row['types'] as $type)
-                                                <flux:badge size="sm">{{ $type }}</flux:badge>
+                                                <span class="inline-flex items-center gap-1">
+                                                    <flux:badge size="sm">{{ $type['name'] }}</flux:badge>
+                                                    @unless ($type['active'])
+                                                        <span
+                                                            class="shrink-0 rounded-full bg-zinc-800/5 px-1.5 py-0.5 text-[10px] text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
+                                                            {{ __('basics13::messages.archived_label') }}
+                                                        </span>
+                                                    @endunless
+                                                </span>
                                             @endforeach
                                         </span>
                                     @endif

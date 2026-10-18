@@ -30,7 +30,10 @@ class CustomerListTransformer extends ListTransformer
         return [
             'id' => $record->id,
             'name' => $record->name,
-            'types' => $record->customerTypes->pluck('name_eu')->all(),
+            'types' => $record->customerTypes->map(fn ($type) => [
+                'name' => $type->name_eu,
+                'active' => $type->active,
+            ])->all(),
             'editPayload' => $this->editPayload($record),
             ...$extra,
         ];
