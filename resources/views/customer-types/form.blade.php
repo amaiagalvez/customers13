@@ -18,7 +18,9 @@
                 {{ $label }}
             </x-basics13::forms.field-label>
             <flux:input name="{{ $field }}" x-model="form.{{ $field }}"
-                @if ($field === 'name_eu') minlength="2" required autofocus @endif
+                :minlength="$field === 'name_eu' ? 2 : null"
+                :required="$field === 'name_eu'"
+                :autofocus="$field === 'name_eu'"
                 maxlength="{{ \Basics13\Support\Validation\MaxLength::string() }}"
                 id="customer-type-{{ $field }}" data-test="customer-type-{{ $field }}" />
             <flux:error name="{{ $field }}" />
