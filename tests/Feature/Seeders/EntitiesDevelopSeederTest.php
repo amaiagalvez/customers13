@@ -4,7 +4,7 @@ namespace entities13\Tests\Feature\Seeders;
 
 use entities13\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use entities13\Database\Seeders\EntitiesDevelopSeeder;
+use Entities13\Database\Seeders\EntitiesDevelopSeeder;
 
 class EntitiesDevelopSeederTest extends TestCase
 {

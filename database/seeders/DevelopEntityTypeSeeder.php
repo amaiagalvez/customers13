@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Database\Seeders;
+namespace Entities13\Database\Seeders;
 
 use entities13\Models\Entity;
 use Illuminate\Database\Seeder;
