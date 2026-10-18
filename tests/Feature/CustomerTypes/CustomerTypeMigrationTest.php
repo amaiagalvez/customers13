@@ -1,17 +1,17 @@
 <?php
 
-namespace Customers13\Tests\Feature\CustomerTypes;
+namespace entities13\Tests\Feature\EntityTypes;
 
-use Customers13\Tests\TestCase;
+use entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
-class CustomerTypeMigrationTest extends TestCase
+class EntityTypeMigrationTest extends TestCase
 {
-    public function test_customer_type_migrations_can_be_rolled_back(): void
+    public function test_entity_type_migrations_can_be_rolled_back(): void
     {
-        $connectionName = 'customers13_customer_type_migration_test';
+        $connectionName = 'entities13_entity_type_migration_test';
         $originalDefault = config('database.default');
         $sqliteConnection = config('database.connections.sqlite');
 
@@ -28,32 +28,32 @@ class CustomerTypeMigrationTest extends TestCase
 
         DB::purge($connectionName);
 
-        $migrations = dirname(__DIR__, 3).'/database/migrations';
+        $migrations = dirname(__DIR__, 3) . '/database/migrations';
 
         try {
             Schema::create('users', static function (Blueprint $table): void {
                 $table->id();
             });
 
-            $customers = require $migrations.'/2026_09_25_000000_create_cum_customers_table.php';
-            $customerTypes = require $migrations.'/2026_10_16_000000_create_cum_customer_types_table.php';
-            $pivot = require $migrations.'/2026_10_16_000001_create_cum_customer_customer_type_table.php';
+            $entities = require $migrations . '/2026_09_25_000000_create_cum_entities_table.php';
+            $entityTypes = require $migrations . '/2026_10_16_000000_create_cum_entity_types_table.php';
+            $pivot = require $migrations . '/2026_10_16_000001_create_cum_entity_entity_type_table.php';
 
-            $customers->up();
-            $customerTypes->up();
+            $entities->up();
+            $entityTypes->up();
             $pivot->up();
 
-            $this->assertTrue(Schema::hasTable('CUM_customers'));
-            $this->assertTrue(Schema::hasTable('CUM_customer_types'));
-            $this->assertTrue(Schema::hasTable('CUM_customer_customer_type'));
+            $this->assertTrue(Schema::hasTable('CUM_entities'));
+            $this->assertTrue(Schema::hasTable('CUM_entity_types'));
+            $this->assertTrue(Schema::hasTable('CUM_entity_entity_type'));
 
             $pivot->down();
-            $customerTypes->down();
-            $customers->down();
+            $entityTypes->down();
+            $entities->down();
 
-            $this->assertFalse(Schema::hasTable('CUM_customer_customer_type'));
-            $this->assertFalse(Schema::hasTable('CUM_customer_types'));
-            $this->assertFalse(Schema::hasTable('CUM_customers'));
+            $this->assertFalse(Schema::hasTable('CUM_entity_entity_type'));
+            $this->assertFalse(Schema::hasTable('CUM_entity_types'));
+            $this->assertFalse(Schema::hasTable('CUM_entities'));
         } finally {
             DB::purge($connectionName);
             config([

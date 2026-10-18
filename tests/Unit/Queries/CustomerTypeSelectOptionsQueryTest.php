@@ -1,12 +1,12 @@
 <?php
 
-namespace Customers13\Tests\Unit\Queries;
+namespace entities13\Tests\Unit\Queries;
 
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
-use Customers13\Models\CustomerType;
-use Customers13\Contracts\CustomerIntegration;
-use Customers13\Queries\CustomerTypes\CustomerTypeSelectOptionsQuery;
+use entities13\Models\EntityType;
+use entities13\Contracts\EntityIntegration;
+use entities13\Queries\EntityTypes\EntityTypeSelectOptionsQuery;
 
 /**
  * The select-options query searches by itself and never counts a state tab, so the two hooks the
@@ -14,30 +14,30 @@ use Customers13\Queries\CustomerTypes\CustomerTypeSelectOptionsQuery;
  * query for its model and for its integration, and both answers have to be the ones the query was
  * built with.
  */
-class CustomerTypeSelectOptionsQueryTest extends TestCase
+class EntityTypeSelectOptionsQueryTest extends TestCase
 {
-    public function test_the_query_answers_the_base_with_the_customer_type_model(): void
+    public function test_the_query_answers_the_base_with_the_entity_type_model(): void
     {
-        $method = new ReflectionMethod(CustomerTypeSelectOptionsQuery::class, 'getModelClass');
+        $method = new ReflectionMethod(EntityTypeSelectOptionsQuery::class, 'getModelClass');
         $method->setAccessible(true);
 
         $this->assertSame(
-            CustomerType::class,
-            $method->invoke(new CustomerTypeSelectOptionsQuery($this->nullIntegration())),
+            EntityType::class,
+            $method->invoke(new EntityTypeSelectOptionsQuery($this->nullIntegration())),
         );
     }
 
     public function test_the_query_answers_the_base_with_the_integration_it_was_given(): void
     {
         $integration = $this->nullIntegration();
-        $method = new ReflectionMethod(CustomerTypeSelectOptionsQuery::class, 'integration');
+        $method = new ReflectionMethod(EntityTypeSelectOptionsQuery::class, 'integration');
         $method->setAccessible(true);
 
-        $this->assertSame($integration, $method->invoke(new CustomerTypeSelectOptionsQuery($integration)));
+        $this->assertSame($integration, $method->invoke(new EntityTypeSelectOptionsQuery($integration)));
     }
 
-    private function nullIntegration(): CustomerIntegration
+    private function nullIntegration(): EntityIntegration
     {
-        return new class extends CustomerIntegration {};
+        return new class extends EntityIntegration {};
     }
 }

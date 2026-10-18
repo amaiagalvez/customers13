@@ -1,23 +1,23 @@
 <?php
 
-namespace Customers13\Tests\Feature\Seeders;
+namespace entities13\Tests\Feature\Seeders;
 
-use Customers13\Tests\TestCase;
+use entities13\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Customers13\Database\Seeders\CustomersDevelopSeeder;
+use entities13\Database\Seeders\EntitiesDevelopSeeder;
 
-class CustomersDevelopSeederTest extends TestCase
+class EntitiesDevelopSeederTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_seeds_customers_and_customer_types_with_their_assignments(): void
+    public function test_it_seeds_entities_and_entity_types_with_their_assignments(): void
     {
-        $this->seed(CustomersDevelopSeeder::class);
+        $this->seed(EntitiesDevelopSeeder::class);
 
-        $this->assertDatabaseCount('CUM_customers', 101);
-        $this->assertDatabaseHas('CUM_customers', ['name' => 'Perf Customer 00100']);
-        $this->assertDatabaseHas('CUM_customers', ['name' => 'Customer holding customer types 0']);
-        $this->assertDatabaseCount('CUM_customer_types', 25);
-        $this->assertDatabaseCount('CUM_customer_customer_type', 2);
+        $this->assertDatabaseCount('CUM_entities', 101);
+        $this->assertDatabaseHas('CUM_entities', ['name' => 'Perf Entity 00100']);
+        $this->assertDatabaseHas('CUM_entities', ['name' => 'Entity holding entity types 0']);
+        $this->assertDatabaseCount('CUM_entity_types', 25);
+        $this->assertDatabaseCount('CUM_entity_entity_type', 2);
     }
 }

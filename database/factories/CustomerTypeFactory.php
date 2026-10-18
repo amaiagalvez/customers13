@@ -1,19 +1,19 @@
 <?php
 
-namespace Customers13\Database\Factories;
+namespace entities13\Database\Factories;
 
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Basics13\Database\Factories\HasStates;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<CustomerType>
+ * @extends Factory<EntityType>
  */
-class CustomerTypeFactory extends Factory
+class EntityTypeFactory extends Factory
 {
     use HasStates;
 
-    protected $model = CustomerType::class;
+    protected $model = EntityType::class;
 
     /**
      * Define the model's default state.

@@ -1,82 +1,82 @@
 <?php
 
-namespace Customers13\Tests\Browser\Customers;
+namespace entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
-use Customers13\Models\Customer;
-use Customers13\Tests\DuskTestCase;
+use entities13\Models\Entity;
+use entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class CustomerFormTest extends DuskTestCase
+class EntityFormTest extends DuskTestCase
 {
-    private const CUSTOMER_NAME_SELECTOR = 'dialog[open] [data-test="customer-name"]';
+    private const ENTITY_NAME_SELECTOR = 'dialog[open] [data-test="entity-name"]';
 
-    private const CUSTOMER_NOTES_SELECTOR = 'dialog[open] [data-test="customer-notes"]';
+    private const ENTITY_NOTES_SELECTOR = 'dialog[open] [data-test="entity-notes"]';
 
-    private const CUSTOMER_SUBMIT_SELECTOR = 'dialog[open] [data-test="customer-submit"]';
+    private const ENTITY_SUBMIT_SELECTOR = 'dialog[open] [data-test="entity-submit"]';
 
-    private const CUSTOMER_STATUS_SELECTOR = '[data-test="customer-status"]';
+    private const ENTITY_STATUS_SELECTOR = '[data-test="entity-status"]';
 
     use DatabaseMigrations;
 
-    public function test_customer_form_prefills_data_when_editing(): void
+    public function test_entity_form_prefills_data_when_editing(): void
     {
         $user = $this->user();
-        $customer = Customer::factory()->create([
-            'name' => 'Existing customer',
+        $entity = Entity::factory()->create([
+            'name' => 'Existing entity',
             'notes' => 'Existing notes',
         ]);
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click("[data-test='customer-edit-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->assertInputValue(self::CUSTOMER_NAME_SELECTOR, $customer->name)
-                ->assertInputValue(self::CUSTOMER_NOTES_SELECTOR, $customer->notes)
-                ->assertSeeIn('dialog[open]', __('Edit customer'));
+                ->visit('/entities')
+                ->click("[data-test='entity-edit-{$entity->id}']")
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->assertInputValue(self::ENTITY_NAME_SELECTOR, $entity->name)
+                ->assertInputValue(self::ENTITY_NOTES_SELECTOR, $entity->notes)
+                ->assertSeeIn('dialog[open]', __('Edit entity'));
         });
     }
 
-    public function test_customer_form_clears_when_cancelled(): void
+    public function test_entity_form_clears_when_cancelled(): void
     {
         $user = $this->user();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click('[data-test="customer-create-button"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->type(self::CUSTOMER_NAME_SELECTOR, 'Test customer')
-                ->type(self::CUSTOMER_NOTES_SELECTOR, 'Test notes')
-                ->click('dialog[open] [data-test="customer-cancel"]')
+                ->visit('/entities')
+                ->click('[data-test="entity-create-button"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->type(self::ENTITY_NAME_SELECTOR, 'Test entity')
+                ->type(self::ENTITY_NOTES_SELECTOR, 'Test notes')
+                ->click('dialog[open] [data-test="entity-cancel"]')
                 ->assertDialogOpened(__('You have unsaved changes. Leave without saving?'))
                 ->acceptDialog()
-                ->waitUntilMissing(self::CUSTOMER_NAME_SELECTOR)
-                ->click('[data-test="customer-create-button"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->assertInputValue(self::CUSTOMER_NAME_SELECTOR, '')
-                ->assertInputValue(self::CUSTOMER_NOTES_SELECTOR, '');
+                ->waitUntilMissing(self::ENTITY_NAME_SELECTOR)
+                ->click('[data-test="entity-create-button"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->assertInputValue(self::ENTITY_NAME_SELECTOR, '')
+                ->assertInputValue(self::ENTITY_NOTES_SELECTOR, '');
         });
     }
 
-    public function test_customer_form_handles_long_notes(): void
+    public function test_entity_form_handles_long_notes(): void
     {
         $user = $this->user();
         $longNotes = str_repeat('Long notes content. ', 100);
 
         $this->browse(function (Browser $browser) use ($user, $longNotes): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click('[data-test="customer-create-button"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->type(self::CUSTOMER_NAME_SELECTOR, 'Customer with long notes')
-                ->type(self::CUSTOMER_NOTES_SELECTOR, $longNotes)
-                ->click(self::CUSTOMER_SUBMIT_SELECTOR)
-                ->waitFor(self::CUSTOMER_STATUS_SELECTOR)
-                ->assertSee('Customer with long notes');
+                ->visit('/entities')
+                ->click('[data-test="entity-create-button"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->type(self::ENTITY_NAME_SELECTOR, 'Entity with long notes')
+                ->type(self::ENTITY_NOTES_SELECTOR, $longNotes)
+                ->click(self::ENTITY_SUBMIT_SELECTOR)
+                ->waitFor(self::ENTITY_STATUS_SELECTOR)
+                ->assertSee('Entity with long notes');
         });
 
-        $this->assertDatabaseHas('CUM_customers', ['name' => 'Customer with long notes']);
+        $this->assertDatabaseHas('CUM_entities', ['name' => 'Entity with long notes']);
     }
 }

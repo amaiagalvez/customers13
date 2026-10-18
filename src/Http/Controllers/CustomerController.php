@@ -1,112 +1,112 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
-use Customers13\Http\Requests\CustomerRequest;
-use Customers13\Http\Requests\CustomerListRequest;
-use Customers13\Queries\Customers\CustomerListQuery;
-use Customers13\Transformers\CustomerListTransformer;
+use entities13\Http\Requests\EntityRequest;
+use entities13\Http\Requests\EntityListRequest;
+use entities13\Queries\Entities\EntityListQuery;
+use entities13\Transformers\EntityListTransformer;
 use Basics13\Support\Database\UniqueConstraintViolation;
-use Customers13\Http\Requests\CustomerSelectOptionsRequest;
-use Customers13\Queries\Customers\CustomerSelectOptionsQuery;
+use entities13\Http\Requests\EntitySelectOptionsRequest;
+use entities13\Queries\Entities\EntitySelectOptionsQuery;
 
-class CustomerController extends Controller
+class EntityController extends Controller
 {
     public function index(
-        CustomerListRequest $request,
-        CustomerListQuery $query,
-        CustomerListTransformer $transformer,
+        EntityListRequest $request,
+        EntityListQuery $query,
+        EntityListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customers = $query->active($search);
+        $entities = $query->active($search);
 
-        return $this->listView($request, 'customers13::customers.list', [
-            'customers' => $customers,
-            // The form needs archived types too, so an edit can keep the ones the customer already
+        return $this->listView($request, 'entities13::entities.list', [
+            'entities' => $entities,
+            // The form needs archived types too, so an edit can keep the ones the entity already
             // holds. The picker only shows those selected archived types, alongside active ones.
-            'customerTypes' => CustomerType::query()->orderBy('name_eu')->orderBy('id')->get(),
+            'entityTypes' => EntityType::query()->orderBy('name_eu')->orderBy('id')->get(),
             'list' => $transformer->active(
-                $customers,
+                $entities,
                 $search,
-                $query->stateCounts(activeTotal: $search === '' ? $customers->total() : null),
+                $query->stateCounts(activeTotal: $search === '' ? $entities->total() : null),
             ),
         ]);
     }
 
     public function selectOptions(
-        CustomerSelectOptionsRequest $request,
-        CustomerSelectOptionsQuery $query,
+        EntitySelectOptionsRequest $request,
+        EntitySelectOptionsQuery $query,
     ): JsonResponse {
         return response()->json([
             'results' => $query->search($request->search()),
         ]);
     }
 
-    public function store(CustomerRequest $request, CustomerListQuery $query): RedirectResponse|JsonResponse
+    public function store(EntityRequest $request, EntityListQuery $query): RedirectResponse|JsonResponse
     {
         $name = $request->string('name')->toString();
-        $deletedCustomer = $query->findTrashedByName($name);
+        $deletedEntity = $query->findTrashedByName($name);
 
-        if ($deletedCustomer !== null && ! $request->boolean('reuse_deleted_name')) {
-            return $this->deletedNameConflict($request, $deletedCustomer, 'customers.index', 'deleted_customer_conflict');
+        if ($deletedEntity !== null && ! $request->boolean('reuse_deleted_name')) {
+            return $this->deletedNameConflict($request, $deletedEntity, 'entities.index', 'deleted_entity_conflict');
         }
 
         try {
-            $customer = DB::transaction(function () use ($request): Customer {
-                $customer = Customer::create($this->attributes($request));
-                $this->syncTypes($customer, $this->typeIds($request));
+            $entity = DB::transaction(function () use ($request): Entity {
+                $entity = Entity::create($this->attributes($request));
+                $this->syncTypes($entity, $this->typeIds($request));
 
-                return $customer;
+                return $entity;
             });
         } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
         if ($request->expectsJson()) {
-            return response()->json($customer->only(['id', 'name']), 201);
+            return response()->json($entity->only(['id', 'name']), 201);
         }
 
-        return to_route('customers.index')->with('status', __('basics13::messages.created'));
+        return to_route('entities.index')->with('status', __('basics13::messages.created'));
     }
 
-    public function update(CustomerRequest $request, Customer $customer): RedirectResponse
+    public function update(EntityRequest $request, Entity $entity): RedirectResponse
     {
         try {
-            DB::transaction(function () use ($request, $customer): void {
-                $customer->update($this->attributes($request));
-                $this->syncTypes($customer, $this->typeIds($request));
+            DB::transaction(function () use ($request, $entity): void {
+                $entity->update($this->attributes($request));
+                $this->syncTypes($entity, $this->typeIds($request));
             });
         } catch (QueryException $exception) {
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
-        return to_route('customers.index')->with('status', __('basics13::messages.updated'));
+        return to_route('entities.index')->with('status', __('basics13::messages.updated'));
     }
 
     /**
-     * Sync customer types after locking them to prevent a race where a type is associated
+     * Sync entity types after locking them to prevent a race where a type is associated
      * after it has been soft-deleted.
      *
      * @param  list<int>  $typeIds
      */
-    private function syncTypes(Customer $customer, array $typeIds): void
+    private function syncTypes(Entity $entity, array $typeIds): void
     {
         if ($typeIds === []) {
-            $customer->customerTypes()->sync([]);
+            $entity->entityTypes()->sync([]);
 
             return;
         }
 
         // Lock the types to prevent concurrent soft-delete while we are associating them.
-        $lockedTypes = DB::transaction(static fn (): array => CustomerType::withTrashed()
+        $lockedTypes = DB::transaction(static fn(): array => EntityType::withTrashed()
             ->whereKey($typeIds)
             ->lockForUpdate()
             ->get()
@@ -116,56 +116,56 @@ class CustomerController extends Controller
         // Ensure none of the types are soft-deleted.
         foreach ($typeIds as $id) {
             if (isset($lockedTypes[$id]) && $lockedTypes[$id]->trashed()) {
-                throw new \RuntimeException('Cannot associate a deleted customer type.');
+                throw new \RuntimeException('Cannot associate a deleted entity type.');
             }
         }
 
-        $customer->customerTypes()->sync($typeIds);
+        $entity->entityTypes()->sync($typeIds);
     }
 
-    public function destroy(Customer $customer): RedirectResponse
+    public function destroy(Entity $entity): RedirectResponse
     {
-        $this->authorize('delete', $customer);
+        $this->authorize('delete', $entity);
 
         // The deleting hook holds the row lock and refuses the delete while children exist, so the
         // controller only has to run it inside a transaction and report the outcome.
-        $deleted = DB::transaction(static fn (): bool => $customer->delete() !== false);
+        $deleted = DB::transaction(static fn(): bool => $entity->delete() !== false);
 
         if (! $deleted) {
-            return to_route('customers.index')
+            return to_route('entities.index')
                 ->with('error', __('Cannot be deleted while it has related records.'));
         }
 
-        return to_route('customers.index')->with('status', __('basics13::messages.moved_to_trash'));
+        return to_route('entities.index')->with('status', __('basics13::messages.moved_to_trash'));
     }
 
     /**
-     * The customer columns, without the types: those live in the pivot table and are written by the
+     * The entity columns, without the types: those live in the pivot table and are written by the
      * relation, not assigned to the model.
      *
      * @return array<string, mixed>
      */
-    private function attributes(CustomerRequest $request): array
+    private function attributes(EntityRequest $request): array
     {
         $attributes = $request->validated();
-        unset($attributes['customer_type_ids']);
+        unset($attributes['entity_type_ids']);
 
         return $attributes;
     }
 
     /**
-     * The form always posts the whole set of checkboxes, so an absent field means a customer with no
-     * types rather than one whose types were left alone. The pivot rows of a customer in the trash
+     * The form always posts the whole set of checkboxes, so an absent field means a entity with no
+     * types rather than one whose types were left alone. The pivot rows of a entity in the trash
      * are kept, which is what stops a type in use from being deleted.
      *
      * @return list<int>
      */
-    private function typeIds(CustomerRequest $request): array
+    private function typeIds(EntityRequest $request): array
     {
         /** @var list<int> $ids */
         $ids = array_map(
-            static fn (mixed $id): int => (int) $id,
-            (array) $request->validated('customer_type_ids', []),
+            static fn(mixed $id): int => (int) $id,
+            (array) $request->validated('entity_type_ids', []),
         );
 
         return $ids;

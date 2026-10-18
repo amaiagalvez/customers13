@@ -1,17 +1,17 @@
 <?php
 
-namespace Customers13\Tests\Feature\Customers;
+namespace entities13\Tests\Feature\Entities;
 
 use App\Models\User;
-use Customers13\Tests\TestCase;
-use Customers13\Models\Customer;
+use entities13\Tests\TestCase;
+use entities13\Models\Entity;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
-class CustomerArchivedTest extends TestCase
+class EntityArchivedTest extends TestCase
 {
     use LazilyRefreshDatabase;
 
-    public function test_archived_customers_are_not_shown_in_the_active_list(): void
+    public function test_archived_entities_are_not_shown_in_the_active_list(): void
     {
         $this->actingAs(User::create([
             'name' => 'Test user',
@@ -20,15 +20,15 @@ class CustomerArchivedTest extends TestCase
             'email_verified_at' => now(),
         ]));
 
-        Customer::factory()->archived()->create(['name' => 'Dormant customer']);
-        Customer::factory()->create(['name' => 'Active customer']);
+        Entity::factory()->archived()->create(['name' => 'Dormant entity']);
+        Entity::factory()->create(['name' => 'Active entity']);
 
-        $this->get(route('customers.index'))
+        $this->get(route('entities.index'))
             ->assertOk()
-            ->assertDontSee('Dormant customer');
+            ->assertDontSee('Dormant entity');
     }
 
-    public function test_archived_customers_are_searchable_by_name(): void
+    public function test_archived_entities_are_searchable_by_name(): void
     {
         $this->actingAs(User::create([
             'name' => 'Test user',
@@ -38,22 +38,22 @@ class CustomerArchivedTest extends TestCase
         ]));
 
         $this->travelTo('2026-10-02 12:30:00');
-        $updatedCustomer = Customer::factory()->archived()->create(['name' => 'Alpha Dormant']);
-        Customer::factory()->archived()->create(['name' => 'Beta Dormant']);
-        Customer::factory()->create(['name' => 'Alpha Active']);
+        $updatedEntity = Entity::factory()->archived()->create(['name' => 'Alpha Dormant']);
+        Entity::factory()->archived()->create(['name' => 'Beta Dormant']);
+        Entity::factory()->create(['name' => 'Alpha Active']);
         $this->travelTo('2026-07-15 12:30:00');
-        $updatedCustomer->touch();
+        $updatedEntity->touch();
 
-        $this->get(route('customers.archived.index', ['search' => 'Alpha']))
+        $this->get(route('entities.archived.index', ['search' => 'Alpha']))
             ->assertOk()
             ->assertSee('Alpha Dormant')
             ->assertDontSee('Beta Dormant')
             ->assertDontSee('Alpha Active');
     }
 
-    public function test_customer_can_be_archived_and_reactivated(): void
+    public function test_entity_can_be_archived_and_reactivated(): void
     {
-        $customer = Customer::factory()->create();
+        $entity = Entity::factory()->create();
         $this->actingAs(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
@@ -61,18 +61,18 @@ class CustomerArchivedTest extends TestCase
             'email_verified_at' => now(),
         ]));
 
-        $this->patch(route('customers.archive', $customer))
-            ->assertRedirect(route('customers.index'));
-        $this->assertFalse($customer->refresh()->active);
+        $this->patch(route('entities.archive', $entity))
+            ->assertRedirect(route('entities.index'));
+        $this->assertFalse($entity->refresh()->active);
 
-        $this->patch(route('customers.archived.activate', $customer))
-            ->assertRedirect(route('customers.archived.index'));
-        $this->assertTrue($customer->refresh()->active);
+        $this->patch(route('entities.archived.activate', $entity))
+            ->assertRedirect(route('entities.archived.index'));
+        $this->assertTrue($entity->refresh()->active);
     }
 
-    public function test_restoring_a_trashed_archived_customer_preserves_its_archived_state(): void
+    public function test_restoring_a_trashed_archived_entity_preserves_its_archived_state(): void
     {
-        $customer = Customer::factory()->archived()->trashed()->create();
+        $entity = Entity::factory()->archived()->trashed()->create();
         $this->actingAs(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
@@ -80,10 +80,10 @@ class CustomerArchivedTest extends TestCase
             'email_verified_at' => now(),
         ]));
 
-        $this->patch(route('customers.trash.restore', $customer->id))
-            ->assertRedirect(route('customers.trash.index'));
+        $this->patch(route('entities.trash.restore', $entity->id))
+            ->assertRedirect(route('entities.trash.index'));
 
-        $this->assertNotSoftDeleted($customer);
-        $this->assertFalse($customer->refresh()->active);
+        $this->assertNotSoftDeleted($entity);
+        $this->assertFalse($entity->refresh()->active);
     }
 }

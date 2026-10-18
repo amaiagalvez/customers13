@@ -1,54 +1,54 @@
 <?php
 
-namespace Customers13\Tests\Unit\Transformers;
+namespace entities13\Tests\Unit\Transformers;
 
 use Basics13\Tests\TestCase;
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Customers13\Transformers\CustomerListTransformer;
+use entities13\Transformers\EntityListTransformer;
 
-final class CustomerListTransformerTest extends TestCase
+final class EntityListTransformerTest extends TestCase
 {
     protected function setUp(): void
     {
         parent::setUp();
 
-        Route::get('dashboard', fn () => null)->name('dashboard');
-        Route::get('customers', fn () => null)->name('customers.index');
-        Route::get('customers/archived', fn () => null)->name('customers.archived.index');
-        Route::get('customers/trash', fn () => null)->name('customers.trash.index');
-        Route::delete('customers/{record}', fn () => null)->name('customers.destroy');
-        Route::patch('customers/{record}/archive', fn () => null)->name('customers.archive');
-        Route::patch('customers/archived/{record}', fn () => null)->name('customers.archived.activate');
-        Route::patch('customers/trash/{record}', fn () => null)->name('customers.trash.restore');
-        Route::delete('customers/trash/{record}', fn () => null)->name('customers.trash.destroy');
+        Route::get('dashboard', fn() => null)->name('dashboard');
+        Route::get('entities', fn() => null)->name('entities.index');
+        Route::get('entities/archived', fn() => null)->name('entities.archived.index');
+        Route::get('entities/trash', fn() => null)->name('entities.trash.index');
+        Route::delete('entities/{record}', fn() => null)->name('entities.destroy');
+        Route::patch('entities/{record}/archive', fn() => null)->name('entities.archive');
+        Route::patch('entities/archived/{record}', fn() => null)->name('entities.archived.activate');
+        Route::patch('entities/trash/{record}', fn() => null)->name('entities.trash.restore');
+        Route::delete('entities/trash/{record}', fn() => null)->name('entities.trash.destroy');
     }
 
-    public function test_active_list_without_integration_allows_deleting_customer(): void
+    public function test_active_list_without_integration_allows_deleting_entity(): void
     {
-        $transformer = new CustomerListTransformer;
+        $transformer = new EntityListTransformer;
 
         $result = $transformer->active($this->records(), '');
         $actions = $result['rows'][0]['actions'];
 
         $this->assertSame('confirm-modal', $actions[1]['type']);
-        $this->assertSame('customer-delete-1', $actions[1]['test']);
+        $this->assertSame('entity-delete-1', $actions[1]['test']);
     }
 
     public function test_trash_list_without_integration_allows_permanent_deletion(): void
     {
-        $transformer = new CustomerListTransformer;
+        $transformer = new EntityListTransformer;
         $result = $transformer->trash($this->records(), '');
         $actions = $result['rows'][0]['actions'];
 
-        $this->assertSame(['customer-restore-1', 'customer-force-delete-1'], array_column($actions, 'test'));
+        $this->assertSame(['entity-restore-1', 'entity-force-delete-1'], array_column($actions, 'test'));
     }
 
     public function test_trash_list_shows_the_hint_when_permanent_deletion_is_blocked(): void
     {
-        $transformer = new BlockingCustomerListTransformer;
+        $transformer = new BlockingEntityListTransformer;
         $result = $transformer->trash($this->records(), '');
         $blockedAction = $result['rows'][0]['actions'][1];
 
@@ -58,7 +58,7 @@ final class CustomerListTransformerTest extends TestCase
 
     public function test_trash_list_uses_an_empty_hint_when_no_force_delete_hint_is_defined(): void
     {
-        $transformer = new BlockingForceDeleteCustomerListTransformer;
+        $transformer = new BlockingForceDeleteEntityListTransformer;
         $result = $transformer->trash($this->records(), '');
         $blockedAction = $result['rows'][0]['actions'][1];
 
@@ -67,18 +67,18 @@ final class CustomerListTransformerTest extends TestCase
     }
 
     /**
-     * @return LengthAwarePaginator<int, Customer>
+     * @return LengthAwarePaginator<int, Entity>
      */
     private function records(): LengthAwarePaginator
     {
-        $record = Customer::factory()->make(['id' => 1]);
-        $record->setRelation('customerTypes', collect());
+        $record = Entity::factory()->make(['id' => 1]);
+        $record->setRelation('entityTypes', collect());
 
         return new LengthAwarePaginator([$record], 1, 15);
     }
 }
 
-final class BlockingCustomerListTransformer extends CustomerListTransformer
+final class BlockingEntityListTransformer extends EntityListTransformer
 {
     protected function getDeleteBlockCondition(Model $record): bool
     {
@@ -96,7 +96,7 @@ final class BlockingCustomerListTransformer extends CustomerListTransformer
     }
 }
 
-final class BlockingForceDeleteCustomerListTransformer extends CustomerListTransformer
+final class BlockingForceDeleteEntityListTransformer extends EntityListTransformer
 {
     protected function getForceDeleteBlockCondition(Model $record): bool
     {

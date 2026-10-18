@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('CUM_customers', function (Blueprint $table) {
+        Schema::create('CUM_entities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
 
@@ -16,11 +16,11 @@ return new class extends Migration
             addAuditColumns($table);
         });
 
-        addUniqueActiveNameIndex('CUM_customers');
+        addUniqueActiveNameIndex('CUM_entities');
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('CUM_customers');
+        Schema::dropIfExists('CUM_entities');
     }
 };

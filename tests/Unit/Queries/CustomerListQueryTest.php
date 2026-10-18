@@ -1,30 +1,30 @@
 <?php
 
-namespace Customers13\Tests\Unit\Queries;
+namespace entities13\Tests\Unit\Queries;
 
 use ReflectionClass;
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
-use Customers13\Contracts\CustomerIntegration;
-use Customers13\Queries\Customers\CustomerListQuery;
+use entities13\Contracts\EntityIntegration;
+use entities13\Queries\Entities\EntityListQuery;
 
-class CustomerListQueryTest extends TestCase
+class EntityListQueryTest extends TestCase
 {
     public function test_query_can_filter_by_active(): void
     {
         foreach (['active', 'archived', 'trashed'] as $method) {
-            $this->assertTrue((new ReflectionMethod(CustomerListQuery::class, $method))->isPublic());
+            $this->assertTrue((new ReflectionMethod(EntityListQuery::class, $method))->isPublic());
         }
     }
 
     public function test_query_can_find_trashed_by_name(): void
     {
-        $this->assertTrue((new ReflectionMethod(CustomerListQuery::class, 'findTrashedByName'))->isPublic());
+        $this->assertTrue((new ReflectionMethod(EntityListQuery::class, 'findTrashedByName'))->isPublic());
     }
 
     public function test_the_query_is_built_on_the_integration_contract(): void
     {
-        $constructor = (new ReflectionClass(CustomerListQuery::class))->getConstructor();
+        $constructor = (new ReflectionClass(EntityListQuery::class))->getConstructor();
 
         $this->assertNotNull($constructor);
         $this->assertCount(1, $constructor->getParameters());
@@ -32,7 +32,7 @@ class CustomerListQueryTest extends TestCase
         $type = $constructor->getParameters()[0]->getType();
 
         $this->assertInstanceOf(\ReflectionNamedType::class, $type);
-        $this->assertSame(CustomerIntegration::class, $type->getName());
+        $this->assertSame(EntityIntegration::class, $type->getName());
     }
 
     /**
@@ -41,20 +41,20 @@ class CustomerListQueryTest extends TestCase
      */
     public function test_search_columns_are_the_ones_the_base_defines(): void
     {
-        $this->assertSame(['CUM_customers.name'], $this->searchColumns('active'));
-        $this->assertSame(['CUM_customers.name', 'CUM_customers.updated_at'], $this->searchColumns('archived'));
-        $this->assertSame(['CUM_customers.name', 'CUM_customers.deleted_at'], $this->searchColumns('trashed'));
+        $this->assertSame(['CUM_entities.name'], $this->searchColumns('active'));
+        $this->assertSame(['CUM_entities.name', 'CUM_entities.updated_at'], $this->searchColumns('archived'));
+        $this->assertSame(['CUM_entities.name', 'CUM_entities.deleted_at'], $this->searchColumns('trashed'));
     }
 
     public function test_state_counts_method_exists(): void
     {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
+        $reflection = new ReflectionClass(EntityListQuery::class);
         $this->assertTrue($reflection->hasMethod('stateCounts'));
     }
 
     public function test_state_counts_returns_array_with_expected_keys(): void
     {
-        $query = new CustomerListQuery($this->nullIntegration());
+        $query = new EntityListQuery($this->nullIntegration());
         $result = $query->stateCounts(10, 5, 3);
 
         $this->assertSame(
@@ -69,7 +69,7 @@ class CustomerListQueryTest extends TestCase
      */
     public function test_the_project_counts_are_gone_from_the_base_query(): void
     {
-        $reflection = new ReflectionClass(CustomerListQuery::class);
+        $reflection = new ReflectionClass(EntityListQuery::class);
 
         $this->assertFalse($reflection->hasMethod('withActiveCounts'));
         $this->assertFalse($reflection->hasMethod('activeCommentsCount'));
@@ -80,25 +80,25 @@ class CustomerListQueryTest extends TestCase
      */
     private function searchColumns(string $scope): array
     {
-        $method = new ReflectionMethod(CustomerListQuery::class, 'searchColumns');
+        $method = new ReflectionMethod(EntityListQuery::class, 'searchColumns');
         $method->setAccessible(true);
 
         /** @var list<string> $columns */
         $columns = $method->invoke(
-            new CustomerListQuery($this->nullIntegration()),
+            new EntityListQuery($this->nullIntegration()),
             $scope,
             match ($scope) {
-                'active' => ['CUM_customers.name'],
-                'archived' => ['CUM_customers.name', 'CUM_customers.updated_at'],
-                default => ['CUM_customers.name', 'CUM_customers.deleted_at'],
+                'active' => ['CUM_entities.name'],
+                'archived' => ['CUM_entities.name', 'CUM_entities.updated_at'],
+                default => ['CUM_entities.name', 'CUM_entities.deleted_at'],
             },
         );
 
         return $columns;
     }
 
-    private function nullIntegration(): CustomerIntegration
+    private function nullIntegration(): EntityIntegration
     {
-        return new class extends CustomerIntegration {};
+        return new class extends EntityIntegration {};
     }
 }

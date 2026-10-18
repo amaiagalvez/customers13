@@ -1,53 +1,53 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Controllers\TrashController;
-use Customers13\Http\Requests\CustomerTypeListRequest;
-use Customers13\Http\Requests\CustomerTypeDestroyRequest;
-use Customers13\Http\Requests\CustomerTypeRestoreRequest;
-use Customers13\Transformers\CustomerTypeListTransformer;
-use Customers13\Queries\CustomerTypes\CustomerTypeListQuery;
+use entities13\Http\Requests\EntityTypeListRequest;
+use entities13\Http\Requests\EntityTypeDestroyRequest;
+use entities13\Http\Requests\EntityTypeRestoreRequest;
+use entities13\Transformers\EntityTypeListTransformer;
+use entities13\Queries\EntityTypes\EntityTypeListQuery;
 
 /**
- * @extends TrashController<CustomerType>
+ * @extends TrashController<EntityType>
  */
-class CustomerTypeTrashController extends TrashController
+class EntityTypeTrashController extends TrashController
 {
     public function index(
-        CustomerTypeListRequest $request,
-        CustomerTypeListQuery $query,
-        CustomerTypeListTransformer $transformer,
+        EntityTypeListRequest $request,
+        EntityTypeListQuery $query,
+        EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customerTypes = $query->trashed($search);
+        $entityTypes = $query->trashed($search);
 
-        return $this->listView($request, 'customers13::customer-types.list', [
-            'customerTypes' => $customerTypes,
+        return $this->listView($request, 'entities13::entity-types.list', [
+            'entityTypes' => $entityTypes,
             'list' => $transformer->trash(
-                $customerTypes,
+                $entityTypes,
                 $search,
-                $query->stateCounts(trashedTotal: $search === '' ? $customerTypes->total() : null),
+                $query->stateCounts(trashedTotal: $search === '' ? $entityTypes->total() : null),
             ),
         ]);
     }
 
-    public function restore(CustomerTypeRestoreRequest $request): RedirectResponse
+    public function restore(EntityTypeRestoreRequest $request): RedirectResponse
     {
         return $this->restoreTrashed($request);
     }
 
-    public function destroy(CustomerTypeDestroyRequest $request): RedirectResponse
+    public function destroy(EntityTypeDestroyRequest $request): RedirectResponse
     {
         return $this->destroyTrashed($request);
     }
 
     /**
-     * @param  CustomerType  $record
+     * @param  EntityType  $record
      */
     protected function restoreTrashedRecord(Model $record): void
     {
@@ -58,14 +58,14 @@ class CustomerTypeTrashController extends TrashController
      * A type is named in four languages and restoring it puts all four back, so any of them being
      * taken by a live type makes the restore impossible.
      *
-     * @param  CustomerType  $record
+     * @param  EntityType  $record
      */
     protected function nameIsTaken(Model $record): bool
     {
-        foreach (CustomerType::NAME_FIELDS as $column) {
+        foreach (EntityType::NAME_FIELDS as $column) {
             $name = $record->getAttribute($column);
 
-            if ($name !== null && CustomerType::query()->where($column, $name)->exists()) {
+            if ($name !== null && EntityType::query()->where($column, $name)->exists()) {
                 return true;
             }
         }
@@ -75,11 +75,11 @@ class CustomerTypeTrashController extends TrashController
 
     protected function recordClass(): string
     {
-        return CustomerType::class;
+        return EntityType::class;
     }
 
     protected function trashRoute(): string
     {
-        return 'customer-types.trash.index';
+        return 'entity-types.trash.index';
     }
 }

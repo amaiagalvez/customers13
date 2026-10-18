@@ -1,10 +1,10 @@
 <?php
 
-namespace Customers13\Tests\Unit\CustomerTypes;
+namespace entities13\Tests\Unit\EntityTypes;
 
 use PHPUnit\Framework\TestCase;
 
-class CustomerTypeTranslationTest extends TestCase
+class EntityTypeTranslationTest extends TestCase
 {
     /**
      * @var list<string>
@@ -12,17 +12,17 @@ class CustomerTypeTranslationTest extends TestCase
     private const LOCALES = ['en', 'es', 'eu', 'fr'];
 
     /**
-     * The copy the customer type resource and the type column of the customer list show.
+     * The copy the entity type resource and the type column of the entity list show.
      *
      * @var list<string>
      */
     private const REQUIRED_KEYS = [
-        'Customer types',
-        'New customer type',
-        'Edit customer type',
-        'Save customer type',
-        'Update customer type',
-        'No customer types yet.',
+        'Entity types',
+        'New entity type',
+        'Edit entity type',
+        'Save entity type',
+        'Update entity type',
+        'No entity types yet.',
         'Name (eu)',
         'Name (es)',
         'Name (fr)',
@@ -58,9 +58,9 @@ class CustomerTypeTranslationTest extends TestCase
 
     public function test_the_copy_is_actually_translated(): void
     {
-        $this->assertSame('Tipos de cliente', $this->lines('es')['Customer types']);
-        $this->assertSame('Bezero motak', $this->lines('eu')['Customer types']);
-        $this->assertSame('Types de client', $this->lines('fr')['Customer types']);
+        $this->assertSame('Tipos de cliente', $this->lines('es')['Entity types']);
+        $this->assertSame('Bezero motak', $this->lines('eu')['Entity types']);
+        $this->assertSame('Types de client', $this->lines('fr')['Entity types']);
     }
 
     /**
@@ -68,7 +68,7 @@ class CustomerTypeTranslationTest extends TestCase
      */
     private function lines(string $locale): array
     {
-        $file = dirname(__DIR__, 3).'/resources/lang/'.$locale.'.json';
+        $file = dirname(__DIR__, 3) . '/resources/lang/' . $locale . '.json';
         $this->assertFileExists($file);
 
         $decoded = json_decode((string) file_get_contents($file), true, 512, JSON_THROW_ON_ERROR);

@@ -2,7 +2,7 @@
 
 return [
     'attributes' => [
-        'customer_id' => 'bezeroaren ID',
+        'entity_id' => 'bezeroaren ID',
         'name_eu' => 'euskarazko izena',
         'name_es' => 'gaztelaniazko izena',
         'name_fr' => 'frantsesezko izena',

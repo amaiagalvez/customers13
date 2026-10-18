@@ -1,6 +1,6 @@
 <?php
 
-namespace Customers13\Tests;
+namespace entities13\Tests;
 
 use App\Models\User;
 use Flux\FluxServiceProvider;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Basics13\Tests\TestCase as Basics13TestCase;
 use Basics13\Support\Testing\ValidatesFormRequests;
-use Customers13\ServiceProvider as Customers13ServiceProvider;
+use entities13\ServiceProvider as entities13ServiceProvider;
 
 abstract class TestCase extends Basics13TestCase
 {
@@ -24,7 +24,7 @@ abstract class TestCase extends Basics13TestCase
         return [
             ...parent::getPackageProviders($app),
             FluxServiceProvider::class,
-            Customers13ServiceProvider::class,
+            entities13ServiceProvider::class,
         ];
     }
 
@@ -33,19 +33,19 @@ abstract class TestCase extends Basics13TestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('auth.providers.users.model', User::class);
-        $app['config']->set('view.compiled', dirname(__DIR__).'/storage/framework/views');
+        $app['config']->set('view.compiled', dirname(__DIR__) . '/storage/framework/views');
     }
 
     protected function defineRoutes($router): void
     {
         parent::defineRoutes($router);
 
-        Route::get('projects', static fn (): string => 'Projects')->name('projects.index');
+        Route::get('projects', static fn(): string => 'Projects')->name('projects.index');
     }
 
     protected function setUp(): void
     {
         parent::setUp();
-        Blade::anonymousComponentPath(__DIR__.'/Fixtures/views/layouts', 'layouts');
+        Blade::anonymousComponentPath(__DIR__ . '/Fixtures/views/layouts', 'layouts');
     }
 }

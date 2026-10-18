@@ -1,11 +1,11 @@
 <?php
 
-namespace Customers13\Policies;
+namespace entities13\Policies;
 
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
-class CustomerPolicy
+class EntityPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -26,7 +26,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Customer $customer): bool
+    public function update(User $user, Entity $entity): bool
     {
         return true;
     }
@@ -34,7 +34,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Customer $customer): bool
+    public function delete(User $user, Entity $entity): bool
     {
         return true;
     }
@@ -42,7 +42,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Customer $customer): bool
+    public function restore(User $user, Entity $entity): bool
     {
         return true;
     }
@@ -50,7 +50,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Customer $customer): bool
+    public function forceDelete(User $user, Entity $entity): bool
     {
         return true;
     }
@@ -58,7 +58,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can archive the model.
      */
-    public function archive(User $user, Customer $customer): bool
+    public function archive(User $user, Entity $entity): bool
     {
         return true;
     }
@@ -66,7 +66,7 @@ class CustomerPolicy
     /**
      * Determine whether the user can activate the model.
      */
-    public function activate(User $user, Customer $customer): bool
+    public function activate(User $user, Entity $entity): bool
     {
         return true;
     }

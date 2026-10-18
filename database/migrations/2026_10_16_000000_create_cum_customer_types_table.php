@@ -7,7 +7,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class extends Migration
 {
     /**
-     * The languages every customer type is named in. Euskera is the language a type always has, so
+     * The languages every entity type is named in. Euskera is the language a type always has, so
      * its column is the only one that is not nullable.
      *
      * @var list<string>
@@ -16,7 +16,7 @@ return new class extends Migration
 
     public function up(): void
     {
-        Schema::create('CUM_customer_types', function (Blueprint $table) {
+        Schema::create('CUM_entity_types', function (Blueprint $table) {
             $table->id();
             $table->string('name_eu');
             $table->string('name_es')->nullable();
@@ -31,12 +31,12 @@ return new class extends Migration
         // nothing in the others, so a type may share a Spanish name with another one as long as
         // their euskera names differ.
         foreach (self::NAME_COLUMNS as $column) {
-            addUniqueActiveColumnIndex('CUM_customer_types', $column);
+            addUniqueActiveColumnIndex('CUM_entity_types', $column);
         }
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('CUM_customer_types');
+        Schema::dropIfExists('CUM_entity_types');
     }
 };

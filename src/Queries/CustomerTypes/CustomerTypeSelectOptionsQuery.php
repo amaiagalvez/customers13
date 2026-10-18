@@ -1,17 +1,17 @@
 <?php
 
-namespace Customers13\Queries\CustomerTypes;
+namespace entities13\Queries\EntityTypes;
 
 use Illuminate\Support\Collection;
 use Basics13\Queries\ListQueryBase;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Database\Eloquent\Builder;
-use Customers13\Contracts\CustomerIntegration;
+use entities13\Contracts\EntityIntegration;
 
 /**
- * @extends ListQueryBase<CustomerType>
+ * @extends ListQueryBase<EntityType>
  */
-final class CustomerTypeSelectOptionsQuery extends ListQueryBase
+final class EntityTypeSelectOptionsQuery extends ListQueryBase
 {
     /**
      * Search columns with table prefix for the query builder.
@@ -19,16 +19,16 @@ final class CustomerTypeSelectOptionsQuery extends ListQueryBase
      * @var list<string>
      */
     private const NAME_COLUMNS = [
-        'CUM_customer_types.name_eu',
-        'CUM_customer_types.name_es',
-        'CUM_customer_types.name_fr',
-        'CUM_customer_types.name_en',
+        'CUM_entity_types.name_eu',
+        'CUM_entity_types.name_es',
+        'CUM_entity_types.name_fr',
+        'CUM_entity_types.name_en',
     ];
 
-    public function __construct(private readonly CustomerIntegration $integration) {}
+    public function __construct(private readonly EntityIntegration $integration) {}
 
     /**
-     * Options for the customer form select. Euskera is the text every option shows, while the term
+     * Options for the entity form select. Euskera is the text every option shows, while the term
      * the user types is matched against all four languages, so a type can be found by any of the
      * names it has.
      *
@@ -36,41 +36,41 @@ final class CustomerTypeSelectOptionsQuery extends ListQueryBase
      */
     public function search(string $search): Collection
     {
-        $query = CustomerType::query()
+        $query = EntityType::query()
             ->where('active', true)
-            ->orderBy('CUM_customer_types.name_eu')
-            ->orderBy('CUM_customer_types.id');
+            ->orderBy('CUM_entity_types.name_eu')
+            ->orderBy('CUM_entity_types.id');
 
         if ($search !== '') {
             $pattern = $this->searchPattern($search);
 
             $query->where(function (Builder $query) use ($pattern): void {
                 foreach (self::NAME_COLUMNS as $column) {
-                    $query->orWhereRaw($column.' LIKE ? ESCAPE \''.self::LIKE_ESCAPE.'\'', [$pattern]);
+                    $query->orWhereRaw($column . ' LIKE ? ESCAPE \'' . self::LIKE_ESCAPE . '\'', [$pattern]);
                 }
             });
         }
 
         return $query->limit(self::PER_PAGE)
             ->get(['id', 'name_eu'])
-            ->map(fn (CustomerType $customerType): array => [
-                'id' => $customerType->id,
-                'text' => $customerType->name_eu,
+            ->map(fn(EntityType $entityType): array => [
+                'id' => $entityType->id,
+                'text' => $entityType->name_eu,
             ]);
     }
 
     /**
-     * @return class-string<CustomerType>
+     * @return class-string<EntityType>
      */
     protected function getModelClass(): string
     {
-        return CustomerType::class;
+        return EntityType::class;
     }
 
     /**
      * The selector joins nothing, so the integration contributes no columns to it.
      */
-    protected function integration(): CustomerIntegration
+    protected function integration(): EntityIntegration
     {
         return $this->integration;
     }

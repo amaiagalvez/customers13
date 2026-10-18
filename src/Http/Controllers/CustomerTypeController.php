@@ -1,52 +1,52 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
-use Customers13\Http\Requests\CustomerTypeRequest;
-use Customers13\Http\Requests\CustomerTypeListRequest;
+use entities13\Http\Requests\EntityTypeRequest;
+use entities13\Http\Requests\EntityTypeListRequest;
 use Basics13\Support\Database\UniqueConstraintViolation;
-use Customers13\Transformers\CustomerTypeListTransformer;
-use Customers13\Queries\CustomerTypes\CustomerTypeListQuery;
-use Customers13\Http\Requests\CustomerTypeSelectOptionsRequest;
-use Customers13\Queries\CustomerTypes\CustomerTypeSelectOptionsQuery;
+use entities13\Transformers\EntityTypeListTransformer;
+use entities13\Queries\EntityTypes\EntityTypeListQuery;
+use entities13\Http\Requests\EntityTypeSelectOptionsRequest;
+use entities13\Queries\EntityTypes\EntityTypeSelectOptionsQuery;
 
-class CustomerTypeController extends Controller
+class EntityTypeController extends Controller
 {
     public function index(
-        CustomerTypeListRequest $request,
-        CustomerTypeListQuery $query,
-        CustomerTypeListTransformer $transformer,
+        EntityTypeListRequest $request,
+        EntityTypeListQuery $query,
+        EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customerTypes = $query->active($search);
+        $entityTypes = $query->active($search);
 
-        return $this->listView($request, 'customers13::customer-types.list', [
-            'customerTypes' => $customerTypes,
+        return $this->listView($request, 'entities13::entity-types.list', [
+            'entityTypes' => $entityTypes,
             'list' => $transformer->active(
-                $customerTypes,
+                $entityTypes,
                 $search,
-                $query->stateCounts(activeTotal: $search === '' ? $customerTypes->total() : null),
+                $query->stateCounts(activeTotal: $search === '' ? $entityTypes->total() : null),
             ),
         ]);
     }
 
     public function selectOptions(
-        CustomerTypeSelectOptionsRequest $request,
-        CustomerTypeSelectOptionsQuery $query,
+        EntityTypeSelectOptionsRequest $request,
+        EntityTypeSelectOptionsQuery $query,
     ): JsonResponse {
         return response()->json([
             'results' => $query->search($request->search()),
         ]);
     }
 
-    public function store(CustomerTypeRequest $request, CustomerTypeListQuery $query): RedirectResponse|JsonResponse
+    public function store(EntityTypeRequest $request, EntityTypeListQuery $query): RedirectResponse|JsonResponse
     {
         $name = $request->string('name_eu')->toString();
         $deletedType = $query->findTrashedByName($name);
@@ -56,43 +56,43 @@ class CustomerTypeController extends Controller
         }
 
         try {
-            $customerType = CustomerType::create($request->validated());
+            $entityType = EntityType::create($request->validated());
         } catch (QueryException $exception) {
             $this->failOnDuplicatedName($exception);
         }
 
         if ($request->expectsJson()) {
-            return response()->json($customerType->only(['id', 'name_eu']), 201);
+            return response()->json($entityType->only(['id', 'name_eu']), 201);
         }
 
-        return to_route('customer-types.index')->with('status', __('basics13::messages.created'));
+        return to_route('entity-types.index')->with('status', __('basics13::messages.created'));
     }
 
-    public function update(CustomerTypeRequest $request, CustomerType $customerType): RedirectResponse
+    public function update(EntityTypeRequest $request, EntityType $entityType): RedirectResponse
     {
         try {
-            $customerType->update($request->validated());
+            $entityType->update($request->validated());
         } catch (QueryException $exception) {
             $this->failOnDuplicatedName($exception);
         }
 
-        return to_route('customer-types.index')->with('status', __('basics13::messages.updated'));
+        return to_route('entity-types.index')->with('status', __('basics13::messages.updated'));
     }
 
-    public function destroy(CustomerType $customerType): RedirectResponse
+    public function destroy(EntityType $entityType): RedirectResponse
     {
-        $this->authorize('delete', $customerType);
+        $this->authorize('delete', $entityType);
 
-        // The deleting hook holds the row lock and refuses the delete while a customer holds the
+        // The deleting hook holds the row lock and refuses the delete while a entity holds the
         // type, so the controller only has to run it inside a transaction and report the outcome.
-        $deleted = DB::transaction(static fn (): bool => $customerType->delete() !== false);
+        $deleted = DB::transaction(static fn(): bool => $entityType->delete() !== false);
 
         if (! $deleted) {
-            return to_route('customer-types.index')
+            return to_route('entity-types.index')
                 ->with('error', __('basics13::messages.cannot_delete_related'));
         }
 
-        return to_route('customer-types.index')->with('status', __('basics13::messages.moved_to_trash'));
+        return to_route('entity-types.index')->with('status', __('basics13::messages.moved_to_trash'));
     }
 
     /**
@@ -104,8 +104,8 @@ class CustomerTypeController extends Controller
      * generic conflict of the base controller carries.
      */
     private function trashedTypeConflict(
-        CustomerTypeRequest $request,
-        CustomerType $trashedType,
+        EntityTypeRequest $request,
+        EntityType $trashedType,
     ): RedirectResponse|JsonResponse {
         $payload = [
             'id' => $trashedType->getKey(),
@@ -121,9 +121,9 @@ class CustomerTypeController extends Controller
             ], 409);
         }
 
-        return to_route('customer-types.index')
+        return to_route('entity-types.index')
             ->withInput()
-            ->with('deleted_customer_type_conflict', $payload);
+            ->with('deleted_entity_type_conflict', $payload);
     }
 
     /**
@@ -145,8 +145,8 @@ class CustomerTypeController extends Controller
     {
         $message = (string) ($exception->errorInfo[2] ?? $exception->getMessage());
 
-        foreach (CustomerType::NAME_FIELDS as $field) {
-            if (str_contains($message, 'active_'.$field) || str_contains($message, '.'.$field)) {
+        foreach (EntityType::NAME_FIELDS as $field) {
+            if (str_contains($message, 'active_' . $field) || str_contains($message, '.' . $field)) {
                 return $field;
             }
         }

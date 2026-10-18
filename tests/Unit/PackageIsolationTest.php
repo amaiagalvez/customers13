@@ -1,6 +1,6 @@
 <?php
 
-namespace Customers13\Tests\Unit;
+namespace entities13\Tests\Unit;
 
 use Generator;
 use SplFileInfo;
@@ -29,7 +29,7 @@ class PackageIsolationTest extends TestCase
      */
     private const FORBIDDEN = [
         'App\\' => 'App\\',
-        'CustomerProjects13' => 'CustomerProjects13',
+        'EntityProjects13' => 'EntityProjects13',
         'Projects13' => 'Projects13',
         'PRO_projects' => 'PRO_projects',
         'PRO_epics' => 'PRO_epics',
@@ -59,10 +59,10 @@ class PackageIsolationTest extends TestCase
         $this->assertSame(
             [],
             $offences,
-            'customers13 must work without projects13 installed, but its production code still '
-            .'names it. Move whatever needs a project into the integration package, and keep the '
-            .'contract in Customers13\\Contracts\\CustomerIntegration as the only seam.'.PHP_EOL
-            .PHP_EOL.implode(PHP_EOL, $offences),
+            'entities13 must work without projects13 installed, but its production code still '
+                . 'names it. Move whatever needs a project into the integration package, and keep the '
+                . 'contract in entities13\\Contracts\\EntityIntegration as the only seam.' . PHP_EOL
+                . PHP_EOL . implode(PHP_EOL, $offences),
         );
     }
 
@@ -75,7 +75,7 @@ class PackageIsolationTest extends TestCase
     public function test_the_package_tests_do_not_require_projects_or_the_bridge(): void
     {
         $files = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator(dirname(__DIR__).'/'),
+            new RecursiveDirectoryIterator(dirname(__DIR__) . '/'),
         );
 
         foreach ($files as $file) {
@@ -86,7 +86,7 @@ class PackageIsolationTest extends TestCase
             $source = file_get_contents($file->getPathname());
             $this->assertIsString($source);
             $this->assertStringNotContainsString('Projects13\\', $source, $file->getPathname());
-            $this->assertStringNotContainsString('CustomerProjects13\\', $source, $file->getPathname());
+            $this->assertStringNotContainsString('EntityProjects13\\', $source, $file->getPathname());
         }
     }
 
@@ -98,7 +98,7 @@ class PackageIsolationTest extends TestCase
         $root = dirname(__DIR__, 2);
 
         foreach (self::PRODUCTION_DIRECTORIES as $directory) {
-            $path = $root.'/'.$directory;
+            $path = $root . '/' . $directory;
 
             if (! is_dir($path)) {
                 continue;
@@ -120,7 +120,7 @@ class PackageIsolationTest extends TestCase
     private function offencesIn(SplFileInfo $file): array
     {
         $contents = (string) file_get_contents($file->getPathname());
-        $relative = str_replace(dirname(__DIR__, 2).'/', '', $file->getPathname());
+        $relative = str_replace(dirname(__DIR__, 2) . '/', '', $file->getPathname());
         $offences = [];
 
         foreach (self::FORBIDDEN as $needle) {

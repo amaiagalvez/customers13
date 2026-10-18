@@ -2,7 +2,7 @@
 
 return [
     'attributes' => [
-        'customer_id' => 'customer ID',
+        'entity_id' => 'entity ID',
         'name_eu' => 'name in Euskera',
         'name_es' => 'name in Spanish',
         'name_fr' => 'name in French',

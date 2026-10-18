@@ -1,22 +1,22 @@
 <?php
 
-namespace Customers13\Http\Requests;
+namespace entities13\Http\Requests;
 
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Requests\RestoreRequest;
 
 /**
- * @extends RestoreRequest<CustomerType>
+ * @extends RestoreRequest<EntityType>
  */
-final class CustomerTypeRestoreRequest extends RestoreRequest
+final class EntityTypeRestoreRequest extends RestoreRequest
 {
     /**
-     * @return CustomerType
+     * @return EntityType
      */
     protected function findTrashed(): Model
     {
-        return CustomerType::onlyTrashed()
-            ->findOrFail((int) $this->route('customer_type'));
+        return EntityType::onlyTrashed()
+            ->findOrFail((int) $this->route('entity_type'));
     }
 }

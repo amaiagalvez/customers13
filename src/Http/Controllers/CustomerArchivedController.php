@@ -1,52 +1,52 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Http\RedirectResponse;
 use Basics13\Http\Controllers\ArchivedController;
-use Customers13\Http\Requests\CustomerListRequest;
-use Customers13\Queries\Customers\CustomerListQuery;
-use Customers13\Transformers\CustomerListTransformer;
+use entities13\Http\Requests\EntityListRequest;
+use entities13\Queries\Entities\EntityListQuery;
+use entities13\Transformers\EntityListTransformer;
 
-class CustomerArchivedController extends ArchivedController
+class EntityArchivedController extends ArchivedController
 {
     public function index(
-        CustomerListRequest $request,
-        CustomerListQuery $query,
-        CustomerListTransformer $transformer,
+        EntityListRequest $request,
+        EntityListQuery $query,
+        EntityListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customers = $query->archived($search);
+        $entities = $query->archived($search);
 
-        return $this->listView($request, 'customers13::customers.list', [
-            'customers' => $customers,
+        return $this->listView($request, 'entities13::entities.list', [
+            'entities' => $entities,
             'list' => $transformer->archived(
-                $customers,
+                $entities,
                 $search,
-                $query->stateCounts(archivedTotal: $search === '' ? $customers->total() : null),
+                $query->stateCounts(archivedTotal: $search === '' ? $entities->total() : null),
             ),
         ]);
     }
 
-    public function archive(Customer $customer): RedirectResponse
+    public function archive(Entity $entity): RedirectResponse
     {
-        return $this->archiveRecord($customer);
+        return $this->archiveRecord($entity);
     }
 
-    public function activate(Customer $customer): RedirectResponse
+    public function activate(Entity $entity): RedirectResponse
     {
-        return $this->activateRecord($customer);
+        return $this->activateRecord($entity);
     }
 
     protected function activeRoute(): string
     {
-        return 'customers.index';
+        return 'entities.index';
     }
 
     protected function archivedRoute(): string
     {
-        return 'customers.archived.index';
+        return 'entities.archived.index';
     }
 }

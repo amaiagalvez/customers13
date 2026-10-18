@@ -1,20 +1,20 @@
 <?php
 
-namespace Customers13\Tests\Unit\Policies;
+namespace entities13\Tests\Unit\Policies;
 
 use App\Models\User;
-use Customers13\Tests\TestCase;
-use Customers13\Models\Customer;
-use Customers13\Policies\CustomerPolicy;
+use entities13\Tests\TestCase;
+use entities13\Models\Entity;
+use entities13\Policies\EntityPolicy;
 
-class CustomerPolicyTest extends TestCase
+class EntityPolicyTest extends TestCase
 {
-    private CustomerPolicy $policy;
+    private EntityPolicy $policy;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new CustomerPolicy;
+        $this->policy = new EntityPolicy;
     }
 
     public function test_view_any_returns_true(): void
@@ -34,48 +34,48 @@ class CustomerPolicyTest extends TestCase
     public function test_update_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->update($user, $customer));
+        $this->assertTrue($this->policy->update($user, $entity));
     }
 
     public function test_delete_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->delete($user, $customer));
+        $this->assertTrue($this->policy->delete($user, $entity));
     }
 
     public function test_restore_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->restore($user, $customer));
+        $this->assertTrue($this->policy->restore($user, $entity));
     }
 
     public function test_force_delete_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->forceDelete($user, $customer));
+        $this->assertTrue($this->policy->forceDelete($user, $entity));
     }
 
     public function test_archive_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->archive($user, $customer));
+        $this->assertTrue($this->policy->archive($user, $entity));
     }
 
     public function test_activate_returns_true(): void
     {
         $user = new User;
-        $customer = new Customer(['name' => 'Customer under test']);
+        $entity = new Entity(['name' => 'Entity under test']);
 
-        $this->assertTrue($this->policy->activate($user, $customer));
+        $this->assertTrue($this->policy->activate($user, $entity));
     }
 }

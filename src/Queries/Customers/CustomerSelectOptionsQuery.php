@@ -1,19 +1,19 @@
 <?php
 
-namespace Customers13\Queries\Customers;
+namespace entities13\Queries\Entities;
 
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Support\Collection;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
-use Customers13\Contracts\CustomerIntegration;
+use entities13\Contracts\EntityIntegration;
 
 /**
- * @extends ListQueryBase<Customer>
+ * @extends ListQueryBase<Entity>
  */
-final class CustomerSelectOptionsQuery extends ListQueryBase
+final class EntitySelectOptionsQuery extends ListQueryBase
 {
-    public function __construct(private readonly CustomerIntegration $integration) {}
+    public function __construct(private readonly EntityIntegration $integration) {}
 
     /**
      * @return Collection<int, array{id: int, text: string}>
@@ -22,31 +22,31 @@ final class CustomerSelectOptionsQuery extends ListQueryBase
     {
         $pattern = $this->searchPattern($search);
 
-        return Customer::query()
+        return Entity::query()
             ->where('active', true)
-            ->when($search !== '', fn (Builder $query) => $query->whereRaw(
-                'CUM_customers.name LIKE ? ESCAPE \''.self::LIKE_ESCAPE.'\'',
+            ->when($search !== '', fn(Builder $query) => $query->whereRaw(
+                'CUM_entities.name LIKE ? ESCAPE \'' . self::LIKE_ESCAPE . '\'',
                 [$pattern],
             ))
-            ->orderBy('CUM_customers.name')
-            ->orderBy('CUM_customers.id')
+            ->orderBy('CUM_entities.name')
+            ->orderBy('CUM_entities.id')
             ->limit(self::PER_PAGE)
             ->get(['id', 'name'])
-            ->map(fn (Customer $customer): array => [
-                'id' => $customer->id,
-                'text' => $customer->name,
+            ->map(fn(Entity $entity): array => [
+                'id' => $entity->id,
+                'text' => $entity->name,
             ]);
     }
 
     /**
-     * @return class-string<Customer>
+     * @return class-string<Entity>
      */
     protected function getModelClass(): string
     {
-        return Customer::class;
+        return Entity::class;
     }
 
-    protected function integration(): CustomerIntegration
+    protected function integration(): EntityIntegration
     {
         return $this->integration;
     }

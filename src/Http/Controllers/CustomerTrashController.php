@@ -1,53 +1,53 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Controllers\TrashController;
-use Customers13\Http\Requests\CustomerListRequest;
-use Customers13\Queries\Customers\CustomerListQuery;
-use Customers13\Http\Requests\CustomerDestroyRequest;
-use Customers13\Http\Requests\CustomerRestoreRequest;
-use Customers13\Transformers\CustomerListTransformer;
+use entities13\Http\Requests\EntityListRequest;
+use entities13\Queries\Entities\EntityListQuery;
+use entities13\Http\Requests\EntityDestroyRequest;
+use entities13\Http\Requests\EntityRestoreRequest;
+use entities13\Transformers\EntityListTransformer;
 
 /**
- * @extends TrashController<Customer>
+ * @extends TrashController<Entity>
  */
-class CustomerTrashController extends TrashController
+class EntityTrashController extends TrashController
 {
     public function index(
-        CustomerListRequest $request,
-        CustomerListQuery $query,
-        CustomerListTransformer $transformer,
+        EntityListRequest $request,
+        EntityListQuery $query,
+        EntityListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customers = $query->trashed($search);
+        $entities = $query->trashed($search);
 
-        return $this->listView($request, 'customers13::customers.list', [
-            'customers' => $customers,
+        return $this->listView($request, 'entities13::entities.list', [
+            'entities' => $entities,
             'list' => $transformer->trash(
-                $customers,
+                $entities,
                 $search,
-                $query->stateCounts(trashedTotal: $search === '' ? $customers->total() : null),
+                $query->stateCounts(trashedTotal: $search === '' ? $entities->total() : null),
             ),
         ]);
     }
 
-    public function restore(CustomerRestoreRequest $request): RedirectResponse
+    public function restore(EntityRestoreRequest $request): RedirectResponse
     {
         return $this->restoreTrashed($request);
     }
 
-    public function destroy(CustomerDestroyRequest $request): RedirectResponse
+    public function destroy(EntityDestroyRequest $request): RedirectResponse
     {
         return $this->destroyTrashed($request);
     }
 
     /**
-     * @param  Customer  $record
+     * @param  Entity  $record
      */
     protected function restoreTrashedRecord(Model $record): void
     {
@@ -55,20 +55,20 @@ class CustomerTrashController extends TrashController
     }
 
     /**
-     * @param  Customer  $record
+     * @param  Entity  $record
      */
     protected function nameIsTaken(Model $record): bool
     {
-        return $this->takenBy(Customer::query(), $record->name);
+        return $this->takenBy(Entity::query(), $record->name);
     }
 
     protected function recordClass(): string
     {
-        return Customer::class;
+        return Entity::class;
     }
 
     protected function trashRoute(): string
     {
-        return 'customers.trash.index';
+        return 'entities.trash.index';
     }
 }

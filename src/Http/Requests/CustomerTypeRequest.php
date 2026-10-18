@@ -1,14 +1,14 @@
 <?php
 
-namespace Customers13\Http\Requests;
+namespace entities13\Http\Requests;
 
 use Illuminate\Validation\Rule;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Validation\Rules\Unique;
 use Basics13\Support\Validation\MaxLength;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CustomerTypeRequest extends FormRequest
+class EntityTypeRequest extends FormRequest
 {
     /**
      * Trim every name, and turn a blank translation into an absent one: a language with no name is
@@ -18,7 +18,7 @@ class CustomerTypeRequest extends FormRequest
     {
         $names = [];
 
-        foreach (CustomerType::NAME_FIELDS as $field) {
+        foreach (EntityType::NAME_FIELDS as $field) {
             $value = $this->input($field);
 
             if (! is_string($value)) {
@@ -34,11 +34,11 @@ class CustomerTypeRequest extends FormRequest
 
     public function authorize(): bool
     {
-        $customerType = $this->route('customer_type');
+        $entityType = $this->route('entity_type');
 
-        return $customerType
-            ? ($this->user()?->can('update', $customerType) ?? false)
-            : ($this->user()?->can('create', CustomerType::class) ?? false);
+        return $entityType
+            ? ($this->user()?->can('update', $entityType) ?? false)
+            : ($this->user()?->can('create', EntityType::class) ?? false);
     }
 
     /**
@@ -51,13 +51,13 @@ class CustomerTypeRequest extends FormRequest
                 'required',
                 'string',
                 'min:2',
-                'max:'.MaxLength::string(),
+                'max:' . MaxLength::string(),
                 $this->uniqueName('name_eu'),
             ],
-            'name_es' => ['nullable', 'string', 'max:'.MaxLength::string(), $this->uniqueName('name_es')],
-            'name_fr' => ['nullable', 'string', 'max:'.MaxLength::string(), $this->uniqueName('name_fr')],
-            'name_en' => ['nullable', 'string', 'max:'.MaxLength::string(), $this->uniqueName('name_en')],
-            'notes' => ['nullable', 'string', 'max:'.MaxLength::longText()],
+            'name_es' => ['nullable', 'string', 'max:' . MaxLength::string(), $this->uniqueName('name_es')],
+            'name_fr' => ['nullable', 'string', 'max:' . MaxLength::string(), $this->uniqueName('name_fr')],
+            'name_en' => ['nullable', 'string', 'max:' . MaxLength::string(), $this->uniqueName('name_en')],
+            'notes' => ['nullable', 'string', 'max:' . MaxLength::longText()],
             'reuse_deleted_name' => ['sometimes', 'boolean'],
         ];
     }
@@ -69,8 +69,8 @@ class CustomerTypeRequest extends FormRequest
      */
     private function uniqueName(string $column): Unique
     {
-        return Rule::unique(CustomerType::class, $column)
-            ->ignore($this->route('customer_type'))
+        return Rule::unique(EntityType::class, $column)
+            ->ignore($this->route('entity_type'))
             ->whereNull('deleted_at');
     }
 }

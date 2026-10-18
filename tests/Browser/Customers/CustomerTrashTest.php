@@ -1,87 +1,87 @@
 <?php
 
-namespace Customers13\Tests\Browser\Customers;
+namespace entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
-use Customers13\Models\Customer;
-use Customers13\Tests\DuskTestCase;
+use entities13\Models\Entity;
+use entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class CustomerTrashTest extends DuskTestCase
+class EntityTrashTest extends DuskTestCase
 {
-    private const CUSTOMER_CONFIRM_SUBMIT_SELECTOR = 'dialog[open] [data-test="customer-confirm-submit"]';
+    private const ENTITY_CONFIRM_SUBMIT_SELECTOR = 'dialog[open] [data-test="entity-confirm-submit"]';
 
-    private const CUSTOMER_ERROR_SELECTOR = '[data-test="customer-error"]';
+    private const ENTITY_ERROR_SELECTOR = '[data-test="entity-error"]';
 
     use DatabaseMigrations;
 
-    public function test_trash_list_searches_deleted_customers_without_showing_live_records(): void
+    public function test_trash_list_searches_deleted_entities_without_showing_live_records(): void
     {
         $user = $this->user();
 
-        Customer::factory()->trashed()->create(['name' => 'Matching deleted customer']);
-        Customer::factory()->trashed()->create(['name' => 'Other deleted customer']);
-        Customer::factory()->create(['name' => 'Matching active customer']);
+        Entity::factory()->trashed()->create(['name' => 'Matching deleted entity']);
+        Entity::factory()->trashed()->create(['name' => 'Other deleted entity']);
+        Entity::factory()->create(['name' => 'Matching active entity']);
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
-                ->visit('/customers/trash?search=Matching')
-                ->assertSee('Matching deleted customer')
-                ->assertDontSee('Other deleted customer')
-                ->assertDontSee('Matching active customer');
+                ->visit('/entities/trash?search=Matching')
+                ->assertSee('Matching deleted entity')
+                ->assertDontSee('Other deleted entity')
+                ->assertDontSee('Matching active entity');
         });
     }
 
-    public function test_customer_can_be_restored_and_permanently_deleted(): void
+    public function test_entity_can_be_restored_and_permanently_deleted(): void
     {
         $user = $this->user();
-        $customer = Customer::factory()->create(['name' => 'Customer to restore and delete']);
+        $entity = Entity::factory()->create(['name' => 'Entity to restore and delete']);
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
-            $customer->delete();
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
+            $entity->delete();
 
             $browser->loginAs($user)
-                ->visit('/customers/trash')
-                ->click("[data-test='customer-restore-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->click(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->waitFor('[data-test="customer-status"]')
+                ->visit('/entities/trash')
+                ->click("[data-test='entity-restore-{$entity->id}']")
+                ->waitFor(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->click(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->waitFor('[data-test="entity-status"]')
                 ->assertSee(__('basics13::messages.restored'));
 
-            $this->assertNotSoftDeleted($customer);
+            $this->assertNotSoftDeleted($entity);
 
-            $customer->refresh()->delete();
+            $entity->refresh()->delete();
 
-            $browser->visit('/customers/trash')
-                ->click("[data-test='customer-force-delete-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->click(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->waitFor('[data-test="customer-status"]')
+            $browser->visit('/entities/trash')
+                ->click("[data-test='entity-force-delete-{$entity->id}']")
+                ->waitFor(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->click(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->waitFor('[data-test="entity-status"]')
                 ->assertSee(__('basics13::messages.permanently_deleted'));
         });
 
-        $this->assertModelMissing($customer);
+        $this->assertModelMissing($entity);
     }
 
-    public function test_restore_is_rejected_when_an_active_customer_has_reused_the_name(): void
+    public function test_restore_is_rejected_when_an_active_entity_has_reused_the_name(): void
     {
         $user = $this->user();
 
-        $trashedCustomer = Customer::factory()->create(['name' => 'Reused customer']);
-        $trashedCustomer->delete();
-        $activeCustomer = Customer::factory()->create(['name' => 'Reused customer']);
+        $trashedEntity = Entity::factory()->create(['name' => 'Reused entity']);
+        $trashedEntity->delete();
+        $activeEntity = Entity::factory()->create(['name' => 'Reused entity']);
 
-        $this->browse(function (Browser $browser) use ($user, $trashedCustomer): void {
+        $this->browse(function (Browser $browser) use ($user, $trashedEntity): void {
             $browser->loginAs($user)
-                ->visit('/customers/trash')
-                ->click("[data-test='customer-restore-{$trashedCustomer->id}']")
-                ->waitFor(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->click(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->waitFor(self::CUSTOMER_ERROR_SELECTOR)
+                ->visit('/entities/trash')
+                ->click("[data-test='entity-restore-{$trashedEntity->id}']")
+                ->waitFor(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->click(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->waitFor(self::ENTITY_ERROR_SELECTOR)
                 ->assertSee(__('basics13::messages.cannot_restore_name_taken'));
         });
 
-        $this->assertSoftDeleted($trashedCustomer);
-        $this->assertModelExists($activeCustomer);
+        $this->assertSoftDeleted($trashedEntity);
+        $this->assertModelExists($activeEntity);
     }
 }

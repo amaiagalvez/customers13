@@ -1,11 +1,11 @@
 <?php
 
-namespace Customers13\Policies;
+namespace entities13\Policies;
 
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
-class CustomerTypePolicy
+class EntityTypePolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -26,7 +26,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, CustomerType $customerType): bool
+    public function update(User $user, EntityType $entityType): bool
     {
         return true;
     }
@@ -34,7 +34,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, CustomerType $customerType): bool
+    public function delete(User $user, EntityType $entityType): bool
     {
         return true;
     }
@@ -42,7 +42,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, CustomerType $customerType): bool
+    public function restore(User $user, EntityType $entityType): bool
     {
         return true;
     }
@@ -50,7 +50,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, CustomerType $customerType): bool
+    public function forceDelete(User $user, EntityType $entityType): bool
     {
         return true;
     }
@@ -58,7 +58,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can archive the model.
      */
-    public function archive(User $user, CustomerType $customerType): bool
+    public function archive(User $user, EntityType $entityType): bool
     {
         return true;
     }
@@ -66,7 +66,7 @@ class CustomerTypePolicy
     /**
      * Determine whether the user can activate the model.
      */
-    public function activate(User $user, CustomerType $customerType): bool
+    public function activate(User $user, EntityType $entityType): bool
     {
         return true;
     }

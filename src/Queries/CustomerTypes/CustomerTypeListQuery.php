@@ -1,19 +1,19 @@
 <?php
 
-namespace Customers13\Queries\CustomerTypes;
+namespace entities13\Queries\EntityTypes;
 
 use Basics13\Queries\ListQueryBase;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Customers13\Contracts\CustomerIntegration;
+use entities13\Contracts\EntityIntegration;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
- * @extends ListQueryBase<CustomerType>
+ * @extends ListQueryBase<EntityType>
  */
-final class CustomerTypeListQuery extends ListQueryBase
+final class EntityTypeListQuery extends ListQueryBase
 {
     /**
      * Search columns with table prefix for the query builder.
@@ -21,66 +21,66 @@ final class CustomerTypeListQuery extends ListQueryBase
      * @var list<string>
      */
     private const NAME_COLUMNS = [
-        'CUM_customer_types.name_eu',
-        'CUM_customer_types.name_es',
-        'CUM_customer_types.name_fr',
-        'CUM_customer_types.name_en',
+        'CUM_entity_types.name_eu',
+        'CUM_entity_types.name_es',
+        'CUM_entity_types.name_fr',
+        'CUM_entity_types.name_en',
     ];
 
-    public function __construct(private readonly CustomerIntegration $integration) {}
+    public function __construct(private readonly EntityIntegration $integration) {}
 
     /**
-     * @return LengthAwarePaginator<int, CustomerType>
+     * @return LengthAwarePaginator<int, EntityType>
      */
     public function active(string $search): LengthAwarePaginator
     {
         // Euskera names the type everywhere, so it is what the list is ordered by. The id breaks
         // ties the same way the archived and trash lists do.
         return $this->paginate(
-            $this->withCustomersCount(CustomerType::query()
-                ->where('CUM_customer_types.active', true)
-                ->orderBy('CUM_customer_types.name_eu')
-                ->orderBy('CUM_customer_types.id')),
+            $this->withEntitiesCount(EntityType::query()
+                ->where('CUM_entity_types.active', true)
+                ->orderBy('CUM_entity_types.name_eu')
+                ->orderBy('CUM_entity_types.id')),
             $search,
             searchColumns: self::NAME_COLUMNS,
         );
     }
 
     /**
-     * @return LengthAwarePaginator<int, CustomerType>
+     * @return LengthAwarePaginator<int, EntityType>
      */
     public function archived(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withCustomersCount(CustomerType::query()
-                ->where('CUM_customer_types.active', false)
-                ->orderBy('CUM_customer_types.name_eu')
-                ->orderBy('CUM_customer_types.id')),
+            $this->withEntitiesCount(EntityType::query()
+                ->where('CUM_entity_types.active', false)
+                ->orderBy('CUM_entity_types.name_eu')
+                ->orderBy('CUM_entity_types.id')),
             $search,
-            searchColumns: [...self::NAME_COLUMNS, 'CUM_customer_types.updated_at'],
+            searchColumns: [...self::NAME_COLUMNS, 'CUM_entity_types.updated_at'],
         );
     }
 
     /**
-     * @return LengthAwarePaginator<int, CustomerType>
+     * @return LengthAwarePaginator<int, EntityType>
      */
     public function trashed(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withCustomersCount(CustomerType::onlyTrashed()
+            $this->withEntitiesCount(EntityType::onlyTrashed()
                 ->latest('deleted_at')
                 ->orderBy('id')),
             $search,
-            searchColumns: [...self::NAME_COLUMNS, 'CUM_customer_types.deleted_at'],
+            searchColumns: [...self::NAME_COLUMNS, 'CUM_entity_types.deleted_at'],
         );
     }
 
     /**
-     * @return class-string<CustomerType>
+     * @return class-string<EntityType>
      */
     protected function getModelClass(): string
     {
-        return CustomerType::class;
+        return EntityType::class;
     }
 
     /**
@@ -88,7 +88,7 @@ final class CustomerTypeListQuery extends ListQueryBase
      * implemented because the base declares it, and kept injected so every list query of this
      * package takes its integration the same way.
      */
-    protected function integration(): CustomerIntegration
+    protected function integration(): EntityIntegration
     {
         return $this->integration;
     }
@@ -97,7 +97,7 @@ final class CustomerTypeListQuery extends ListQueryBase
      * A trashed type is found by its euskera name, which is the one the create form names first and
      * the only name a type is required to have.
      *
-     * @param  Builder<CustomerType>  $query
+     * @param  Builder<EntityType>  $query
      */
     protected function firstTrashedByName(Builder $query, string $name): ?Model
     {
@@ -105,17 +105,17 @@ final class CustomerTypeListQuery extends ListQueryBase
     }
 
     /**
-     * How many customers hold the type, deleted ones included: a type in the trash keeps the pivot
-     * rows of the customers that held it, and that count is what the list needs to know before it
+     * How many entities hold the type, deleted ones included: a type in the trash keeps the pivot
+     * rows of the entities that held it, and that count is what the list needs to know before it
      * offers to delete a type instead of archiving it.
      *
-     * @param  Builder<CustomerType>  $query
-     * @return Builder<CustomerType>
+     * @param  Builder<EntityType>  $query
+     * @return Builder<EntityType>
      */
-    private function withCustomersCount(Builder $query): Builder
+    private function withEntitiesCount(Builder $query): Builder
     {
         return $query->withCount([
-            'customers' => fn (Builder $customers): Builder => $customers
+            'entities' => fn(Builder $entities): Builder => $entities
                 ->withoutGlobalScope(SoftDeletingScope::class),
         ]);
     }

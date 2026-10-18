@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Create a new customer' => 'Ezkilak berria sortzeko',
+    'Create a new entity' => 'Ezkilak berria sortzeko',
     'Edit' => 'Aldatu',
     'Update' => 'Atzitu',
     'Delete' => 'Ezabatu',

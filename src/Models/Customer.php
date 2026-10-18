@@ -1,14 +1,14 @@
 <?php
 
-namespace Customers13\Models;
+namespace entities13\Models;
 
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Model;
-use Customers13\Policies\CustomerPolicy;
+use entities13\Policies\EntityPolicy;
 use Basics13\Concerns\TracksAuditColumns;
 use Basics13\Concerns\TransactionalDelete;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Customers13\Database\Factories\CustomerFactory;
+use entities13\Database\Factories\EntityFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,11 +28,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @property-read CarbonImmutable|null $deleted_at
  */
 #[Fillable(['name', 'notes'])]
-#[UsePolicy(CustomerPolicy::class)]
-#[UseFactory(CustomerFactory::class)]
-class Customer extends Model
+#[UsePolicy(EntityPolicy::class)]
+#[UseFactory(EntityFactory::class)]
+class Entity extends Model
 {
-    /** @use HasFactory<CustomerFactory> */
+    /** @use HasFactory<EntityFactory> */
     use HasFactory, SoftDeletes, TracksAuditColumns, TransactionalDelete;
 
     /**
@@ -40,7 +40,7 @@ class Customer extends Model
      *
      * @var string
      */
-    protected $table = 'CUM_customers';
+    protected $table = 'CUM_entities';
 
     /**
      * @var array{active: bool}
@@ -60,15 +60,15 @@ class Customer extends Model
     }
 
     /**
-     * The types this customer is categorised with. A customer holds as many as it needs, and the
-     * pivot row survives the customer's soft delete so the type stays in use while it is in the
+     * The types this entity is categorised with. A entity holds as many as it needs, and the
+     * pivot row survives the entity's soft delete so the type stays in use while it is in the
      * trash.
      *
-     * @return BelongsToMany<CustomerType, $this>
+     * @return BelongsToMany<EntityType, $this>
      */
-    public function customerTypes(): BelongsToMany
+    public function entityTypes(): BelongsToMany
     {
-        return $this->belongsToMany(CustomerType::class, 'CUM_customer_customer_type', 'customer_id', 'customer_type_id')
+        return $this->belongsToMany(EntityType::class, 'CUM_entity_entity_type', 'entity_id', 'entity_type_id')
             ->withTimestamps();
     }
 }

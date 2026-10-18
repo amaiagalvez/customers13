@@ -1,51 +1,51 @@
 <?php
 
-namespace Customers13\Tests\Browser\Customers;
+namespace entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
-use Customers13\Models\Customer;
-use Customers13\Tests\DuskTestCase;
+use entities13\Models\Entity;
+use entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class CustomerCrudTest extends DuskTestCase
+class EntityCrudTest extends DuskTestCase
 {
-    private const CUSTOMER_NAME_SELECTOR = 'dialog[open] [data-test="customer-name"]';
+    private const ENTITY_NAME_SELECTOR = 'dialog[open] [data-test="entity-name"]';
 
-    private const CUSTOMER_NOTES_SELECTOR = 'dialog[open] [data-test="customer-notes"]';
+    private const ENTITY_NOTES_SELECTOR = 'dialog[open] [data-test="entity-notes"]';
 
-    private const CUSTOMER_SUBMIT_SELECTOR = 'dialog[open] [data-test="customer-submit"]';
+    private const ENTITY_SUBMIT_SELECTOR = 'dialog[open] [data-test="entity-submit"]';
 
-    private const CUSTOMER_STATUS_SELECTOR = '[data-test="customer-status"]';
+    private const ENTITY_STATUS_SELECTOR = '[data-test="entity-status"]';
 
     use DatabaseMigrations;
 
-    public function test_customer_row_name_opens_the_edit_form(): void
+    public function test_entity_row_name_opens_the_edit_form(): void
     {
         $user = $this->user();
-        $customer = Customer::factory()->create(['name' => 'Editable from the row']);
+        $entity = Entity::factory()->create(['name' => 'Editable from the row']);
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click('[data-test="customer-name-'.$customer->id.'"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->assertSeeIn('dialog[open]', __('Edit customer'))
-                ->assertInputValue(self::CUSTOMER_NAME_SELECTOR, $customer->name);
+                ->visit('/entities')
+                ->click('[data-test="entity-name-' . $entity->id . '"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->assertSeeIn('dialog[open]', __('Edit entity'))
+                ->assertInputValue(self::ENTITY_NAME_SELECTOR, $entity->name);
         });
     }
 
-    public function test_customer_table_keeps_the_actions_column_stuck_to_the_end(): void
+    public function test_entity_table_keeps_the_actions_column_stuck_to_the_end(): void
     {
         $user = $this->user();
-        $longName = 'Very long customer name '.str_repeat('x', 120);
-        $customer = Customer::factory()->create(['name' => $longName]);
+        $longName = 'Very long entity name ' . str_repeat('x', 120);
+        $entity = Entity::factory()->create(['name' => $longName]);
 
-        $this->browse(function (Browser $browser) use ($user, $customer, $longName): void {
+        $this->browse(function (Browser $browser) use ($user, $entity, $longName): void {
             $browser->loginAs($user)
                 ->resize(1920, 1080)
-                ->visit('/customers?search='.urlencode($longName));
+                ->visit('/entities?search=' . urlencode($longName));
 
-            $browser->assertAttribute('[data-test="customer-name-'.$customer->id.'"]', 'title', $longName)
+            $browser->assertAttribute('[data-test="entity-name-' . $entity->id . '"]', 'title', $longName)
                 ->assertScript(
                     'getComputedStyle(document.querySelector(\'.resource-list-table tbody tr td:last-child\')).position',
                     'sticky',
@@ -56,77 +56,77 @@ class CustomerCrudTest extends DuskTestCase
                 )
                 ->resize(320, 420)
                 ->assertScript(
-                    'getComputedStyle(document.querySelector(\'[data-test="customer-name-'.$customer->id.'"]\')).textOverflow',
+                    'getComputedStyle(document.querySelector(\'[data-test="entity-name-' . $entity->id . '"]\')).textOverflow',
                     'ellipsis',
                 );
         });
     }
 
-    public function test_customer_can_be_created_updated_and_deleted_from_the_drawer(): void
+    public function test_entity_can_be_created_updated_and_deleted_from_the_drawer(): void
     {
         $user = $this->user();
-        $customerName = 'Dusk customer '.fake()->uuid();
-        $updatedCustomerName = 'Updated customer '.fake()->uuid();
-        $customerId = null;
+        $entityName = 'Dusk entity ' . fake()->uuid();
+        $updatedEntityName = 'Updated entity ' . fake()->uuid();
+        $entityId = null;
 
         $this->browse(function (Browser $browser) use (
             $user,
-            $customerName,
-            $updatedCustomerName,
-            &$customerId,
+            $entityName,
+            $updatedEntityName,
+            &$entityId,
         ): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click('[data-test="customer-create-button"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->type(self::CUSTOMER_NAME_SELECTOR, $customerName)
-                ->type(self::CUSTOMER_NOTES_SELECTOR, 'Test notes')
-                ->click(self::CUSTOMER_SUBMIT_SELECTOR)
-                ->waitFor(self::CUSTOMER_STATUS_SELECTOR)
-                ->assertSee($customerName);
+                ->visit('/entities')
+                ->click('[data-test="entity-create-button"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->type(self::ENTITY_NAME_SELECTOR, $entityName)
+                ->type(self::ENTITY_NOTES_SELECTOR, 'Test notes')
+                ->click(self::ENTITY_SUBMIT_SELECTOR)
+                ->waitFor(self::ENTITY_STATUS_SELECTOR)
+                ->assertSee($entityName);
 
-            $customer = Customer::query()->where('name', $customerName)->firstOrFail();
-            $customerId = $customer->id;
+            $entity = Entity::query()->where('name', $entityName)->firstOrFail();
+            $entityId = $entity->id;
 
-            $browser->click("[data-test='customer-edit-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->clear(self::CUSTOMER_NAME_SELECTOR)
-                ->type(self::CUSTOMER_NAME_SELECTOR, $updatedCustomerName)
-                ->click(self::CUSTOMER_SUBMIT_SELECTOR)
-                ->waitFor(self::CUSTOMER_STATUS_SELECTOR)
-                ->assertSee($updatedCustomerName)
-                ->click("[data-test='customer-delete-{$customer->id}']")
-                ->waitFor('dialog[open] [data-test="customer-confirm-submit"]')
-                ->click('dialog[open] [data-test="customer-confirm-submit"]')
-                ->waitFor(self::CUSTOMER_STATUS_SELECTOR)
-                ->assertDontSee($updatedCustomerName);
+            $browser->click("[data-test='entity-edit-{$entity->id}']")
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->clear(self::ENTITY_NAME_SELECTOR)
+                ->type(self::ENTITY_NAME_SELECTOR, $updatedEntityName)
+                ->click(self::ENTITY_SUBMIT_SELECTOR)
+                ->waitFor(self::ENTITY_STATUS_SELECTOR)
+                ->assertSee($updatedEntityName)
+                ->click("[data-test='entity-delete-{$entity->id}']")
+                ->waitFor('dialog[open] [data-test="entity-confirm-submit"]')
+                ->click('dialog[open] [data-test="entity-confirm-submit"]')
+                ->waitFor(self::ENTITY_STATUS_SELECTOR)
+                ->assertDontSee($updatedEntityName);
         });
 
-        $this->assertNotNull($customerId);
-        $this->assertSoftDeleted('CUM_customers', ['id' => $customerId]);
+        $this->assertNotNull($entityId);
+        $this->assertSoftDeleted('CUM_entities', ['id' => $entityId]);
     }
 
-    public function test_customer_creation_shows_conflict_modal_for_trashed_name(): void
+    public function test_entity_creation_shows_conflict_modal_for_trashed_name(): void
     {
         $user = $this->user();
-        $customer = Customer::factory()->create(['name' => 'Reused customer']);
-        $customer->delete();
+        $entity = Entity::factory()->create(['name' => 'Reused entity']);
+        $entity->delete();
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->click('[data-test="customer-create-button"]')
-                ->waitFor(self::CUSTOMER_NAME_SELECTOR)
-                ->type(self::CUSTOMER_NAME_SELECTOR, $customer->name)
-                ->click(self::CUSTOMER_SUBMIT_SELECTOR)
-                ->waitFor('dialog[open] [data-test="customer-conflict-restore"]')
+                ->visit('/entities')
+                ->click('[data-test="entity-create-button"]')
+                ->waitFor(self::ENTITY_NAME_SELECTOR)
+                ->type(self::ENTITY_NAME_SELECTOR, $entity->name)
+                ->click(self::ENTITY_SUBMIT_SELECTOR)
+                ->waitFor('dialog[open] [data-test="entity-conflict-restore"]')
                 ->assertSee(__('Record Name already in trash'))
-                ->assertSee(__('A deleted record already uses the name :name.', ['name' => $customer->name]))
-                ->click('[data-test="customer-conflict-restore"]')
-                ->waitFor(self::CUSTOMER_STATUS_SELECTOR)
+                ->assertSee(__('A deleted record already uses the name :name.', ['name' => $entity->name]))
+                ->click('[data-test="entity-conflict-restore"]')
+                ->waitFor(self::ENTITY_STATUS_SELECTOR)
                 ->assertSee(__('basics13::messages.restored'));
         });
 
-        $this->assertModelExists($customer);
+        $this->assertModelExists($entity);
     }
 }

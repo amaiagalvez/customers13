@@ -1,39 +1,39 @@
 <?php
 
-namespace Customers13\Tests\Feature\Customers;
+namespace entities13\Tests\Feature\Entities;
 
-use Customers13\Tests\TestCase;
-use Customers13\Models\Customer;
+use entities13\Tests\TestCase;
+use entities13\Models\Entity;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
- * The uniqueness of a customer name is enforced by the database itself via a partial unique index
+ * The uniqueness of a entity name is enforced by the database itself via a partial unique index
  * on the generated `active_name` column, so a write that skipped validation still cannot
  * duplicate an active name.
  */
-class CustomerUniqueIndexTest extends TestCase
+class EntityUniqueIndexTest extends TestCase
 {
     use RefreshDatabase;
 
     public function test_the_table_has_the_partial_unique_index_on_active_name(): void
     {
         $indexes = collect(DB::select(
-            "select name from sqlite_master where type = 'index' and tbl_name = 'CUM_customers'",
+            "select name from sqlite_master where type = 'index' and tbl_name = 'CUM_entities'",
         ))->pluck('name');
 
-        $this->assertContains('CUM_customers_active_name_unique', $indexes);
+        $this->assertContains('CUM_entities_active_name_unique', $indexes);
     }
 
     public function test_a_duplicate_active_name_hits_the_database_index(): void
     {
-        Customer::factory()->create(['name' => 'Ane Bezeroa']);
+        Entity::factory()->create(['name' => 'Ane Bezeroa']);
 
         $refused = false;
 
         try {
-            Customer::factory()->create(['name' => 'Ane Bezeroa']);
+            Entity::factory()->create(['name' => 'Ane Bezeroa']);
         } catch (QueryException) {
             $refused = true;
         }
@@ -41,16 +41,16 @@ class CustomerUniqueIndexTest extends TestCase
         $this->assertTrue($refused, 'The database accepted a duplicate active name.');
     }
 
-    public function test_a_name_left_by_a_trashed_customer_can_be_taken_again(): void
+    public function test_a_name_left_by_a_trashed_entity_can_be_taken_again(): void
     {
-        $trashed = Customer::factory()->trashed()->create(['name' => 'Mota zaharkitua']);
+        $trashed = Entity::factory()->trashed()->create(['name' => 'Mota zaharkitua']);
 
         // The same name is accepted again, because the record that held it is in the trash.
-        $replacement = Customer::factory()->create(['name' => 'Mota zaharkitua']);
+        $replacement = Entity::factory()->create(['name' => 'Mota zaharkitua']);
 
         $this->assertSame('Mota zaharkitua', $replacement->name);
         $this->assertSoftDeleted($trashed);
-        $this->assertSame(1, Customer::query()->where('name', 'Mota zaharkitua')->count());
-        $this->assertSame(1, Customer::onlyTrashed()->where('name', 'Mota zaharkitua')->count());
+        $this->assertSame(1, Entity::query()->where('name', 'Mota zaharkitua')->count());
+        $this->assertSame(1, Entity::onlyTrashed()->where('name', 'Mota zaharkitua')->count());
     }
 }

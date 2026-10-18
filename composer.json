@@ -1,6 +1,6 @@
 {
-    "name": "amaia/customers13",
-    "description": "Customer management for Laravel 13: CRUD, soft deletes, archive, trash and select options.",
+    "name": "amaia/entities13",
+    "description": "Entity management for Laravel 13: CRUD, soft deletes, archive, trash and select options.",
     "type": "library",
     "license": "MIT",
     "version": "1.0.0",
@@ -18,21 +18,21 @@
     },
     "autoload": {
         "psr-4": {
-            "Customers13\\Database\\Factories\\": "database/factories/",
-            "Customers13\\Database\\Seeders\\": "database/seeders/",
-            "Customers13\\": "src/"
+            "entities13\\Database\\Factories\\": "database/factories/",
+            "entities13\\Database\\Seeders\\": "database/seeders/",
+            "entities13\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/Fixtures/App/",
-            "Customers13\\Tests\\": "tests/"
+            "entities13\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Customers13\\ServiceProvider"
+                "entities13\\ServiceProvider"
             ]
         }
     },

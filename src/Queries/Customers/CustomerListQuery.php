@@ -1,17 +1,17 @@
 <?php
 
-namespace Customers13\Queries\Customers;
+namespace entities13\Queries\Entities;
 
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
-use Customers13\Contracts\CustomerIntegration;
+use entities13\Contracts\EntityIntegration;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
- * @extends ListQueryBase<Customer>
+ * @extends ListQueryBase<Entity>
  */
-final class CustomerListQuery extends ListQueryBase
+final class EntityListQuery extends ListQueryBase
 {
     /**
      * The list the columns below belong to. Passed to the integration so one binding can tell an
@@ -23,58 +23,58 @@ final class CustomerListQuery extends ListQueryBase
 
     private const SCOPE_TRASHED = 'trashed';
 
-    public function __construct(private readonly CustomerIntegration $integration) {}
+    public function __construct(private readonly EntityIntegration $integration) {}
 
     /**
-     * @return LengthAwarePaginator<int, Customer>
+     * @return LengthAwarePaginator<int, Entity>
      */
     public function active(string $search): LengthAwarePaginator
     {
-        // Unique names among non-deleted customers keep the ordering total on its own; the id
+        // Unique names among non-deleted entities keep the ordering total on its own; the id
         // is here so this list breaks ties the same way the archived and trash lists do.
         return $this->paginate(
-            $this->scoped(self::SCOPE_ACTIVE, Customer::query()->where('CUM_customers.active', true)->with('customerTypes')->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
+            $this->scoped(self::SCOPE_ACTIVE, Entity::query()->where('CUM_entities.active', true)->with('entityTypes')->orderBy('CUM_entities.name')->orderBy('CUM_entities.id')),
             $search,
             /** @phpstan-ignore argument.type */
-            searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['CUM_customers.name']),
+            searchColumns: $this->searchColumns(self::SCOPE_ACTIVE, ['CUM_entities.name']),
         );
     }
 
     /**
-     * @return LengthAwarePaginator<int, Customer>
+     * @return LengthAwarePaginator<int, Entity>
      */
     public function archived(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->scoped(self::SCOPE_ARCHIVED, Customer::query()->where('CUM_customers.active', false)->with('customerTypes')->orderBy('CUM_customers.name')->orderBy('CUM_customers.id')),
+            $this->scoped(self::SCOPE_ARCHIVED, Entity::query()->where('CUM_entities.active', false)->with('entityTypes')->orderBy('CUM_entities.name')->orderBy('CUM_entities.id')),
             $search,
             /** @phpstan-ignore argument.type */
-            searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['CUM_customers.name', 'CUM_customers.updated_at']),
+            searchColumns: $this->searchColumns(self::SCOPE_ARCHIVED, ['CUM_entities.name', 'CUM_entities.updated_at']),
         );
     }
 
     /**
-     * @return LengthAwarePaginator<int, Customer>
+     * @return LengthAwarePaginator<int, Entity>
      */
     public function trashed(string $search): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->scoped(self::SCOPE_TRASHED, Customer::onlyTrashed()->with('customerTypes')->latest('deleted_at')->orderBy('id')),
+            $this->scoped(self::SCOPE_TRASHED, Entity::onlyTrashed()->with('entityTypes')->latest('deleted_at')->orderBy('id')),
             $search,
             /** @phpstan-ignore argument.type */
-            searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['CUM_customers.name', 'CUM_customers.deleted_at']),
+            searchColumns: $this->searchColumns(self::SCOPE_TRASHED, ['CUM_entities.name', 'CUM_entities.deleted_at']),
         );
     }
 
     /**
-     * @return class-string<Customer>
+     * @return class-string<Entity>
      */
     protected function getModelClass(): string
     {
-        return Customer::class;
+        return Entity::class;
     }
 
-    protected function integration(): CustomerIntegration
+    protected function integration(): EntityIntegration
     {
         return $this->integration;
     }
@@ -83,12 +83,12 @@ final class CustomerListQuery extends ListQueryBase
      * Hand the query to the integration before anything searches or orders it, so the columns it
      * contributes to the search and the ordering are already there.
      *
-     * @param  Builder<Customer>  $query
-     * @return Builder<Customer>
+     * @param  Builder<Entity>  $query
+     * @return Builder<Entity>
      */
     private function scoped(string $scope, Builder $query): Builder
     {
-        $this->integration->scope($query, $scope, 'customer_projects');
+        $this->integration->scope($query, $scope, 'entity_projects');
 
         return $query;
     }

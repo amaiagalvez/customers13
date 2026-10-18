@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'Create a new customer' => 'Crear un nuevo cliente',
+    'Create a new entity' => 'Crear un nuevo cliente',
     'Edit' => 'Editar',
     'Update' => 'Actualizar',
     'Delete' => 'Eliminar',

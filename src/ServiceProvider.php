@@ -1,48 +1,48 @@
 <?php
 
-namespace Customers13;
+namespace entities13;
 
-use Customers13\Contracts\CustomerIntegration;
+use entities13\Contracts\EntityIntegration;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**
- * Default implementation of CustomerIntegration with empty implementations.
+ * Default implementation of EntityIntegration with empty implementations.
  * Used when no integration package is installed.
  */
-final class DefaultCustomerIntegration extends CustomerIntegration {}
+final class DefaultEntityIntegration extends EntityIntegration {}
 
 class ServiceProvider extends BaseServiceProvider
 {
     public function boot(): void
     {
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'customers13');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'customers13');
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang');
-        $this->loadJsonTranslationsFrom(__DIR__.'/../resources/lang');
-
-        $this->publishes([
-            __DIR__.'/../config/customers13.php' => config_path('customers13.php'),
-        ], 'customers13-config');
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'entities13');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', 'entities13');
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang');
+        $this->loadJsonTranslationsFrom(__DIR__ . '/../resources/lang');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => resource_path('views/vendor/customers13'),
-        ], 'customers13-views');
+            __DIR__ . '/../config/entities13.php' => config_path('entities13.php'),
+        ], 'entities13-config');
 
         $this->publishes([
-            __DIR__.'/../resources/lang' => lang_path('vendor/customers13'),
-        ], 'customers13-lang');
+            __DIR__ . '/../resources/views' => resource_path('views/vendor/entities13'),
+        ], 'entities13-views');
 
-        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+        $this->publishes([
+            __DIR__ . '/../resources/lang' => lang_path('vendor/entities13'),
+        ], 'entities13-lang');
+
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
     }
 
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/customers13.php', 'customers13');
+        $this->mergeConfigFrom(__DIR__ . '/../config/entities13.php', 'entities13');
 
         // Bound only if nobody else has: an integration package registers after this one and
         // replaces it, and doing so does not depend on Composer's provider order being right.
-        $this->app->singletonIf(CustomerIntegration::class, DefaultCustomerIntegration::class);
+        $this->app->singletonIf(EntityIntegration::class, DefaultEntityIntegration::class);
     }
 }

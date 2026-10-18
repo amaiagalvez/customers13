@@ -1,17 +1,17 @@
 <?php
 
-namespace Customers13\Tests\Feature\Customers;
+namespace entities13\Tests\Feature\Entities;
 
-use Customers13\Tests\TestCase;
+use entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 
-class CustomerMigrationTest extends TestCase
+class EntityMigrationTest extends TestCase
 {
-    public function test_customer_migration_can_be_rolled_back(): void
+    public function test_entity_migration_can_be_rolled_back(): void
     {
-        $connectionName = 'customers13_migration_test';
+        $connectionName = 'entities13_migration_test';
         $originalDefault = config('database.default');
         $sqliteConnection = config('database.connections.sqlite');
 
@@ -33,14 +33,14 @@ class CustomerMigrationTest extends TestCase
                 $table->id();
             });
 
-            $migration = require dirname(__DIR__, 3).'/database/migrations/2026_09_25_000000_create_cum_customers_table.php';
+            $migration = require dirname(__DIR__, 3) . '/database/migrations/2026_09_25_000000_create_cum_entities_table.php';
             $migration->up();
 
-            $this->assertTrue(Schema::hasTable('CUM_customers'));
+            $this->assertTrue(Schema::hasTable('CUM_entities'));
 
             $migration->down();
 
-            $this->assertFalse(Schema::hasTable('CUM_customers'));
+            $this->assertFalse(Schema::hasTable('CUM_entities'));
         } finally {
             DB::purge($connectionName);
             config([

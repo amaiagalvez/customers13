@@ -1,92 +1,92 @@
 <?php
 
-namespace Customers13\Tests\Browser\Customers;
+namespace entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
-use Customers13\Models\Customer;
-use Customers13\Tests\DuskTestCase;
+use entities13\Models\Entity;
+use entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
-class CustomerArchivedTest extends DuskTestCase
+class EntityArchivedTest extends DuskTestCase
 {
-    private const CUSTOMER_CONFIRM_SUBMIT_SELECTOR = 'dialog[open] [data-test="customer-confirm-submit"]';
+    private const ENTITY_CONFIRM_SUBMIT_SELECTOR = 'dialog[open] [data-test="entity-confirm-submit"]';
 
     use DatabaseMigrations;
 
-    public function test_archived_customers_are_not_shown_in_the_active_list(): void
+    public function test_archived_entities_are_not_shown_in_the_active_list(): void
     {
         $user = $this->user();
 
-        Customer::factory()->archived()->create(['name' => 'Dormant customer']);
-        Customer::factory()->create(['name' => 'Active customer']);
+        Entity::factory()->archived()->create(['name' => 'Dormant entity']);
+        Entity::factory()->create(['name' => 'Active entity']);
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
-                ->visit('/customers')
-                ->assertDontSee('Dormant customer')
-                ->assertSee('Active customer');
+                ->visit('/entities')
+                ->assertDontSee('Dormant entity')
+                ->assertSee('Active entity');
         });
     }
 
-    public function test_archived_customers_are_searchable_by_name(): void
+    public function test_archived_entities_are_searchable_by_name(): void
     {
         $user = $this->user();
 
         $this->travelTo('2026-10-02 12:30:00');
-        $updatedCustomer = Customer::factory()->archived()->create(['name' => 'Alpha Dormant']);
-        Customer::factory()->archived()->create(['name' => 'Beta Dormant']);
-        Customer::factory()->create(['name' => 'Alpha Active']);
+        $updatedEntity = Entity::factory()->archived()->create(['name' => 'Alpha Dormant']);
+        Entity::factory()->archived()->create(['name' => 'Beta Dormant']);
+        Entity::factory()->create(['name' => 'Alpha Active']);
         $this->travelTo('2026-07-15 12:30:00');
-        $updatedCustomer->touch();
+        $updatedEntity->touch();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
-                ->visit('/customers/archived?search=Alpha')
+                ->visit('/entities/archived?search=Alpha')
                 ->assertSee('Alpha Dormant')
                 ->assertDontSee('Beta Dormant')
                 ->assertDontSee('Alpha Active');
         });
     }
 
-    public function test_an_archived_customer_can_be_reactivated(): void
+    public function test_an_archived_entity_can_be_reactivated(): void
     {
         // Seeding the archived state keeps this package free of the bridge: the archive *button*
-        // only appears for a customer that owns projects, which is covered by CustomerProjects13.
-        $customer = Customer::factory()->archived()->create(['name' => 'Customer to reactivate']);
+        // only appears for a entity that owns projects, which is covered by EntityProjects13.
+        $entity = Entity::factory()->archived()->create(['name' => 'Entity to reactivate']);
         $user = $this->user();
 
-        $this->assertFalse($customer->active);
+        $this->assertFalse($entity->active);
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
-                ->visit('/customers/archived')
-                ->assertSee($customer->name)
-                ->click("[data-test='customer-activate-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->click(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->waitFor('[data-test="customer-status"]')
+                ->visit('/entities/archived')
+                ->assertSee($entity->name)
+                ->click("[data-test='entity-activate-{$entity->id}']")
+                ->waitFor(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->click(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->waitFor('[data-test="entity-status"]')
                 ->assertSee(__('basics13::messages.activated'));
 
-            $this->assertTrue($customer->refresh()->active);
+            $this->assertTrue($entity->refresh()->active);
         });
     }
 
-    public function test_restoring_a_trashed_archived_customer_preserves_its_archived_state(): void
+    public function test_restoring_a_trashed_archived_entity_preserves_its_archived_state(): void
     {
-        $customer = Customer::factory()->archived()->trashed()->create(['name' => 'Archived and trashed']);
+        $entity = Entity::factory()->archived()->trashed()->create(['name' => 'Archived and trashed']);
         $user = $this->user();
 
-        $this->browse(function (Browser $browser) use ($user, $customer): void {
+        $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
-                ->visit('/customers/trash')
-                ->click("[data-test='customer-restore-{$customer->id}']")
-                ->waitFor(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->click(self::CUSTOMER_CONFIRM_SUBMIT_SELECTOR)
-                ->waitFor('[data-test="customer-status"]')
+                ->visit('/entities/trash')
+                ->click("[data-test='entity-restore-{$entity->id}']")
+                ->waitFor(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->click(self::ENTITY_CONFIRM_SUBMIT_SELECTOR)
+                ->waitFor('[data-test="entity-status"]')
                 ->assertSee(__('basics13::messages.restored'));
         });
 
-        $this->assertNotSoftDeleted($customer);
-        $this->assertFalse($customer->refresh()->active);
+        $this->assertNotSoftDeleted($entity);
+        $this->assertFalse($entity->refresh()->active);
     }
 }

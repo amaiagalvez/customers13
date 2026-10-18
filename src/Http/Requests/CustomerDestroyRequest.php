@@ -1,22 +1,22 @@
 <?php
 
-namespace Customers13\Http\Requests;
+namespace entities13\Http\Requests;
 
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Requests\TrashDestroyRequest;
 
 /**
- * @extends TrashDestroyRequest<Customer>
+ * @extends TrashDestroyRequest<Entity>
  */
-final class CustomerDestroyRequest extends TrashDestroyRequest
+final class EntityDestroyRequest extends TrashDestroyRequest
 {
     /**
-     * @return Customer
+     * @return Entity
      */
     protected function findTrashed(): Model
     {
-        return Customer::onlyTrashed()
-            ->findOrFail((int) $this->route('customer'));
+        return Entity::onlyTrashed()
+            ->findOrFail((int) $this->route('entity'));
     }
 }

@@ -1,15 +1,15 @@
 <?php
 
-namespace Customers13\Transformers;
+namespace entities13\Transformers;
 
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
 
 /**
- * @extends ListTransformer<CustomerType>
+ * @extends ListTransformer<EntityType>
  */
-class CustomerTypeListTransformer extends ListTransformer
+class EntityTypeListTransformer extends ListTransformer
 {
     /**
      * @param  array<string, mixed>  $extra
@@ -29,18 +29,18 @@ class CustomerTypeListTransformer extends ListTransformer
     }
 
     /**
-     * A type that a customer holds is archived instead of deleted: it stays selectable in the
-     * customer form, which is where the type gets used from. The count is taken with the deleted
-     * customers in, because those keep the type too.
+     * A type that a entity holds is archived instead of deleted: it stays selectable in the
+     * entity form, which is where the type gets used from. The count is taken with the deleted
+     * entities in, because those keep the type too.
      */
     protected function getDeleteBlockCondition(Model $record): bool
     {
-        return (int) $record->getAttribute('customers_count') > 0;
+        return (int) $record->getAttribute('entities_count') > 0;
     }
 
     protected function getForceDeleteBlockCondition(Model $record): bool
     {
-        return (int) $record->getAttribute('customers_count') > 0;
+        return (int) $record->getAttribute('entities_count') > 0;
     }
 
     protected function getForceDeleteBlockHint(Model $record): string
@@ -49,7 +49,7 @@ class CustomerTypeListTransformer extends ListTransformer
     }
 
     /**
-     * @param  CustomerType  $record
+     * @param  EntityType  $record
      * @return array{id: int, name_eu: string, name_es: string|null, name_fr: string|null, name_en: string|null, notes: string|null}
      */
     protected function editPayload(Model $record): array
@@ -59,11 +59,11 @@ class CustomerTypeListTransformer extends ListTransformer
 
     protected function resourceLabel(): string
     {
-        return __('Customer types');
+        return __('Entity types');
     }
 
     protected function resourceKey(): string
     {
-        return 'customer-type';
+        return 'entity-type';
     }
 }

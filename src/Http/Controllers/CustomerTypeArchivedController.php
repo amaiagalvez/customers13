@@ -1,52 +1,52 @@
 <?php
 
-namespace Customers13\Http\Controllers;
+namespace entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use Customers13\Models\CustomerType;
+use entities13\Models\EntityType;
 use Illuminate\Http\RedirectResponse;
 use Basics13\Http\Controllers\ArchivedController;
-use Customers13\Http\Requests\CustomerTypeListRequest;
-use Customers13\Transformers\CustomerTypeListTransformer;
-use Customers13\Queries\CustomerTypes\CustomerTypeListQuery;
+use entities13\Http\Requests\EntityTypeListRequest;
+use entities13\Transformers\EntityTypeListTransformer;
+use entities13\Queries\EntityTypes\EntityTypeListQuery;
 
-class CustomerTypeArchivedController extends ArchivedController
+class EntityTypeArchivedController extends ArchivedController
 {
     public function index(
-        CustomerTypeListRequest $request,
-        CustomerTypeListQuery $query,
-        CustomerTypeListTransformer $transformer,
+        EntityTypeListRequest $request,
+        EntityTypeListQuery $query,
+        EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $customerTypes = $query->archived($search);
+        $entityTypes = $query->archived($search);
 
-        return $this->listView($request, 'customers13::customer-types.list', [
-            'customerTypes' => $customerTypes,
+        return $this->listView($request, 'entities13::entity-types.list', [
+            'entityTypes' => $entityTypes,
             'list' => $transformer->archived(
-                $customerTypes,
+                $entityTypes,
                 $search,
-                $query->stateCounts(archivedTotal: $search === '' ? $customerTypes->total() : null),
+                $query->stateCounts(archivedTotal: $search === '' ? $entityTypes->total() : null),
             ),
         ]);
     }
 
-    public function archive(CustomerType $customerType): RedirectResponse
+    public function archive(EntityType $entityType): RedirectResponse
     {
-        return $this->archiveRecord($customerType);
+        return $this->archiveRecord($entityType);
     }
 
-    public function activate(CustomerType $customerType): RedirectResponse
+    public function activate(EntityType $entityType): RedirectResponse
     {
-        return $this->activateRecord($customerType);
+        return $this->activateRecord($entityType);
     }
 
     protected function activeRoute(): string
     {
-        return 'customer-types.index';
+        return 'entity-types.index';
     }
 
     protected function archivedRoute(): string
     {
-        return 'customer-types.archived.index';
+        return 'entity-types.archived.index';
     }
 }

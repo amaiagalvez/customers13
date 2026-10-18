@@ -1,14 +1,14 @@
 <?php
 
-namespace Customers13\Http\Requests;
+namespace entities13\Http\Requests;
 
-use Customers13\Models\Customer;
+use entities13\Models\Entity;
 use Basics13\Http\Requests\SearchableSelectOptionsRequest;
 
-class CustomerSelectOptionsRequest extends SearchableSelectOptionsRequest
+class EntitySelectOptionsRequest extends SearchableSelectOptionsRequest
 {
     public function authorize(): bool
     {
-        return $this->user()?->can('viewAny', Customer::class) ?? false;
+        return $this->user()?->can('viewAny', Entity::class) ?? false;
     }
 }
