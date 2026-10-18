@@ -30,9 +30,8 @@ class CustomerController extends Controller
 
         return $this->listView($request, 'customers13::customers.list', [
             'customers' => $customers,
-            // The form offers the types that can be picked, archived ones included: one of those may
-            // already be held by the customer being edited, and leaving it out of the checkboxes
-            // would drop it the moment the form is saved.
+            // The form needs archived types too, so an edit can keep the ones the customer already
+            // holds. The picker only shows those selected archived types, alongside active ones.
             'customerTypes' => CustomerType::query()->orderBy('name_eu')->orderBy('id')->get(),
             'list' => $transformer->active(
                 $customers,

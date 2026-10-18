@@ -25,7 +25,7 @@ class CustomerTypePickerTest extends DuskTestCase
 
     private const STATUS = '[data-test="customer-status"]';
 
-    public function test_the_picker_lists_every_type_that_can_be_picked(): void
+    public function test_create_only_shows_active_types(): void
     {
         $user = $this->user();
         $active = CustomerType::factory()->create(['name_eu' => 'Active kind']);
@@ -37,11 +37,9 @@ class CustomerTypePickerTest extends DuskTestCase
                 ->visit('/customers')
                 ->click('[data-test="customer-create-button"]')
                 ->waitFor(self::PICKER)
-                ->assertScript($this->pickerHas($active->id))
-                ->assertScript($this->pickerHas($archived->id))
+                ->assertScript($this->typeIsVisible($active->id))
+                ->assertScript($this->typeIsVisible($archived->id), false)
                 ->assertScript($this->pickerHas($trashed->id), false)
-                // An archived type is still offered, marked as such: a customer may already hold it.
-                ->assertSeeIn(self::PICKER, __('basics13::messages.archived_label'))
                 ->assertSeeIn(self::PICKER, 'Active kind');
         });
     }
@@ -119,22 +117,26 @@ class CustomerTypePickerTest extends DuskTestCase
         );
     }
 
-    public function test_the_edit_form_keeps_the_types_the_customer_holds_checked(): void
+    public function test_edit_keeps_selected_archived_types_and_hides_other_archived_types(): void
     {
         $user = $this->user();
-        $types = CustomerType::factory()->count(3)->create();
+        $active = CustomerType::factory()->create();
+        $selectedArchived = CustomerType::factory()->archived()->create();
+        $otherArchived = CustomerType::factory()->archived()->create();
         $customer = Customer::factory()->create(['name' => 'Customer holding two types']);
-        $customer->customerTypes()->attach([$types[0]->id, $types[2]->id]);
+        $customer->customerTypes()->attach([$active->id, $selectedArchived->id]);
 
-        $this->browse(function (Browser $browser) use ($user, $customer, $types): void {
+        $this->browse(function (Browser $browser) use ($user, $customer, $active, $selectedArchived, $otherArchived): void {
             $browser->loginAs($user)
                 ->visit('/customers')
                 ->click('[data-test="customer-edit-'.$customer->id.'"]')
                 ->waitFor(self::PICKER)
-                ->waitUntil($this->typeIsChecked($types[0]->id), 10)
-                ->assertChecked($this->typeInput($types[0]->id))
-                ->assertChecked($this->typeInput($types[2]->id))
-                ->assertNotChecked($this->typeInput($types[1]->id));
+                ->waitUntil($this->typeIsChecked($active->id), 10)
+                ->assertScript($this->typeIsVisible($active->id))
+                ->assertScript($this->typeIsVisible($selectedArchived->id))
+                ->assertScript($this->typeIsVisible($otherArchived->id), false)
+                ->assertChecked($this->typeInput($active->id))
+                ->assertChecked($this->typeInput($selectedArchived->id));
         });
     }
 
@@ -155,6 +157,12 @@ class CustomerTypePickerTest extends DuskTestCase
     private function typeIsChecked(int $typeId): string
     {
         return 'document.querySelector('.json_encode($this->typeInput($typeId)).').checked === true';
+    }
+
+    private function typeIsVisible(int $typeId): string
+    {
+        return 'getComputedStyle(document.querySelector('.json_encode($this->typeInput($typeId))
+            .').closest("label")).display !== "none"';
     }
 
     private function pickerScrolls(): string

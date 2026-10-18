@@ -32,6 +32,8 @@
             class="max-h-64 divide-y divide-zinc-100 overflow-y-auto rounded-lg border border-zinc-200 border-b-zinc-300/80 bg-white shadow-xs dark:divide-white/5 dark:border-white/10 dark:bg-white/10">
             @forelse ($customerTypes as $customerType)
                 <label
+                    data-customer-type-active="{{ $customerType->active ? 'true' : 'false' }}"
+                    x-show="$el.dataset.customerTypeActive === 'true' || form.customer_type_ids.includes($el.querySelector('input').value)"
                     class="flex cursor-pointer items-center gap-3 px-3 py-2.5 text-sm text-zinc-700 transition-colors hover:bg-zinc-50 has-[:checked]:bg-brand-50 dark:text-zinc-300 dark:hover:bg-white/5 dark:has-[:checked]:bg-brand-500/10">
                     <input type="checkbox" name="customer_type_ids[]" value="{{ (string) $customerType->id }}"
                         x-model="form.customer_type_ids"
