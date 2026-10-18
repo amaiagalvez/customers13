@@ -3,16 +3,14 @@
 namespace Customers13\Tests;
 
 use App\Models\User;
-use Basics13\ServiceProvider;
+use Basics13\Tests\TestCase as Basics13TestCase;
 use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
-use Livewire\LivewireServiceProvider;
 use Basics13\Support\Testing\ValidatesFormRequests;
-use Orchestra\Testbench\TestCase as TestbenchTestCase;
 use Customers13\ServiceProvider as Customers13ServiceProvider;
 
-abstract class TestCase extends TestbenchTestCase
+abstract class TestCase extends Basics13TestCase
 {
     use ValidatesFormRequests;
 
@@ -24,32 +22,24 @@ abstract class TestCase extends TestbenchTestCase
     protected function getPackageProviders($app): array
     {
         return [
-            LivewireServiceProvider::class,
             FluxServiceProvider::class,
-            ServiceProvider::class,
             Customers13ServiceProvider::class,
         ];
     }
 
-    /**
-     * The tests run on SQLite in memory, so nobody needs a database server to check the package.
-     * The engines the application really runs are that application's own business.
-     */
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('database.default', 'sqlite');
-        $app['config']->set('app.key', 'base64:'.base64_encode(str_repeat('a', 32)));
-        $app['config']->set('database.connections.sqlite.database', ':memory:');
+        parent::getEnvironmentSetUp($app);
+
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.compiled', dirname(__DIR__).'/storage/framework/views');
     }
 
     protected function defineRoutes($router): void
     {
-        Route::get('login', static fn (): string => 'Login')->name('login');
-        Route::get('email/verify', static fn (): string => 'Verify email')->name('verification.notice');
+        parent::defineRoutes($router);
+
         Route::get('projects', static fn (): string => 'Projects')->name('projects.index');
-        Route::get('dashboard', static fn (): string => 'Dashboard')->name('dashboard');
     }
 
     protected function setUp(): void

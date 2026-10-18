@@ -14,9 +14,16 @@ use Customers13\Contracts\CustomerIntegration;
 final class CustomerTypeSelectOptionsQuery extends ListQueryBase
 {
     /**
+     * Search columns with table prefix for the query builder.
+     *
      * @var list<string>
      */
-    private const NAME_COLUMNS = ['CUM_customer_types.name_eu', 'CUM_customer_types.name_es', 'CUM_customer_types.name_fr', 'CUM_customer_types.name_en'];
+    private const NAME_COLUMNS = [
+        'CUM_customer_types.name_eu',
+        'CUM_customer_types.name_es',
+        'CUM_customer_types.name_fr',
+        'CUM_customer_types.name_en',
+    ];
 
     public function __construct(private readonly CustomerIntegration $integration) {}
 

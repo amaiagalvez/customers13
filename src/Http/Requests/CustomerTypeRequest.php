@@ -10,10 +10,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CustomerTypeRequest extends FormRequest
 {
-    /**
-     * @var list<string>
-     */
-    private const NAME_FIELDS = ['name_eu', 'name_es', 'name_fr', 'name_en'];
 
     /**
      * Trim every name, and turn a blank translation into an absent one: a language with no name is
@@ -23,7 +19,7 @@ class CustomerTypeRequest extends FormRequest
     {
         $names = [];
 
-        foreach (self::NAME_FIELDS as $field) {
+        foreach (CustomerType::NAME_FIELDS as $field) {
             $value = $this->input($field);
 
             if (! is_string($value)) {

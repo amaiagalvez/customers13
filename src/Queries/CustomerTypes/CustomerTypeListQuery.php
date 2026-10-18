@@ -15,7 +15,17 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
  */
 final class CustomerTypeListQuery extends ListQueryBase
 {
-    private const NAME_COLUMNS = ['CUM_customer_types.name_eu', 'CUM_customer_types.name_es', 'CUM_customer_types.name_fr', 'CUM_customer_types.name_en'];
+    /**
+     * Search columns with table prefix for the query builder.
+     *
+     * @var list<string>
+     */
+    private const NAME_COLUMNS = [
+        'CUM_customer_types.name_eu',
+        'CUM_customer_types.name_es',
+        'CUM_customer_types.name_fr',
+        'CUM_customer_types.name_en',
+    ];
 
     public function __construct(private readonly CustomerIntegration $integration) {}
 

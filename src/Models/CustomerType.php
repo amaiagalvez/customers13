@@ -64,6 +64,13 @@ class CustomerType extends Model
     }
 
     /**
+     * Language columns for the type name.
+     *
+     * @var list<string>
+     */
+    public const NAME_FIELDS = ['name_eu', 'name_es', 'name_fr', 'name_en'];
+
+    /**
      * The customers holding this type.
      *
      * Deleted customers are excluded: this relation is what the application reads, and a customer

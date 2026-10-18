@@ -19,11 +19,6 @@ use Customers13\Queries\CustomerTypes\CustomerTypeSelectOptionsQuery;
 
 class CustomerTypeController extends Controller
 {
-    /**
-     * The three original names plus the euskera one, in the order a duplicate is looked for when
-     * the database refuses a write that validation let through.
-     */
-    private const NAME_FIELDS = ['name_eu', 'name_es', 'name_fr', 'name_en'];
 
     public function index(
         CustomerTypeListRequest $request,
@@ -151,7 +146,7 @@ class CustomerTypeController extends Controller
     {
         $message = (string) ($exception->errorInfo[2] ?? $exception->getMessage());
 
-        foreach (self::NAME_FIELDS as $field) {
+        foreach (CustomerType::NAME_FIELDS as $field) {
             if (str_contains($message, 'active_'.$field) || str_contains($message, '.'.$field)) {
                 return $field;
             }

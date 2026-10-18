@@ -62,7 +62,7 @@ class CustomerTypeTrashController extends TrashController
      */
     protected function nameIsTaken(Model $record): bool
     {
-        foreach (['name_eu', 'name_es', 'name_fr', 'name_en'] as $column) {
+        foreach (CustomerType::NAME_FIELDS as $column) {
             $name = $record->getAttribute($column);
 
             if ($name !== null && CustomerType::query()->where($column, $name)->exists()) {

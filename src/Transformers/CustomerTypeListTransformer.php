@@ -48,20 +48,6 @@ class CustomerTypeListTransformer extends ListTransformer
         return __('basics13::messages.cannot_force_delete_related');
     }
 
-    protected function getExtraDate(Model $record, string $scope): ?string
-    {
-        return match ($scope) {
-            'active' => $record->created_at?->toIso8601String(),
-            'archived' => $record->updated_at?->toIso8601String(),
-            'trash' => $record->deleted_at?->toIso8601String(),
-        };
-    }
-
-    protected function getRestoreActive(Model $record): bool
-    {
-        return $record->active;
-    }
-
     /**
      * @param  CustomerType  $record
      * @return array{id: int, name_eu: string, name_es: string|null, name_fr: string|null, name_en: string|null, notes: string|null}
