@@ -23,7 +23,6 @@ class CustomerTypeTranslationTest extends TestCase
         'Save customer type',
         'Update customer type',
         'No customer types yet.',
-        'No customer types match your search.',
         'Name (eu)',
         'Name (es)',
         'Name (fr)',

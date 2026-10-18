@@ -39,7 +39,7 @@ class CustomerTypeCrudTest extends TestCase
         $this->actingAs($this->user())
             ->get(route('customer-types.index'))
             ->assertOk()
-            ->assertSee(__('No customer types yet.'));
+            ->assertSee('No records yet.');
     }
 
     public function test_authenticated_users_can_create_update_and_delete_customer_types(): void

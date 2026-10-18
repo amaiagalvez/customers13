@@ -62,35 +62,8 @@ class CustomerTypeListTransformer extends ListTransformer
         return __('Customer types');
     }
 
-    protected function noMatchMessage(): string
-    {
-        return __('No customer types match your search.');
-    }
-
-    protected function noRecordsMessage(): string
-    {
-        return __('No customer types yet.');
-    }
-
     protected function resourceKey(): string
     {
         return 'customer-type';
-    }
-
-    /**
-     * @return array{active: string, archived: string, trash: string, destroy: string, archive: string, activate: string, restore: string, trashDestroy: string}
-     */
-    protected function routes(): array
-    {
-        return [
-            'active' => 'customer-types.index',
-            'archived' => 'customer-types.archived.index',
-            'trash' => 'customer-types.trash.index',
-            'destroy' => 'customer-types.destroy',
-            'archive' => 'customer-types.archive',
-            'activate' => 'customer-types.archived.activate',
-            'restore' => 'customer-types.trash.restore',
-            'trashDestroy' => 'customer-types.trash.destroy',
-        ];
     }
 }

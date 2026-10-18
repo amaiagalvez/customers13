@@ -5,8 +5,6 @@ return [
     'Create a new customer' => 'Create a new customer',
     'Customers' => 'Customers',
     'Edit customer' => 'Edit customer',
-    'No customers match your search' => 'No customers match your search.',
-    'No customers yet' => 'No customers yet.',
     'Projects: :count' => 'Projects: :count',
     'Record Name already in trash' => 'Record Name already in trash',
     'A deleted record already uses the name :name' => 'A deleted record already uses the name :name.',

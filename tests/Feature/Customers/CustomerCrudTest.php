@@ -38,7 +38,7 @@ class CustomerCrudTest extends TestCase
         $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]))
             ->get(route('customers.index'))
             ->assertOk()
-            ->assertSee(__('No customers yet.'));
+            ->assertSee('No records yet.');
     }
 
     public function test_authenticated_users_can_create_update_and_delete_customers(): void

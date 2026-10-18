@@ -77,4 +77,12 @@ class CustomerTypeListQueryTest extends TestCase
     {
         return new class extends CustomerIntegration {};
     }
+
+    public function test_the_integration_method_is_protected(): void
+    {
+        $method = new ReflectionMethod(CustomerTypeListQuery::class, 'integration');
+
+        $this->assertTrue($method->isProtected());
+        $this->assertSame(CustomerTypeListQuery::class, $method->getDeclaringClass()->getName());
+    }
 }

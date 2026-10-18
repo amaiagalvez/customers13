@@ -18,7 +18,9 @@ class CustomerListTransformer extends ListTransformer
      */
     private const BLOCKS_DELETE = 'projects_exists';
 
-    public function __construct(private readonly CustomerIntegration $integration) {}
+    public function __construct(
+        private readonly ?CustomerIntegration $integration = null,
+    ) {}
 
     /**
      * @param  array<string, mixed>  $extra
@@ -41,7 +43,7 @@ class CustomerListTransformer extends ListTransformer
 
     protected function getDeleteBlockCondition(Model $record): bool
     {
-        $extra = $this->integration->row($record);
+        $extra = $this->integrationRow($record);
 
         return $extra[self::BLOCKS_DELETE] ?? false;
     }
@@ -58,7 +60,7 @@ class CustomerListTransformer extends ListTransformer
 
     protected function integrationRow(Model $record): array
     {
-        return $this->integration->row($record);
+        return $this->integration?->row($record) ?? [];
     }
 
     /**
@@ -83,35 +85,8 @@ class CustomerListTransformer extends ListTransformer
         return __('Customers');
     }
 
-    protected function noMatchMessage(): string
-    {
-        return __('No customers match your search.');
-    }
-
-    protected function noRecordsMessage(): string
-    {
-        return __('No customers yet.');
-    }
-
     protected function resourceKey(): string
     {
         return 'customer';
-    }
-
-    /**
-     * @return array{active: string, archived: string, trash: string, destroy: string, archive: string, activate: string, restore: string, trashDestroy: string}
-     */
-    protected function routes(): array
-    {
-        return [
-            'active' => 'customers.index',
-            'archived' => 'customers.archived.index',
-            'trash' => 'customers.trash.index',
-            'destroy' => 'customers.destroy',
-            'archive' => 'customers.archive',
-            'activate' => 'customers.archived.activate',
-            'restore' => 'customers.trash.restore',
-            'trashDestroy' => 'customers.trash.destroy',
-        ];
     }
 }
