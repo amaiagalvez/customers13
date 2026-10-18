@@ -136,7 +136,12 @@ class CustomerTypePickerTest extends DuskTestCase
                 ->assertScript($this->typeIsVisible($selectedArchived->id))
                 ->assertScript($this->typeIsVisible($otherArchived->id), false)
                 ->assertChecked($this->typeInput($active->id))
-                ->assertChecked($this->typeInput($selectedArchived->id));
+                ->assertChecked($this->typeInput($selectedArchived->id))
+                ->assertScript(
+                    'document.querySelector('.json_encode($this->typeInput($selectedArchived->id))
+                    .').closest("label").innerText.includes('.json_encode(__('basics13::messages.archived_label')).')',
+                    true,
+                );
         });
     }
 
