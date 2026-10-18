@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0ea34c9112a96caa7d6c9be6832ff6ac",
+    "content-hash": "5449c195f680307a58084e0af5a741b6",
     "packages": [],
     "packages-dev": [
         {
@@ -13,7 +13,7 @@
             "dist": {
                 "type": "path",
                 "url": "../packages/basics13",
-                "reference": "dd71d1b448d88cd8f84b0eeec8499aada676da41"
+                "reference": "ca1e6f4696999f96aba62fafc7935b4e294080f8"
             },
             "require": {
                 "laravel/boost": "^2.10",

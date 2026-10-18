@@ -33,19 +33,19 @@ abstract class TestCase extends Basics13TestCase
         parent::getEnvironmentSetUp($app);
 
         $app['config']->set('auth.providers.users.model', User::class);
-        $app['config']->set('view.compiled', dirname(__DIR__) . '/storage/framework/views');
+        $app['config']->set('view.compiled', dirname(__DIR__).'/storage/framework/views');
     }
 
     protected function defineRoutes($router): void
     {
         parent::defineRoutes($router);
 
-        Route::get('projects', static fn(): string => 'Projects')->name('projects.index');
+        Route::get('projects', static fn (): string => 'Projects')->name('projects.index');
     }
 
     protected function setUp(): void
     {
         parent::setUp();
-        Blade::anonymousComponentPath(__DIR__ . '/Fixtures/views/layouts', 'layouts');
+        Blade::anonymousComponentPath(__DIR__.'/Fixtures/views/layouts', 'layouts');
     }
 }
