@@ -100,32 +100,16 @@
                             <flux:table.row :key="$row['id']"
                                 class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                                 <flux:table.cell class="max-w-[16rem]">
-                                    <flux:modal.trigger name="entity-type-form">
-                                        <button type="button"
-                                            class="block max-w-full truncate text-start font-medium text-zinc-900 hover:underline dark:text-zinc-100"
-                                            x-on:click="editEntityType(JSON.parse($el.dataset.payload))"
-                                            data-payload="{{ json_encode($row['editPayload']) }}"
-                                            title="{{ $row['nameEu'] }}"
-                                            data-test="entity-type-name-eu-{{ $row['id'] }}">{{ $row['nameEu'] }}</button>
-                                    </flux:modal.trigger>
+                                    {{ $row['nameEu'] }}
                                 </flux:table.cell>
                                 <flux:table.cell class="max-w-[16rem]">
-                                    <span
-                                        class="block max-w-full truncate text-zinc-700 dark:text-zinc-300"
-                                        title="{{ $row['nameEs'] }}"
-                                        data-test="entity-type-name-es-{{ $row['id'] }}">{{ $row['nameEs'] ?? '—' }}</span>
+                                    {{ $row['nameEs'] ?? '—' }}
                                 </flux:table.cell>
                                 <flux:table.cell class="max-w-[16rem]">
-                                    <span
-                                        class="block max-w-full truncate text-zinc-700 dark:text-zinc-300"
-                                        title="{{ $row['nameFr'] }}"
-                                        data-test="entity-type-name-fr-{{ $row['id'] }}">{{ $row['nameFr'] ?? '—' }}</span>
+                                    {{ $row['nameFr'] ?? '—' }}
                                 </flux:table.cell>
                                 <flux:table.cell class="max-w-[16rem]">
-                                    <span
-                                        class="block max-w-full truncate text-zinc-700 dark:text-zinc-300"
-                                        title="{{ $row['nameEn'] }}"
-                                        data-test="entity-type-name-en-{{ $row['id'] }}">{{ $row['nameEn'] ?? '—' }}</span>
+                                    {{ $row['nameEn'] ?? '—' }}
                                 </flux:table.cell>
                                 <flux:table.cell align="end" sticky
                                     class="bg-white dark:bg-zinc-900">
