@@ -1,2 +1,2 @@
 providers:
-  - entities13\ServiceProvider
+  - Entities13\ServiceProvider

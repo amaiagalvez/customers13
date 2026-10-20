@@ -6,7 +6,7 @@
 
 <x-basics13::forms.tracked-resource prefix="entity" context-field="_entity_form" id-field="_entity_id">
     <flux:field>
-        <x-basics13::forms.field-label :request="\entities13\Http\Requests\EntityRequest::class" field="name" test="entity-name-info"
+        <x-basics13::forms.field-label :request="\Entities13\Http\Requests\EntityRequest::class" field="name" test="entity-name-info"
             for="entity-name">
             {{ __('Name') }}
         </x-basics13::forms.field-label>
@@ -16,7 +16,7 @@
         <flux:error name="name" />
     </flux:field>
     <flux:field>
-        <x-basics13::forms.field-label :request="\entities13\Http\Requests\EntityRequest::class" field="entity_type_ids"
+        <x-basics13::forms.field-label :request="\Entities13\Http\Requests\EntityRequest::class" field="entity_type_ids"
             test="entity-type-ids-info" for="entity-type-ids" :notices="[__('You can pick several types.')]">
             {{ __('Types') }}
         </x-basics13::forms.field-label>
@@ -54,7 +54,7 @@
         <flux:error name="entity_type_ids" />
     </flux:field>
     <flux:field>
-        <x-basics13::forms.field-label :request="\entities13\Http\Requests\EntityRequest::class" field="notes" test="entity-notes-info"
+        <x-basics13::forms.field-label :request="\Entities13\Http\Requests\EntityRequest::class" field="notes" test="entity-notes-info"
             for="entity-notes">
             {{ __('Notes') }}
         </x-basics13::forms.field-label>

@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use entities13\Http\Controllers\EntityController;
-use entities13\Http\Controllers\EntityTypeController;
-use entities13\Http\Controllers\EntityTrashController;
-use entities13\Http\Controllers\EntityArchivedController;
-use entities13\Http\Controllers\EntityTypeTrashController;
-use entities13\Http\Controllers\EntityTypeArchivedController;
+use Entities13\Http\Controllers\EntityController;
+use Entities13\Http\Controllers\EntityTypeController;
+use Entities13\Http\Controllers\EntityTrashController;
+use Entities13\Http\Controllers\EntityArchivedController;
+use Entities13\Http\Controllers\EntityTypeTrashController;
+use Entities13\Http\Controllers\EntityTypeArchivedController;
 
 Route::middleware(['web', 'auth', 'verified'])->group(function () {
     Route::get('entities/archived', [EntityArchivedController::class, 'index'])->name('entities.archived.index');

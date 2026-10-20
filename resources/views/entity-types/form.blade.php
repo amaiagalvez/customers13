@@ -13,7 +13,7 @@
     id-field="_entity_type_id">
     @foreach ($nameFields as $field => $label)
         <flux:field>
-            <x-basics13::forms.field-label :request="\entities13\Http\Requests\EntityTypeRequest::class" :field="$field" :test="'entity-type-' . $field . '-info'"
+            <x-basics13::forms.field-label :request="\Entities13\Http\Requests\EntityTypeRequest::class" :field="$field" :test="'entity-type-' . $field . '-info'"
                 :for="'entity-type-' . $field" :labels="$nameFields">
                 {{ $label }}
             </x-basics13::forms.field-label>
@@ -27,7 +27,7 @@
     @endforeach
 
     <flux:field>
-        <x-basics13::forms.field-label :request="\entities13\Http\Requests\EntityTypeRequest::class" field="notes"
+        <x-basics13::forms.field-label :request="\Entities13\Http\Requests\EntityTypeRequest::class" field="notes"
             test="entity-type-notes-info" for="entity-type-notes">
             {{ __('Notes') }}
         </x-basics13::forms.field-label>
