@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Tests\Feature\Entities;
+namespace Entities13\Tests\Feature\Entities;
 
 use App\Models\User;
-use entities13\Models\Entity;
-use entities13\Tests\TestCase;
+use Entities13\Models\Entity;
+use Entities13\Tests\TestCase;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
 class EntityArchivedTest extends TestCase

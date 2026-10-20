@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Http\Requests;
+namespace Entities13\Http\Requests;
 
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Basics13\Http\Requests\SearchableSelectOptionsRequest;
 
 class EntityTypeSelectOptionsRequest extends SearchableSelectOptionsRequest

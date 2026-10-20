@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Tests;
+namespace Entities13\Tests;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable;

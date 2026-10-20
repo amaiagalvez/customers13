@@ -1,11 +1,11 @@
 <?php
 
-namespace entities13\Tests\Feature\Entities;
+namespace Entities13\Tests\Feature\Entities;
 
 use App\Models\User;
-use entities13\Models\Entity;
-use entities13\Tests\TestCase;
-use entities13\Models\EntityType;
+use Entities13\Models\Entity;
+use Entities13\Tests\TestCase;
+use Entities13\Models\EntityType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 

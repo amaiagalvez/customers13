@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Tests\Unit\Validation;
+namespace Entities13\Tests\Unit\Validation;
 
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
-use entities13\Http\Requests\EntityRestoreRequest;
+use Entities13\Http\Requests\EntityRestoreRequest;
 
 class EntityRestoreRequestTest extends TestCase
 {

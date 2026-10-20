@@ -1,14 +1,14 @@
 <?php
 
-namespace entities13\Models;
+namespace Entities13\Models;
 
 use Carbon\CarbonImmutable;
-use entities13\Policies\EntityPolicy;
+use Entities13\Policies\EntityPolicy;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Concerns\TracksAuditColumns;
 use Basics13\Concerns\TransactionalDelete;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use entities13\Database\Factories\EntityFactory;
+use Entities13\Database\Factories\EntityFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

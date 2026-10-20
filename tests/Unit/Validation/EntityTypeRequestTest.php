@@ -1,17 +1,17 @@
 <?php
 
-namespace entities13\Tests\Unit\Validation;
+namespace Entities13\Tests\Unit\Validation;
 
 use App\Models\User;
 use Illuminate\Routing\Route;
-use entities13\Tests\TestCase;
+use Entities13\Tests\TestCase;
 use Illuminate\Auth\Access\Gate;
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Illuminate\Foundation\Application;
 use Illuminate\Validation\Rules\Unique;
-use entities13\Policies\EntityTypePolicy;
+use Entities13\Policies\EntityTypePolicy;
 use Basics13\Support\Validation\MaxLength;
-use entities13\Http\Requests\EntityTypeRequest;
+use Entities13\Http\Requests\EntityTypeRequest;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 /**

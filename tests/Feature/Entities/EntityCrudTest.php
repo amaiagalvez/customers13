@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Tests\Feature\Entities;
+namespace Entities13\Tests\Feature\Entities;
 
 use App\Models\User;
-use entities13\Models\Entity;
-use entities13\Tests\TestCase;
+use Entities13\Models\Entity;
+use Entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Basics13\Support\Validation\MaxLength;

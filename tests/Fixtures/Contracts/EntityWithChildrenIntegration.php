@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Tests\Fixtures\Contracts;
+namespace Entities13\Tests\Fixtures\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use entities13\Contracts\EntityIntegration;
+use Entities13\Contracts\EntityIntegration;
 
 /**
  * Stands in for any integration package that knows something about a entity this package cannot

@@ -18,21 +18,21 @@
     },
     "autoload": {
         "psr-4": {
-            "entities13\\Database\\Factories\\": "database/factories/",
-            "entities13\\Database\\Seeders\\": "database/seeders/",
-            "entities13\\": "src/"
+            "Entities13\\Database\\Factories\\": "database/factories/",
+            "Entities13\\Database\\Seeders\\": "database/seeders/",
+            "Entities13\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/Fixtures/App/",
-            "entities13\\Tests\\": "tests/"
+            "Entities13\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "entities13\\ServiceProvider"
+                "Entities13\\ServiceProvider"
             ]
         }
     },

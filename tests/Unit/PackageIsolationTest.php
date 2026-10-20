@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Tests\Unit;
+namespace Entities13\Tests\Unit;
 
 use Generator;
 use SplFileInfo;
@@ -61,7 +61,7 @@ class PackageIsolationTest extends TestCase
             $offences,
             'entities13 must work without projects13 installed, but its production code still '
                 .'names it. Move whatever needs a project into the integration package, and keep the '
-                .'contract in entities13\\Contracts\\EntityIntegration as the only seam.'.PHP_EOL
+                .'contract in Entities13\\Contracts\\EntityIntegration as the only seam.'.PHP_EOL
                 .PHP_EOL.implode(PHP_EOL, $offences),
         );
     }

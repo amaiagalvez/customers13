@@ -1,22 +1,22 @@
 <?php
 
-namespace entities13\Http\Controllers;
+namespace Entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use entities13\Models\Entity;
-use entities13\Models\EntityType;
+use Entities13\Models\Entity;
+use Entities13\Models\EntityType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
-use entities13\Http\Requests\EntityRequest;
-use entities13\Http\Requests\EntityListRequest;
-use entities13\Queries\Entities\EntityListQuery;
-use entities13\Transformers\EntityListTransformer;
+use Entities13\Http\Requests\EntityRequest;
+use Entities13\Http\Requests\EntityListRequest;
+use Entities13\Queries\Entities\EntityListQuery;
+use Entities13\Transformers\EntityListTransformer;
 use Basics13\Support\Database\UniqueConstraintViolation;
-use entities13\Http\Requests\EntitySelectOptionsRequest;
-use entities13\Queries\Entities\EntitySelectOptionsQuery;
+use Entities13\Http\Requests\EntitySelectOptionsRequest;
+use Entities13\Queries\Entities\EntitySelectOptionsQuery;
 
 class EntityController extends Controller
 {

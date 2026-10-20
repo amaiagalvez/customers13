@@ -1,17 +1,17 @@
 <?php
 
-namespace entities13\Http\Controllers;
+namespace Entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Http\Controllers\TrashController;
-use entities13\Http\Requests\EntityListRequest;
-use entities13\Queries\Entities\EntityListQuery;
-use entities13\Http\Requests\EntityDestroyRequest;
-use entities13\Http\Requests\EntityRestoreRequest;
-use entities13\Transformers\EntityListTransformer;
+use Entities13\Http\Requests\EntityListRequest;
+use Entities13\Queries\Entities\EntityListQuery;
+use Entities13\Http\Requests\EntityDestroyRequest;
+use Entities13\Http\Requests\EntityRestoreRequest;
+use Entities13\Transformers\EntityListTransformer;
 
 /**
  * @extends TrashController<Entity>

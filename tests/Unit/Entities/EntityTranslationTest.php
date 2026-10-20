@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Tests\Unit\Entities;
+namespace Entities13\Tests\Unit\Entities;
 
 use PHPUnit\Framework\TestCase;
 

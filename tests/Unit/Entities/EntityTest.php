@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Tests\Unit\Entities;
+namespace Entities13\Tests\Unit\Entities;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use PHPUnit\Framework\TestCase;
 
 class EntityTest extends TestCase

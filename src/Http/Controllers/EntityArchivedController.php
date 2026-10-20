@@ -1,14 +1,14 @@
 <?php
 
-namespace entities13\Http\Controllers;
+namespace Entities13\Http\Controllers;
 
 use Illuminate\View\View;
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Http\RedirectResponse;
-use entities13\Http\Requests\EntityListRequest;
-use entities13\Queries\Entities\EntityListQuery;
+use Entities13\Http\Requests\EntityListRequest;
+use Entities13\Queries\Entities\EntityListQuery;
 use Basics13\Http\Controllers\ArchivedController;
-use entities13\Transformers\EntityListTransformer;
+use Entities13\Transformers\EntityListTransformer;
 
 class EntityArchivedController extends ArchivedController
 {

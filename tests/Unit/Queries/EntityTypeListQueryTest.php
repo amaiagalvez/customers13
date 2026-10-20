@@ -1,12 +1,12 @@
 <?php
 
-namespace entities13\Tests\Unit\Queries;
+namespace Entities13\Tests\Unit\Queries;
 
 use ReflectionClass;
 use ReflectionMethod;
 use PHPUnit\Framework\TestCase;
-use entities13\Contracts\EntityIntegration;
-use entities13\Queries\EntityTypes\EntityTypeListQuery;
+use Entities13\Contracts\EntityIntegration;
+use Entities13\Queries\EntityTypes\EntityTypeListQuery;
 
 class EntityTypeListQueryTest extends TestCase
 {

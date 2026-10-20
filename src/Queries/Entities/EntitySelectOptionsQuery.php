@@ -1,12 +1,12 @@
 <?php
 
-namespace entities13\Queries\Entities;
+namespace Entities13\Queries\Entities;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Support\Collection;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
-use entities13\Contracts\EntityIntegration;
+use Entities13\Contracts\EntityIntegration;
 
 /**
  * @extends ListQueryBase<Entity>

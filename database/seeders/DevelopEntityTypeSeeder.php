@@ -2,9 +2,9 @@
 
 namespace Entities13\Database\Seeders;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Database\Seeder;
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 
 /**
  * Example entity types plus the requested number of bulk types for a development database.

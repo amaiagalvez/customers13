@@ -7,4 +7,4 @@ if (! is_file($autoload)) {
 }
 
 $loader = require $autoload;
-$loader->addPsr4('entities13\\Tests\\', __DIR__.'/');
+$loader->addPsr4('Entities13\\Tests\\', __DIR__.'/');

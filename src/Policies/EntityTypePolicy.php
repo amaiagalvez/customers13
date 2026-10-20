@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Policies;
+namespace Entities13\Policies;
 
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
 class EntityTypePolicy

@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Contracts;
+namespace Entities13\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;

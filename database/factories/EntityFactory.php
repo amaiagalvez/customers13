@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Database\Factories;
+namespace Entities13\Database\Factories;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Basics13\Database\Factories\HasStates;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

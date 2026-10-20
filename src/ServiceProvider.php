@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13;
+namespace Entities13;
 
-use entities13\Contracts\EntityIntegration;
+use Entities13\Contracts\EntityIntegration;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 
 /**

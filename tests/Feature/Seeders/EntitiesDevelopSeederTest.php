@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Tests\Feature\Seeders;
+namespace Entities13\Tests\Feature\Seeders;
 
-use entities13\Tests\TestCase;
+use Entities13\Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Entities13\Database\Seeders\EntitiesDevelopSeeder;
 

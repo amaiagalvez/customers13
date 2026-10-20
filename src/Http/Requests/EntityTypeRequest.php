@@ -1,9 +1,9 @@
 <?php
 
-namespace entities13\Http\Requests;
+namespace Entities13\Http\Requests;
 
 use Illuminate\Validation\Rule;
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Illuminate\Validation\Rules\Unique;
 use Basics13\Support\Validation\MaxLength;
 use Illuminate\Foundation\Http\FormRequest;

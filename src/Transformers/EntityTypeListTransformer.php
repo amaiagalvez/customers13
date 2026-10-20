@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Transformers;
+namespace Entities13\Transformers;
 
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
 

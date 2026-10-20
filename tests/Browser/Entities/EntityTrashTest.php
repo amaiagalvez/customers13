@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Tests\Browser\Entities;
+namespace Entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
-use entities13\Models\Entity;
-use entities13\Tests\DuskTestCase;
+use Entities13\Models\Entity;
+use Entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
 class EntityTrashTest extends DuskTestCase

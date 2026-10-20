@@ -1,12 +1,12 @@
 <?php
 
-namespace entities13\Tests\Unit\Queries;
+namespace Entities13\Tests\Unit\Queries;
 
 use ReflectionMethod;
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use PHPUnit\Framework\TestCase;
-use entities13\Contracts\EntityIntegration;
-use entities13\Queries\Entities\EntitySelectOptionsQuery;
+use Entities13\Contracts\EntityIntegration;
+use Entities13\Queries\Entities\EntitySelectOptionsQuery;
 
 /**
  * The select-options query searches by itself and never counts a state tab, so the two hooks the

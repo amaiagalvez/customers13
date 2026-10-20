@@ -1,6 +1,6 @@
 <?php
 
-namespace entities13\Tests;
+namespace Entities13\Tests;
 
 use App\Models\User;
 use Flux\FluxServiceProvider;
@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Route;
 use Basics13\Tests\TestCase as Basics13TestCase;
 use Basics13\Support\Testing\ValidatesFormRequests;
-use entities13\ServiceProvider as entities13ServiceProvider;
+use Entities13\ServiceProvider as entities13ServiceProvider;
 
 abstract class TestCase extends Basics13TestCase
 {

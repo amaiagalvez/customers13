@@ -1,13 +1,13 @@
 <?php
 
-namespace entities13\Tests\Unit\Transformers;
+namespace Entities13\Tests\Unit\Transformers;
 
 use Basics13\Tests\TestCase;
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
-use entities13\Transformers\EntityListTransformer;
+use Entities13\Transformers\EntityListTransformer;
 
 final class EntityListTransformerTest extends TestCase
 {

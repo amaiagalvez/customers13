@@ -1,10 +1,10 @@
 <?php
 
-namespace entities13\Http\Requests;
+namespace Entities13\Http\Requests;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Validation\Rule;
-use entities13\Models\EntityType;
+use Entities13\Models\EntityType;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Validation\Rules\Exists;
 use Basics13\Support\Validation\MaxLength;

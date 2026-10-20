@@ -1,8 +1,8 @@
 <?php
 
-namespace entities13\Tests\Feature\EntityTypes;
+namespace Entities13\Tests\Feature\EntityTypes;
 
-use entities13\Tests\TestCase;
+use Entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;

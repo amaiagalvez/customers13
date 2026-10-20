@@ -1,11 +1,11 @@
 <?php
 
-namespace entities13\Tests\Unit\Policies;
+namespace Entities13\Tests\Unit\Policies;
 
 use App\Models\User;
-use entities13\Tests\TestCase;
-use entities13\Models\EntityType;
-use entities13\Policies\EntityTypePolicy;
+use Entities13\Tests\TestCase;
+use Entities13\Models\EntityType;
+use Entities13\Policies\EntityTypePolicy;
 
 class EntityTypePolicyTest extends TestCase
 {

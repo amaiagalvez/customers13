@@ -1,11 +1,11 @@
 <?php
 
-namespace entities13\Transformers;
+namespace Entities13\Transformers;
 
-use entities13\Models\Entity;
+use Entities13\Models\Entity;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
-use entities13\Contracts\EntityIntegration;
+use Entities13\Contracts\EntityIntegration;
 
 /**
  * @extends ListTransformer<Entity>

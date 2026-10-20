@@ -1,13 +1,13 @@
 <?php
 
-namespace entities13\Tests\Feature\Entities;
+namespace Entities13\Tests\Feature\Entities;
 
 use App\Models\User;
-use entities13\Models\Entity;
-use entities13\Tests\TestCase;
-use entities13\Contracts\EntityIntegration;
+use Entities13\Models\Entity;
+use Entities13\Tests\TestCase;
+use Entities13\Contracts\EntityIntegration;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use entities13\Tests\Fixtures\Contracts\EntityWithChildrenIntegration;
+use Entities13\Tests\Fixtures\Contracts\EntityWithChildrenIntegration;
 
 /**
  * What hangs from a entity is the business of whichever package knows about it, so this package
