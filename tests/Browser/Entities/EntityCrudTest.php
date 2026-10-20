@@ -19,7 +19,7 @@ class EntityCrudTest extends DuskTestCase
 
     use DatabaseMigrations;
 
-    public function test_entity_row_name_opens_the_edit_form(): void
+    public function test_entity_row_name_is_not_interactive(): void
     {
         $user = $this->user();
         $entity = Entity::factory()->create(['name' => 'Editable from the row']);
@@ -27,10 +27,11 @@ class EntityCrudTest extends DuskTestCase
         $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
                 ->visit('/entities')
-                ->click('[data-test="entity-name-'.$entity->id.'"]')
-                ->waitFor(self::ENTITY_NAME_SELECTOR)
-                ->assertSeeIn('dialog[open]', __('Edit entity'))
-                ->assertInputValue(self::ENTITY_NAME_SELECTOR, $entity->name);
+                ->assertSeeIn('[data-test="entity-name-'.$entity->id.'"]', $entity->name)
+                ->assertScript(
+                    'document.querySelector(\'[data-test="entity-name-'.$entity->id.'"]\').closest(\'a, button\') === null',
+                    true,
+                );
         });
     }
 

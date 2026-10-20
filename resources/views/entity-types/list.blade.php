@@ -100,7 +100,10 @@
                             <flux:table.row :key="$row['id']"
                                 class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
                                 <flux:table.cell class="max-w-[16rem]">
-                                    {{ $row['nameEu'] }}
+                                    <span class="block max-w-full truncate" title="{{ $row['nameEu'] }}"
+                                        data-test="entity-type-name-{{ $row['id'] }}">
+                                        {{ $row['nameEu'] }}
+                                    </span>
                                 </flux:table.cell>
                                 <flux:table.cell class="max-w-[16rem]">
                                     {{ $row['nameEs'] ?? '—' }}

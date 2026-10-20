@@ -65,6 +65,7 @@ class EntityTypeCrudTest extends TestCase
             ->assertSee('aria-labelledby="entity-type-form-heading"', false)
             ->assertSee('id="entity-type-form-heading"', false)
             ->assertSee('entity-type-edit-'.$entityType->id)
+            ->assertSee('data-test="entity-type-name-'.$entityType->id.'"', false)
             ->assertSee('Bezero mota')
             ->assertSee('Tipo de cliente')
             ->assertSee('Type de client')
