@@ -26,7 +26,7 @@ class EntityArchivedController extends ArchivedController
             'list' => $transformer->archived(
                 $entities,
                 $search,
-                $query->stateCounts(archivedTotal: $search === '' ? $entities->total() : null),
+                $query->stateCounts(archivedTotal: $search === '' && $filters === [] ? $entities->total() : null),
             ),
             'searchableFields' => $query->searchableFields('archived'),
             'filters' => $filters,

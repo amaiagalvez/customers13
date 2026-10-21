@@ -4,6 +4,7 @@ namespace Entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
 use Entities13\Models\Entity;
+use Entities13\Models\EntityType;
 use Entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 
@@ -127,6 +128,162 @@ class EntityCrudTest extends DuskTestCase
                 ->assertDontSeeIn('dialog[open]', 'entities13::messages.')
                 ->click('[data-test="advanced-search-close"]')
                 ->waitUntilMissing('dialog[open]');
+        });
+    }
+
+    public function test_advanced_search_keeps_default_operators_after_reopening(): void
+    {
+        $user = $this->user();
+        $operatorValue = 'document.querySelector(\'[data-test="name-advanced-search-operator"]\').value';
+
+        $this->browse(function (Browser $browser) use ($user, $operatorValue): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertScript($operatorValue, 'contains')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitUntilMissing('dialog[open]')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertScript($operatorValue, 'contains')
+                ->click('[data-test="advanced-search-close"]')
+                ->waitUntilMissing('dialog[open]')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertScript($operatorValue, 'contains');
+        });
+    }
+
+    public function test_advanced_search_applies_the_boolean_operator(): void
+    {
+        $user = $this->user();
+
+        $this->browse(function (Browser $browser) use ($user): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertMissing('dialog[open] [wire\\:model="filters.active.value"]')
+                ->select('[data-test="active-advanced-search-operator"]', 'is_true')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitUntilMissing('dialog[open]')
+                ->waitUntil('location.search.includes("is_true")')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->select('[data-test="active-advanced-search-operator"]', 'is_false')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitUntilMissing('dialog[open]')
+                ->waitUntil('location.search.includes("is_false")');
+        });
+    }
+
+    public function test_advanced_search_filters_entity_types_from_a_checkbox_list(): void
+    {
+        $user = $this->user();
+        $entityType = EntityType::factory()->create(['name_eu' => 'Dusk mota '.fake()->uuid()]);
+        $typed = Entity::factory()->create(['name' => 'Typed '.fake()->uuid()]);
+        $typed->entityTypes()->attach($entityType);
+        $untyped = Entity::factory()->create(['name' => 'Untyped '.fake()->uuid()]);
+
+        $this->browse(function (Browser $browser) use ($user, $entityType, $typed, $untyped): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertMissing('dialog[open] select[multiple]')
+                ->assertVisible('[data-test="entity_type_ids-advanced-search-info"]')
+                ->assertSeeIn('[data-test="entity_type_ids-advanced-search-options"]', $entityType->name_eu)
+                ->check('[data-test="entity_type_ids-advanced-search-options"] input[value="'.$entityType->id.'"]')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitUntilMissing('dialog[open]')
+                ->waitUntil('location.search.includes("entity_type_ids")')
+                ->waitUntilMissingText($untyped->name)
+                ->assertSee($typed->name);
+        });
+    }
+
+    public function test_filter_badges_follow_the_applied_filters_and_remove_them(): void
+    {
+        $user = $this->user();
+        $holding = Entity::factory()->create(['name' => 'Holding '.fake()->uuid()]);
+        $other = Entity::factory()->create(['name' => 'Other '.fake()->uuid()]);
+
+        $this->browse(function (Browser $browser) use ($user, $holding, $other): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->type('dialog[open] input[wire\\:model="filters.name.value"]', 'Holding')
+                ->select('[data-test="active-advanced-search-operator"]', 'is_true')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitFor('[data-test="entity-filter-remove-name"]')
+                ->assertVisible('[data-test="entity-filter-remove-active"]')
+                ->assertSee($holding->name)
+                ->assertDontSee($other->name)
+                ->click('[data-test="entity-filter-remove-name"]')
+                ->waitUntilMissing('[data-test="entity-filter-remove-name"]')
+                ->assertVisible('[data-test="entity-filter-remove-active"]')
+                ->assertSee($other->name)
+                ->click('[data-test="entity-filter-clear-all"]')
+                ->waitUntilMissing('[data-test="entity-filter-badges"]')
+                ->assertScript('location.search', '');
+        });
+    }
+
+    public function test_advanced_search_date_inputs_follow_the_chosen_operator(): void
+    {
+        $user = $this->user();
+        $from = 'dialog[open] input[wire\\:model="filters.created_at.value.0"]';
+        $single = 'dialog[open] input[wire\\:model="filters.created_at.value"]';
+
+        $this->browse(function (Browser $browser) use ($user, $from, $single): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertPresent($from)
+                ->select('[data-test="created_at-advanced-search-operator"]', 'before')
+                ->waitFor($single)
+                ->assertMissing($from)
+                ->select('[data-test="created_at-advanced-search-operator"]', 'between')
+                ->waitFor($from)
+                ->assertMissing($single);
+        });
+    }
+
+    public function test_search_and_advanced_filters_keep_each_other(): void
+    {
+        $user = $this->user();
+        $term = 'Northern';
+        $match = Entity::factory()->create(['name' => 'Holding '.$term.' '.fake()->uuid()]);
+        $otherHolding = Entity::factory()->create(['name' => 'Holding '.fake()->uuid()]);
+        $otherTerm = Entity::factory()->create(['name' => 'Other '.$term.' '.fake()->uuid()]);
+
+        $this->browse(function (Browser $browser) use ($user, $term, $match, $otherHolding, $otherTerm): void {
+            $browser->loginAs($user)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->type('dialog[open] input[wire\\:model="filters.name.value"]', 'Holding')
+                ->press(__('basics13::messages.apply_filters'))
+                ->waitFor('[data-test="entity-filter-remove-name"]')
+                // Searching keeps the applied filter.
+                ->type('[data-test="entity-search"]', $term)
+                ->waitUntil('location.search.includes("search=")')
+                ->waitUntilMissingText($otherHolding->name)
+                ->assertSee($match->name)
+                ->assertDontSee($otherTerm->name)
+                ->assertScript('location.search.includes("filters")', true)
+                ->assertVisible('[data-test="entity-filter-remove-name"]')
+                // Applying filters keeps the search.
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->waitForReload(fn (Browser $browser) => $browser->press(__('basics13::messages.apply_filters')))
+                ->waitFor('[data-test="entity-filter-remove-name"]')
+                ->assertScript('new URLSearchParams(location.search).get("search")', $term)
+                ->assertSee($match->name)
+                ->assertDontSee($otherTerm->name);
         });
     }
 

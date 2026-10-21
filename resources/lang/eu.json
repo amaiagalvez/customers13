@@ -7,6 +7,7 @@
     "Entity notes": "Oharrak",
     "Entity status": "Egoera",
     "Entity types": "Bezero motak",
+    "Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.": "«Berdina da»: hautatutako motetatik gutxienez bat duten bezeroak; «ez da berdina»: horietako bat ere ez dutenak.",
     "Entities": "Bezeroak",
     "Edit entity": "Bezeroa editatu",
     "Edit entity type": "Bezero mota editatu",

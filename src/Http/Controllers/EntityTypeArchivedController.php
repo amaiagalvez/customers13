@@ -18,8 +18,7 @@ class EntityTypeArchivedController extends ArchivedController
         EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $filters = $request->filters() ?? [];
-        $entityTypes = $query->archived($search, $filters);
+        $entityTypes = $query->archived($search);
 
         return $this->listView($request, 'entities13::entity-types.list', [
             'entityTypes' => $entityTypes,
@@ -28,8 +27,6 @@ class EntityTypeArchivedController extends ArchivedController
                 $search,
                 $query->stateCounts(archivedTotal: $search === '' ? $entityTypes->total() : null),
             ),
-            'searchableFields' => $query->searchableFields('archived'),
-            'filters' => $filters,
             'scope' => 'archived',
         ]);
     }

@@ -80,7 +80,7 @@ final class EntityListQuery extends ListQueryBase
      * Get the searchable field definitions for the current scope.
      *
      * @param  string  $scope  One of 'active', 'archived', 'trashed'
-     * @return array<string, array{column: string, label: string, type: string, operators?: array<int,string>, default_operator?: string, visible?: bool, order?: int, group?: string, nullable?: bool, placeholder?: string, help?: string, condition?: callable, options?: array<int,string>|callable, multiple?: bool}>
+     * @return array<string, array{column: string, label: string, type: string, operators?: array<int,string>, default_operator?: string, visible?: bool, order?: int, group?: string, nullable?: bool, placeholder?: string, help?: string, condition?: callable, options?: array<int,string>|callable, multiple?: bool, relation?: string}>
      */
     public function searchableFields(string $scope): array
     {
@@ -119,8 +119,10 @@ final class EntityListQuery extends ListQueryBase
                 'group' => 'dates',
             ],
             'entity_type_ids' => [
-                'column' => 'ENT_entity_entity_type.entity_type_id',
+                'column' => 'ENT_entity_types.id',
+                'relation' => 'entityTypes',
                 'label' => 'Entity types',
+                'help' => 'Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.',
                 'type' => 'select',
                 'visible' => true,
                 'order' => 10,

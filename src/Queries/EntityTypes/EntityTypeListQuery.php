@@ -92,65 +92,8 @@ final class EntityTypeListQuery extends ListQueryBase
      */
     public function searchableFields(string $scope): array
     {
-        return [
-            'name_eu' => [
-                'column' => 'ENT_entity_types.name_eu',
-                'label' => 'entities13::messages.name_eu',
-                'type' => 'text',
-                'visible' => true,
-                'order' => 10,
-                'group' => 'names',
-            ],
-            'name_es' => [
-                'column' => 'ENT_entity_types.name_es',
-                'label' => 'entities13::messages.name_es',
-                'type' => 'text',
-                'visible' => true,
-                'order' => 20,
-                'group' => 'names',
-            ],
-            'name_fr' => [
-                'column' => 'ENT_entity_types.name_fr',
-                'label' => 'entities13::messages.name_fr',
-                'type' => 'text',
-                'visible' => true,
-                'order' => 30,
-                'group' => 'names',
-            ],
-            'name_en' => [
-                'column' => 'ENT_entity_types.name_en',
-                'label' => 'entities13::messages.name_en',
-                'type' => 'text',
-                'visible' => true,
-                'order' => 40,
-                'group' => 'names',
-            ],
-            'notes' => [
-                'column' => 'ENT_entity_types.notes',
-                'label' => 'entities13::messages.notes',
-                'type' => 'text',
-                'operators' => ['contains', 'equals', 'not_equals'], // Excludes starts_with/ends_with
-                'visible' => false,
-                'order' => 50,
-                'group' => 'basic',
-            ],
-            'active' => [
-                'column' => 'ENT_entity_types.active',
-                'label' => 'entities13::messages.active',
-                'type' => 'boolean',
-                'visible' => true,
-                'order' => 10,
-                'group' => 'status',
-            ],
-            'created_at' => [
-                'column' => 'ENT_entity_types.created_at',
-                'label' => 'entities13::messages.created_at',
-                'type' => 'date',
-                'visible' => true,
-                'order' => 10,
-                'group' => 'dates',
-            ],
-        ];
+        // Entity types are a short catalogue: the list search is enough, no advanced filters.
+        return [];
     }
 
     /**

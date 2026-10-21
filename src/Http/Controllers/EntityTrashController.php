@@ -32,7 +32,7 @@ class EntityTrashController extends TrashController
             'list' => $transformer->trash(
                 $entities,
                 $search,
-                $query->stateCounts(trashedTotal: $search === '' ? $entities->total() : null),
+                $query->stateCounts(trashedTotal: $search === '' && $filters === [] ? $entities->total() : null),
             ),
             'searchableFields' => $query->searchableFields('trashed'),
             'filters' => $filters,

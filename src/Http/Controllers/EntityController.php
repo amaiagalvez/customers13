@@ -37,7 +37,7 @@ class EntityController extends Controller
             'list' => $transformer->active(
                 $entities,
                 $search,
-                $query->stateCounts(activeTotal: $search === '' ? $entities->total() : null),
+                $query->stateCounts(activeTotal: $search === '' && $filters === [] ? $entities->total() : null),
             ),
             'searchableFields' => $query->searchableFields('active'),
             'filters' => $filters,
