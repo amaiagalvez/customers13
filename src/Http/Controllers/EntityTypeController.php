@@ -25,7 +25,8 @@ class EntityTypeController extends Controller
         EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $entityTypes = $query->active($search);
+        $filters = $request->filters() ?? [];
+        $entityTypes = $query->active($search, $filters);
 
         return $this->listView($request, 'entities13::entity-types.list', [
             'entityTypes' => $entityTypes,
@@ -34,6 +35,9 @@ class EntityTypeController extends Controller
                 $search,
                 $query->stateCounts(activeTotal: $search === '' ? $entityTypes->total() : null),
             ),
+            'searchableFields' => $query->searchableFields('active'),
+            'filters' => $filters,
+            'scope' => 'active',
         ]);
     }
 

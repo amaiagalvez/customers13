@@ -24,7 +24,8 @@ class EntityTypeTrashController extends TrashController
         EntityTypeListTransformer $transformer,
     ): View|string {
         $search = $request->search();
-        $entityTypes = $query->trashed($search);
+        $filters = $request->filters() ?? [];
+        $entityTypes = $query->trashed($search, $filters);
 
         return $this->listView($request, 'entities13::entity-types.list', [
             'entityTypes' => $entityTypes,
@@ -33,6 +34,9 @@ class EntityTypeTrashController extends TrashController
                 $search,
                 $query->stateCounts(trashedTotal: $search === '' ? $entityTypes->total() : null),
             ),
+            'searchableFields' => $query->searchableFields('trashed'),
+            'filters' => $filters,
+            'scope' => 'trashed',
         ]);
     }
 

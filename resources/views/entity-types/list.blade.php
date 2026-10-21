@@ -30,6 +30,11 @@
             'submitLabel' => $editingEntityType ? __('Update entity type') : __('Save entity type'),
         ]
         : null;
+
+    // Get searchable fields for advanced search modal
+    $searchableFields = $searchableFields ?? [];
+    $filters = $filters ?? [];
+    $scope = $scope ?? 'active';
 @endphp
 
 <x-layouts::app :title="$list['resource']">
@@ -69,7 +74,7 @@
         @elseif ($list['create'] && request()->boolean('create'))
             x-init="createEntityType(); $nextTick(() => $dispatch('modal-show', { name: 'entity-type-form' }))" @endif
         class="flex flex-col gap-y-2 sm:gap-y-3">
-        <x-basics13::list.page-header :list="$list" prefix="entity-type">
+        <x-basics13::list.page-header :list="$list" prefix="entity-type" :scope="$scope" :searchableFields="$searchableFields" :filters="$filters">
             <x-slot:actions>
                 @if ($list['create'])
                     <x-basics13::list.create-action prefix="entity-type" :label="__('New entity type')"
@@ -81,7 +86,7 @@
         <x-basics13::list.flash prefix="entity-type" />
 
         @fragment('list-results')
-            <x-basics13::list.searchable-results :search="$list['search']" :total="$entityTypes->total()">
+            <x-basics13::list.searchable-results :search="$list['search']" :total="$entityTypes->total()" :scope="$scope" :filters="$filters">
                 <x-basics13::list.search :search="$list['search']" prefix="entity-type" />
 
                 <x-basics13::list.table prefix="entity-type" :paginator="$entityTypes">
@@ -160,6 +165,14 @@
                     restore-test="entity-type-conflict-restore" />
             @endif
         @endif
+
+        <livewire:basics13.advanced-search-modal
+            :fields="$searchableFields"
+            :filters="$filters"
+            :scope="$scope"
+            :operatorLabels="__('basics13::messages')"
+            :fieldTypeLabels="__('basics13::messages')"
+            :groupLabels="__('basics13::messages')" />
 
         <x-basics13::list.confirm-modal prefix="entity-type" />
     </div>

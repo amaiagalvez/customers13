@@ -63,6 +63,45 @@ class EntityCrudTest extends DuskTestCase
         });
     }
 
+    public function test_advanced_search_button_is_visible_without_overflow(): void
+    {
+        $user = $this->user();
+
+        $this->browse(function (Browser $browser) use ($user): void {
+            $browser->loginAs($user)
+                ->resize(375, 812)
+                ->visit('/entities')
+                ->assertVisible('[data-test="entity-advanced-search"]')
+                ->assertSeeIn('[data-test="entity-advanced-search"]', __('basics13::messages.advanced_search'))
+                ->assertScript(
+                    '(() => { const bounds = document.querySelector(\'[data-test="entity-advanced-search"]\').getBoundingClientRect(); return bounds.width > 0 && bounds.left >= 0 && bounds.right <= window.innerWidth; })()',
+                    true,
+                );
+        });
+    }
+
+    public function test_advanced_search_form_is_visible_without_overflow(): void
+    {
+        $user = $this->user();
+
+        $this->browse(function (Browser $browser) use ($user): void {
+            $browser->loginAs($user)
+                ->resize(375, 812)
+                ->visit('/entities')
+                ->click('[data-test="entity-advanced-search"]')
+                ->waitFor('dialog[open] #advanced-search-heading')
+                ->assertSeeIn('dialog[open]', __('basics13::messages.advanced_search'))
+                ->assertVisible('dialog[open] input[wire\\:model="filters.name.value"]')
+                ->assertVisible('dialog[open] select[wire\\:model="filters.name.operator"]')
+                ->assertSeeIn('dialog[open]', __('basics13::messages.clear_filters'))
+                ->assertSeeIn('dialog[open]', __('basics13::messages.apply_filters'))
+                ->assertScript(
+                    '(() => { const bounds = document.querySelector(\'dialog[open]\').getBoundingClientRect(); return bounds.width > 0 && bounds.left >= 0 && bounds.right <= window.innerWidth; })()',
+                    true,
+                );
+        });
+    }
+
     public function test_entity_can_be_created_updated_and_deleted_from_the_drawer(): void
     {
         $user = $this->user();

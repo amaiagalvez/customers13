@@ -50,4 +50,14 @@ final class EntitySelectOptionsQuery extends ListQueryBase
     {
         return $this->integration;
     }
+
+    /**
+     * Select-option queries do not expose list filters.
+     *
+     * @return array{}
+     */
+    public function searchableFields(string $scope): array
+    {
+        return [];
+    }
 }

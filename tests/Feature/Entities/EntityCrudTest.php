@@ -38,6 +38,7 @@ class EntityCrudTest extends TestCase
         $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]))
             ->get(route('entities.index'))
             ->assertOk()
+            ->assertSee('data-test="entity-advanced-search"', false)
             ->assertSee('No records yet.');
     }
 

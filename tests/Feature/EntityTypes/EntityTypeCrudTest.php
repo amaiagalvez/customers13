@@ -39,6 +39,7 @@ class EntityTypeCrudTest extends TestCase
         $this->actingAs($this->user())
             ->get(route('entity-types.index'))
             ->assertOk()
+            ->assertSee('data-test="entity-type-advanced-search"', false)
             ->assertSee('No records yet.');
     }
 
