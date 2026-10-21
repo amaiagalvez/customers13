@@ -87,7 +87,7 @@ final class EntityListQuery extends ListQueryBase
         return [
             'name' => [
                 'column' => 'ENT_entities.name',
-                'label' => 'entities13::messages.name',
+                'label' => 'Entity name',
                 'type' => 'text',
                 'visible' => true,
                 'order' => 10,
@@ -95,7 +95,7 @@ final class EntityListQuery extends ListQueryBase
             ],
             'notes' => [
                 'column' => 'ENT_entities.notes',
-                'label' => 'entities13::messages.notes',
+                'label' => 'Entity notes',
                 'type' => 'text',
                 'operators' => ['contains', 'equals', 'not_equals'], // Excludes starts_with/ends_with
                 'visible' => false,
@@ -104,7 +104,7 @@ final class EntityListQuery extends ListQueryBase
             ],
             'active' => [
                 'column' => 'ENT_entities.active',
-                'label' => 'entities13::messages.active',
+                'label' => 'Entity status',
                 'type' => 'boolean',
                 'visible' => true,
                 'order' => 10,
@@ -112,7 +112,7 @@ final class EntityListQuery extends ListQueryBase
             ],
             'created_at' => [
                 'column' => 'ENT_entities.created_at',
-                'label' => 'entities13::messages.created_at',
+                'label' => 'Entity creation date',
                 'type' => 'date',
                 'visible' => true,
                 'order' => 10,
@@ -120,7 +120,7 @@ final class EntityListQuery extends ListQueryBase
             ],
             'entity_type_ids' => [
                 'column' => 'ENT_entity_entity_type.entity_type_id',
-                'label' => 'entities13::messages.entity_types',
+                'label' => 'Entity types',
                 'type' => 'select',
                 'visible' => true,
                 'order' => 10,

@@ -63,7 +63,7 @@ class EntityCrudTest extends DuskTestCase
         });
     }
 
-    public function test_advanced_search_button_is_visible_without_overflow(): void
+    public function test_advanced_search_button_and_form_are_correctly_displayed(): void
     {
         $user = $this->user();
 
@@ -76,29 +76,57 @@ class EntityCrudTest extends DuskTestCase
                 ->assertScript(
                     '(() => { const bounds = document.querySelector(\'[data-test="entity-advanced-search"]\').getBoundingClientRect(); return bounds.width > 0 && bounds.left >= 0 && bounds.right <= window.innerWidth; })()',
                     true,
-                );
-        });
-    }
-
-    public function test_advanced_search_form_is_visible_without_overflow(): void
-    {
-        $user = $this->user();
-
-        $this->browse(function (Browser $browser) use ($user): void {
-            $browser->loginAs($user)
-                ->resize(375, 812)
-                ->visit('/entities')
+                )
                 ->click('[data-test="entity-advanced-search"]')
                 ->waitFor('dialog[open] #advanced-search-heading')
                 ->assertSeeIn('dialog[open]', __('basics13::messages.advanced_search'))
+                ->assertVisible('[data-test="advanced-search-close"]')
+                ->assertAttribute(
+                    '[data-test="advanced-search-close"]',
+                    'aria-label',
+                    __('basics13::messages.close'),
+                )
+                ->assertScript(
+                    'document.querySelectorAll(\'dialog[open] [data-test="advanced-search-close"]\').length',
+                    1,
+                )
+                ->assertScript(
+                    'document.querySelectorAll(\'dialog[open] [data-flux-modal-close]\').length',
+                    0,
+                )
                 ->assertVisible('dialog[open] input[wire\\:model="filters.name.value"]')
-                ->assertVisible('dialog[open] select[wire\\:model="filters.name.operator"]')
+                ->assertVisible('[data-test="name-advanced-search-operator"]')
+                ->assertScript(
+                    'document.querySelector(\'[data-test="name-advanced-search-operator"]\').options.length > 0',
+                    true,
+                )
+                ->assertScript(
+                    'document.querySelector(\'[data-test="name-advanced-search-operator"]\').options[0].textContent.trim()',
+                    __('basics13::messages.operator_contains'),
+                )
+                ->assertScript(
+                    'document.querySelectorAll(\'dialog[open] input[type="date"]\').length',
+                    2,
+                )
+                ->assertSeeIn('dialog[open]', 'Izena')
+                ->assertSeeIn('dialog[open]', 'Sortze-data')
+                ->assertSeeIn('dialog[open]', 'Egoera')
+                ->assertSeeIn('dialog[open]', 'Bezero motak')
+                ->assertDontSeeIn('dialog[open]', 'BASIC')
+                ->assertDontSeeIn('dialog[open]', 'DATES')
+                ->assertDontSeeIn('dialog[open]', 'STATUS')
+                ->assertDontSeeIn('dialog[open]', 'RELATIONS')
                 ->assertSeeIn('dialog[open]', __('basics13::messages.clear_filters'))
                 ->assertSeeIn('dialog[open]', __('basics13::messages.apply_filters'))
                 ->assertScript(
                     '(() => { const bounds = document.querySelector(\'dialog[open]\').getBoundingClientRect(); return bounds.width > 0 && bounds.left >= 0 && bounds.right <= window.innerWidth; })()',
                     true,
-                );
+                )
+                ->click('[data-test="advanced-search-toggle"]')
+                ->waitForText('Oharrak')
+                ->assertDontSeeIn('dialog[open]', 'entities13::messages.')
+                ->click('[data-test="advanced-search-close"]')
+                ->waitUntilMissing('dialog[open]');
         });
     }
 
