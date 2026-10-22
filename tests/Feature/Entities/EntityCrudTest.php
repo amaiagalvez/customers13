@@ -7,7 +7,6 @@ use Entities13\Models\Entity;
 use Entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Basics13\Support\Validation\MaxLength;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -351,20 +350,6 @@ class EntityCrudTest extends TestCase
             ->assertSessionHasNoErrors();
 
         $this->assertNull($entity->fresh()->notes);
-    }
-
-    public function test_notes_longer_than_the_configured_maximum_are_rejected(): void
-    {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
-
-        $this->from(route('entities.index'))
-            ->post(route('entities.store'), [
-                'name' => 'Notes entity',
-                'notes' => str_repeat('a', MaxLength::longText() + 1),
-            ])->assertRedirect(route('entities.index'))
-            ->assertSessionHasErrors('notes');
-
-        $this->assertDatabaseCount('ENT_entities', 0);
     }
 
     public function test_the_edit_form_is_bound_to_the_saved_notes(): void

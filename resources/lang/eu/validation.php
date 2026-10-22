@@ -9,9 +9,9 @@ return [
         'name_en' => 'ingelesezko izena',
     ],
     'name' => [
-        'required' => 'Herrialde Laguna deskribapena beharrezkoa da.',
-        'min' => 'Herrialde Laguna gutxienez :min Letrak egon behar da.',
-        'max' => 'Herrialde Laguna gabeez :max Letrak ez sorto da.',
-        'unique' => 'Herrialde Laguna lehenetsik ez duten izena izan da.',
+        'required' => ':Attribute eremua nahitaezkoa da.',
+        'min' => ':Attribute-(e)k gutxienez :min karaktere izan behar ditu.',
+        'max' => ':Attribute-(e)k ezin du :max karaktere baino gehiago eduki.',
+        'unique' => ':Attribute dagoeneko hartua izan da.',
     ],
 ];

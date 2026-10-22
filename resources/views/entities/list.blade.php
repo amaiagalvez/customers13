@@ -86,29 +86,32 @@
                     <flux:table.rows>
                         @forelse ($list['rows'] as $row)
                             <flux:table.row :key="$row['id']"
-                                class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50">
-                                <flux:table.cell class="max-w-[16rem]">
-                                    <span class="block max-w-full truncate" title="{{ $row['name'] }}"
+                                class="transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-800/50 group">
+                                <flux:table.cell>
+                                    <span class="font-medium block truncate" title="{{ $row['name'] }}"
                                         data-test="entity-name-{{ $row['id'] }}">
                                         {{ $row['name'] }}
                                     </span>
                                 </flux:table.cell>
-                                <flux:table.cell class="max-w-[16rem]">
+                                <flux:table.cell class="flex items-center gap-2">
                                     @if ($row['types'] === [])
-                                        <span class="text-zinc-400 dark:text-zinc-500"
+                                        <span class="text-zinc-500 capitalize text-sm"
                                             data-test="entity-types-{{ $row['id'] }}">—</span>
                                     @else
                                         <span class="flex flex-wrap gap-1"
                                             data-test="entity-types-{{ $row['id'] }}">
                                             @foreach ($row['types'] as $type)
                                                 <span class="inline-flex items-center gap-1">
-                                                    <flux:badge size="sm">{{ $type['name'] }}
+                                                    <flux:badge size="sm" class="{{ $type['active'] ? '' : 'opacity-50' }}">
+                                                        {{ $type['name'] }}
                                                     </flux:badge>
                                                     @unless ($type['active'])
-                                                        <span
-                                                            class="shrink-0 rounded-full bg-zinc-800/5 px-1.5 py-0.5 text-[10px] text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
-                                                            {{ __('basics13::messages.archived_label') }}
-                                                        </span>
+                                                        <flux:tooltip :content="__('basics13::messages.archived_label')">
+                                                            <span
+                                                                class="shrink-0 rounded-full bg-zinc-800/5 px-1.5 py-0.5 text-[10px] text-zinc-600 dark:bg-white/10 dark:text-zinc-300">
+                                                                {{ __('basics13::messages.archived_label') }}
+                                                            </span>
+                                                        </flux:tooltip>
                                                     @endunless
                                                 </span>
                                             @endforeach
@@ -117,7 +120,7 @@
                                 </flux:table.cell>
                                 @includeIf(config('entities13.views.entity_list.cells'))
                                 <flux:table.cell align="end" sticky
-                                    class="bg-white dark:bg-zinc-900">
+                                    class="bg-white dark:bg-zinc-900 px-2">
                                     <x-basics13::list.row-actions :actions="$row['actions']" prefix="entity"
                                         edit-handler="editEntity" />
                                 </flux:table.cell>
@@ -125,12 +128,21 @@
                         @empty
                             <x-basics13::list.empty-state :colspan="3 + (int) config('entities13.views.entity_list.count', 0)" :message="$list['emptyMessage']">
                                 @if ($list['create'] && ! $list['narrowed'])
-                                    <flux:modal.trigger name="entity-form">
-                                        <flux:button size="sm" variant="primary" icon="plus"
-                                            x-on:click="createEntity()" data-test="entity-empty-create">
-                                            {{ __('New entity') }}
-                                        </flux:button>
-                                    </flux:modal.trigger>
+                                    <div class="flex flex-col items-center gap-4 py-8">
+                                        <flux:icon.users size="w-16 h-16 text-zinc-400 dark:text-zinc-500" class="mb-4"/>
+                                        <flux:heading size="md" class="text-zinc-700 dark:text-zinc-300 text-center">
+                                            {{ __('No entities yet') }}
+                                        </flux:heading>
+                                        <p class="text-zinc-500 dark:text-zinc-400 text-center">
+                                            {{ __('Create your first entity to get started.') }}
+                                        </p>
+                                        <flux:modal.trigger name="entity-form">
+                                            <flux:button variant="primary" icon="plus"
+                                                x-on:click="createEntity()" data-test="entity-empty-create">
+                                                {{ __('New entity') }}
+                                            </flux:button>
+                                        </flux:modal.trigger>
+                                    </div>
                                 @endif
                             </x-basics13::list.empty-state>
                         @endforelse

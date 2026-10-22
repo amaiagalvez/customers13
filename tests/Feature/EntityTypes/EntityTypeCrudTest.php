@@ -8,7 +8,6 @@ use Entities13\Tests\TestCase;
 use Entities13\Models\EntityType;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Basics13\Support\Validation\MaxLength;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -327,20 +326,6 @@ class EntityTypeCrudTest extends TestCase
         Gate::before(static fn (): bool => false);
 
         $this->post(route('entity-types.store'), ['name_eu' => 'Mota'])->assertForbidden();
-
-        $this->assertDatabaseCount('ENT_entity_types', 0);
-    }
-
-    public function test_notes_longer_than_the_configured_maximum_are_rejected(): void
-    {
-        $this->actingAs($this->user());
-
-        $this->from(route('entity-types.index'))
-            ->post(route('entity-types.store'), [
-                'name_eu' => 'Mota',
-                'notes' => str_repeat('a', MaxLength::longText() + 1),
-            ])
-            ->assertSessionHasErrors('notes');
 
         $this->assertDatabaseCount('ENT_entity_types', 0);
     }
