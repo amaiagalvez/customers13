@@ -3,16 +3,22 @@
 namespace Entities13\Policies;
 
 use Entities13\Models\Entity;
+use Basics13\Concerns\ChecksPermissions;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
+/**
+ * Entity abilities, each one granted by its `entities.{action}` permission.
+ */
 class EntityPolicy
 {
+    use ChecksPermissions;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $this->permits($user, 'entities.view');
     }
 
     /**
@@ -20,7 +26,7 @@ class EntityPolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $this->permits($user, 'entities.create');
     }
 
     /**
@@ -28,7 +34,7 @@ class EntityPolicy
      */
     public function update(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.edit');
     }
 
     /**
@@ -36,7 +42,7 @@ class EntityPolicy
      */
     public function delete(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.delete');
     }
 
     /**
@@ -44,7 +50,7 @@ class EntityPolicy
      */
     public function restore(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.restore');
     }
 
     /**
@@ -52,7 +58,7 @@ class EntityPolicy
      */
     public function forceDelete(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.force_delete');
     }
 
     /**
@@ -60,7 +66,7 @@ class EntityPolicy
      */
     public function archive(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.archive');
     }
 
     /**
@@ -68,6 +74,6 @@ class EntityPolicy
      */
     public function activate(User $user, Entity $entity): bool
     {
-        return true;
+        return $this->permits($user, 'entities.archive');
     }
 }

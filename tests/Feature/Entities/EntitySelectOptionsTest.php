@@ -21,12 +21,12 @@ class EntitySelectOptionsTest extends TestCase
 
     public function test_entity_options_are_searchable_and_limited_to_the_shared_page_size(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $total = ListQueryBase::PER_PAGE + 1;
 
@@ -45,12 +45,12 @@ class EntitySelectOptionsTest extends TestCase
 
     public function test_entity_options_only_include_active_entities(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         Entity::factory()->create(['name' => 'Active select entity']);
         Entity::factory()->archived()->create(['name' => 'Inactive select entity']);
@@ -64,12 +64,12 @@ class EntitySelectOptionsTest extends TestCase
 
     public function test_entity_options_reject_search_terms_over_the_configured_maximum(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $term = str_repeat('a', MaxLength::string() + 1);
 

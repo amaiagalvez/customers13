@@ -2,7 +2,6 @@
 
 namespace Entities13\Tests\Unit\Validation;
 
-use App\Models\User;
 use Entities13\Models\Entity;
 use Illuminate\Routing\Route;
 use Entities13\Tests\TestCase;
@@ -13,6 +12,7 @@ use Illuminate\Validation\Rules\Unique;
 use Illuminate\Support\Facades\Validator;
 use Basics13\Support\Validation\MaxLength;
 use Entities13\Http\Requests\EntityRequest;
+use Basics13\Support\Testing\PermissionsActor;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
 /**
@@ -35,10 +35,17 @@ class EntityRequestTest extends TestCase
         parent::tearDown();
     }
 
+    public function test_authorize_needs_the_create_permission(): void
+    {
+        $request = new EntityRequest;
+        $request->setUserResolver(static fn (): PermissionsActor => PermissionsActor::holding(['entities.view']));
+        $this->assertFalse($request->authorize());
+    }
+
     public function test_authorize_returns_true_when_creating(): void
     {
         $request = new EntityRequest;
-        $request->setUserResolver(static fn (): User => new User);
+        $request->setUserResolver(static fn (): PermissionsActor => PermissionsActor::holding(['entities.manage']));
         $this->assertTrue($request->authorize());
     }
 
@@ -49,7 +56,7 @@ class EntityRequestTest extends TestCase
         $route = new Route($request->getMethod(), '/', static fn (): null => null);
         $route->bind($request);
         $request->setRouteResolver(static fn (): Route => $route);
-        $request->setUserResolver(static fn (): User => new User);
+        $request->setUserResolver(static fn (): PermissionsActor => PermissionsActor::holding(['entities.manage']));
 
         $this->assertTrue($request->authorize());
     }

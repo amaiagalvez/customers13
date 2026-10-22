@@ -22,7 +22,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_entity_row_name_is_not_interactive(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entity = Entity::factory()->create(['name' => 'Editable from the row']);
 
         $this->browse(function (Browser $browser) use ($user, $entity): void {
@@ -38,7 +38,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_entity_table_keeps_the_actions_column_stuck_to_the_end(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $longName = 'Very long entity name '.str_repeat('x', 120);
         $entity = Entity::factory()->create(['name' => $longName]);
 
@@ -66,7 +66,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_advanced_search_button_and_form_are_correctly_displayed(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
@@ -134,7 +134,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_advanced_search_keeps_default_operators_after_reopening(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $operatorValue = 'document.querySelector(\'[data-test="name-advanced-search-operator"]\').value';
 
         $this->browse(function (Browser $browser) use ($user, $operatorValue): void {
@@ -158,7 +158,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_advanced_search_applies_the_boolean_operator(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
@@ -181,7 +181,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_advanced_search_filters_entity_types_from_a_checkbox_list(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entityType = EntityType::factory()->create(['name_eu' => 'Dusk mota '.fake()->uuid()]);
         $typed = Entity::factory()->create(['name' => 'Typed '.fake()->uuid()]);
         $typed->entityTypes()->attach($entityType);
@@ -207,7 +207,7 @@ class EntityCrudTest extends DuskTestCase
     public function test_filter_badges_follow_the_applied_filters_and_remove_them(): void
     {
         // The trash: the one list that offers the status filter next to the others.
-        $user = $this->user();
+        $user = $this->admin();
         $holding = Entity::factory()->trashed()->create(['name' => 'Holding '.fake()->uuid()]);
         $other = Entity::factory()->trashed()->create(['name' => 'Other '.fake()->uuid()]);
 
@@ -235,7 +235,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_advanced_search_date_inputs_follow_the_chosen_operator(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $from = 'dialog[open] input[wire\\:model="filters.created_at.value.0"]';
         $single = 'dialog[open] input[wire\\:model="filters.created_at.value"]';
 
@@ -256,7 +256,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_search_and_advanced_filters_keep_each_other(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $term = 'Northern';
         $match = Entity::factory()->create(['name' => 'Holding '.$term.' '.fake()->uuid()]);
         $otherHolding = Entity::factory()->create(['name' => 'Holding '.fake()->uuid()]);
@@ -291,7 +291,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_entity_can_be_created_updated_and_deleted_from_the_drawer(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entityName = 'Dusk entity '.fake()->uuid();
         $updatedEntityName = 'Updated entity '.fake()->uuid();
         $entityId = null;
@@ -335,7 +335,7 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_entity_creation_shows_conflict_modal_for_trashed_name(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entity = Entity::factory()->create(['name' => 'Reused entity']);
         $entity->delete();
 

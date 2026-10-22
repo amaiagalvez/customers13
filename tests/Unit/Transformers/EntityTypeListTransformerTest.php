@@ -30,7 +30,7 @@ final class EntityTypeListTransformerTest extends TestCase
         $type->setAttribute('entities_count', 0);
 
         $rows = (new EntityTypeListTransformer)->active(new LengthAwarePaginator([$type], 1, 15), '')['rows'];
-        $delete = collect($rows[0]['actions'])->firstWhere('test', 'entity-type-delete-1');
+        $delete = array_column($rows[0]['actions'], null, 'test')['entity-type-delete-1'];
 
         $this->assertSame(__('basics13::messages.delete_record', ['name' => 'Ikastetxea']), $delete['confirmTitle']);
     }

@@ -3,16 +3,22 @@
 namespace Entities13\Policies;
 
 use Entities13\Models\EntityType;
+use Basics13\Concerns\ChecksPermissions;
 use Illuminate\Contracts\Auth\Authenticatable as User;
 
+/**
+ * Entity type abilities, each one granted by its `entity_types.{action}` permission.
+ */
 class EntityTypePolicy
 {
+    use ChecksPermissions;
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.view');
     }
 
     /**
@@ -20,7 +26,7 @@ class EntityTypePolicy
      */
     public function create(User $user): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.create');
     }
 
     /**
@@ -28,7 +34,7 @@ class EntityTypePolicy
      */
     public function update(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.edit');
     }
 
     /**
@@ -36,7 +42,7 @@ class EntityTypePolicy
      */
     public function delete(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.delete');
     }
 
     /**
@@ -44,7 +50,7 @@ class EntityTypePolicy
      */
     public function restore(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.restore');
     }
 
     /**
@@ -52,7 +58,7 @@ class EntityTypePolicy
      */
     public function forceDelete(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.force_delete');
     }
 
     /**
@@ -60,7 +66,7 @@ class EntityTypePolicy
      */
     public function archive(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.archive');
     }
 
     /**
@@ -68,6 +74,6 @@ class EntityTypePolicy
      */
     public function activate(User $user, EntityType $entityType): bool
     {
-        return true;
+        return $this->permits($user, 'entity_types.archive');
     }
 }

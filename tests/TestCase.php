@@ -3,6 +3,7 @@
 namespace Entities13\Tests;
 
 use App\Models\User;
+use Basics13\Models\Role;
 use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
 use Basics13\Tests\TestCase as Basics13TestCase;
@@ -42,5 +43,16 @@ abstract class TestCase extends Basics13TestCase
     {
         parent::setUp();
         Blade::anonymousComponentPath(__DIR__.'/Fixtures/views/layouts', 'layouts');
+    }
+
+    /**
+     * Give the account the `admin` system role, which the permission migrations grant full access
+     * to entities and entity types.
+     */
+    protected function admin(User $user): User
+    {
+        $user->assignRole(Role::query()->where('slug', 'admin')->firstOrFail());
+
+        return $user;
     }
 }

@@ -2,63 +2,54 @@
 
 namespace Entities13\Tests\Unit\Policies;
 
-use App\Models\User;
 use Entities13\Tests\TestCase;
 use Entities13\Models\EntityType;
 use Entities13\Policies\EntityTypePolicy;
+use Basics13\Support\Testing\PermissionsActor;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EntityTypePolicyTest extends TestCase
 {
-    private EntityTypePolicy $policy;
-
-    protected function setUp(): void
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function recordAbilities(): array
     {
-        parent::setUp();
-        $this->policy = new EntityTypePolicy;
+        return [
+            'update' => ['update', 'entity_types.edit'],
+            'delete' => ['delete', 'entity_types.delete'],
+            'restore' => ['restore', 'entity_types.restore'],
+            'forceDelete' => ['forceDelete', 'entity_types.force_delete'],
+            'archive' => ['archive', 'entity_types.archive'],
+            'activate' => ['activate', 'entity_types.archive'],
+        ];
     }
 
-    public function test_view_any_returns_true(): void
+    public function test_listing_and_creating_need_their_permission(): void
     {
-        $this->assertTrue($this->policy->viewAny(new User));
+        $policy = new EntityTypePolicy;
+
+        $this->assertTrue($policy->viewAny(PermissionsActor::holding(['entity_types.view'])));
+        $this->assertFalse($policy->viewAny(PermissionsActor::holding([])));
+        $this->assertTrue($policy->create(PermissionsActor::holding(['entity_types.create'])));
+        $this->assertFalse($policy->create(PermissionsActor::holding(['entity_types.view'])));
     }
 
-    public function test_create_returns_true(): void
+    #[DataProvider('recordAbilities')]
+    public function test_each_ability_on_a_record_needs_its_permission(string $ability, string $permission): void
     {
-        $this->assertTrue($this->policy->create(new User));
+        $policy = new EntityTypePolicy;
+
+        $this->assertTrue($policy->{$ability}(PermissionsActor::holding([$permission]), new EntityType));
+        $this->assertFalse($policy->{$ability}(PermissionsActor::holding(['entity_types.view']), new EntityType));
     }
 
-    public function test_update_returns_true(): void
+    #[DataProvider('recordAbilities')]
+    public function test_only_the_manage_of_its_own_module_grants_every_ability(string $ability, string $permission): void
     {
-        $this->assertTrue($this->policy->update(new User, $this->entityType()));
-    }
+        $policy = new EntityTypePolicy;
 
-    public function test_delete_returns_true(): void
-    {
-        $this->assertTrue($this->policy->delete(new User, $this->entityType()));
-    }
-
-    public function test_restore_returns_true(): void
-    {
-        $this->assertTrue($this->policy->restore(new User, $this->entityType()));
-    }
-
-    public function test_force_delete_returns_true(): void
-    {
-        $this->assertTrue($this->policy->forceDelete(new User, $this->entityType()));
-    }
-
-    public function test_archive_returns_true(): void
-    {
-        $this->assertTrue($this->policy->archive(new User, $this->entityType()));
-    }
-
-    public function test_activate_returns_true(): void
-    {
-        $this->assertTrue($this->policy->activate(new User, $this->entityType()));
-    }
-
-    private function entityType(): EntityType
-    {
-        return new EntityType(['name_eu' => 'Type under test']);
+        $this->assertTrue($policy->{$ability}(PermissionsActor::holding(['entity_types.manage']), new EntityType));
+        $this->assertFalse($policy->{$ability}(PermissionsActor::holding(['users.manage', str_replace('entity_types.', 'roles.', $permission)]), new EntityType));
     }
 }

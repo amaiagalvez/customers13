@@ -26,5 +26,21 @@
     "Update entity": "Bezeroa eguneratu",
     "Update entity type": "Bezero mota eguneratu",
     "You can pick several types.": "Hainbat mota hauta ditzakezu.",
-    "Your entities and their types.": "Zure bezeroak eta haien motak."
+    "Your entities and their types.": "Zure bezeroak eta haien motak.",
+    "entities.view": "Ikusi bezeroak",
+    "entities.create": "Sortu bezeroak",
+    "entities.edit": "Editatu bezeroak",
+    "entities.delete": "Bota bezeroak zakarrontzira",
+    "entities.archive": "Artxibatu eta aktibatu bezeroak",
+    "entities.restore": "Leheneratu bezeroak zakarrontzitik",
+    "entities.force_delete": "Ezabatu bezeroak betiko",
+    "entities.manage": "Kudeatu bezeroak (sarbide osoa)",
+    "entity_types.view": "Ikusi bezero motak",
+    "entity_types.create": "Sortu bezero motak",
+    "entity_types.edit": "Editatu bezero motak",
+    "entity_types.delete": "Bota bezero motak zakarrontzira",
+    "entity_types.archive": "Artxibatu eta aktibatu bezero motak",
+    "entity_types.restore": "Leheneratu bezero motak zakarrontzitik",
+    "entity_types.force_delete": "Ezabatu bezero motak betiko",
+    "entity_types.manage": "Kudeatu bezero motak (sarbide osoa)"
 }

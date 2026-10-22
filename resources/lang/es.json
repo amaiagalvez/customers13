@@ -26,5 +26,21 @@
     "Update entity": "Actualizar cliente",
     "Update entity type": "Actualizar tipo de cliente",
     "You can pick several types.": "Puedes elegir varios tipos.",
-    "Your entities and their types.": "Tus clientes y sus tipos."
+    "Your entities and their types.": "Tus clientes y sus tipos.",
+    "entities.view": "Ver clientes",
+    "entities.create": "Crear clientes",
+    "entities.edit": "Editar clientes",
+    "entities.delete": "Mover clientes a la papelera",
+    "entities.archive": "Archivar y activar clientes",
+    "entities.restore": "Restaurar clientes de la papelera",
+    "entities.force_delete": "Eliminar clientes definitivamente",
+    "entities.manage": "Gestionar clientes (acceso total)",
+    "entity_types.view": "Ver tipos de cliente",
+    "entity_types.create": "Crear tipos de cliente",
+    "entity_types.edit": "Editar tipos de cliente",
+    "entity_types.delete": "Mover tipos de cliente a la papelera",
+    "entity_types.archive": "Archivar y activar tipos de cliente",
+    "entity_types.restore": "Restaurar tipos de cliente de la papelera",
+    "entity_types.force_delete": "Eliminar tipos de cliente definitivamente",
+    "entity_types.manage": "Gestionar tipos de cliente (acceso total)"
 }

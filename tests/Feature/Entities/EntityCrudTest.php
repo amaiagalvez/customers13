@@ -24,7 +24,7 @@ class EntityCrudTest extends TestCase
 
     public function test_unverified_users_cannot_create_entities(): void
     {
-        $user = User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused']);
+        $user = $this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused']));
 
         $this->actingAs($user)
             ->post(route('entities.store'), ['name' => 'Unverified entity'])
@@ -34,7 +34,7 @@ class EntityCrudTest extends TestCase
 
     public function test_empty_entity_list_shows_its_empty_state(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]))
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])))
             ->get(route('entities.index'))
             ->assertOk()
             ->assertSee('data-test="entity-advanced-search"', false)
@@ -43,7 +43,7 @@ class EntityCrudTest extends TestCase
 
     public function test_authenticated_users_can_create_update_and_delete_entities(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
 
         $response = $this->post(route('entities.store'), ['name' => 'Ane Bezeroa']);
         $response->assertRedirect(route('entities.index'))
@@ -72,12 +72,12 @@ class EntityCrudTest extends TestCase
 
     public function test_entity_store_persists_only_validated_attributes(): void
     {
-        $user = $this->actingAs(User::create([
+        $user = $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $this->post(route('entities.store'), [
             'name' => 'Validated entity',
@@ -105,7 +105,7 @@ class EntityCrudTest extends TestCase
      */
     public function test_a_refused_delete_reports_the_error_and_leaves_the_entity_out_of_the_trash(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
         $entity = Entity::factory()->create();
         Entity::deleting(static fn (): bool => false);
 
@@ -118,12 +118,12 @@ class EntityCrudTest extends TestCase
 
     public function test_json_entity_creation_trims_the_name_and_returns_the_created_record(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $this->postJson(route('entities.store'), ['name' => '  Ane Bezeroa  '])
             ->assertCreated()
@@ -135,12 +135,12 @@ class EntityCrudTest extends TestCase
 
     public function test_html_creation_opens_the_restore_conflict_for_a_trashed_name(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $entity = Entity::factory()->create(['name' => 'Reused entity']);
         $entity->delete();
 
@@ -156,12 +156,12 @@ class EntityCrudTest extends TestCase
 
     public function test_json_creation_requires_explicit_reuse_of_a_trashed_name(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $entity = Entity::factory()->create(['name' => 'Reused entity']);
         $entity->delete();
 
@@ -182,12 +182,12 @@ class EntityCrudTest extends TestCase
 
     public function test_store_converts_a_concurrent_duplicate_name_into_a_validation_error(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $name = 'Concurrent entity';
         $this->createDuplicateNameAfterValidation($name);
 
@@ -201,12 +201,12 @@ class EntityCrudTest extends TestCase
 
     public function test_update_converts_a_concurrent_duplicate_name_into_a_validation_error(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $entity = Entity::factory()->create(['name' => 'Original entity']);
         $name = 'Concurrent entity';
         $this->createDuplicateNameAfterValidation($name);
@@ -246,7 +246,7 @@ class EntityCrudTest extends TestCase
 
     public function test_invalid_entity_names_are_rejected(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
 
         $this->postJson(route('entities.store'), ['name' => 'Abc'])
             ->assertUnprocessable()
@@ -256,7 +256,7 @@ class EntityCrudTest extends TestCase
 
     public function test_creation_requires_authorization(): void
     {
-        $user = User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]);
+        $user = $this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
         $this->actingAs($user);
         Gate::before(static fn (): bool => false);
 
@@ -267,12 +267,12 @@ class EntityCrudTest extends TestCase
 
     public function test_entity_name_with_non_latin_characters_can_be_stored_and_searched(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $name = 'Cliente Ñandú クライアント';
 
         $this->post(route('entities.store'), ['name' => $name])
@@ -287,12 +287,12 @@ class EntityCrudTest extends TestCase
 
     public function test_entity_search_is_kept_in_pagination_links(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         foreach (range(1, 30) as $index) {
             Entity::factory()->create(['name' => "Repeat entity {$index}"]);
@@ -305,7 +305,7 @@ class EntityCrudTest extends TestCase
 
     public function test_notes_are_saved_and_replaced_on_update(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
 
         $this->post(route('entities.store'), [
             'name' => 'Notes entity',
@@ -327,7 +327,7 @@ class EntityCrudTest extends TestCase
 
     public function test_notes_are_optional_and_can_be_cleared(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
 
         $this->post(route('entities.store'), ['name' => 'Notes entity'])
             ->assertRedirect(route('entities.index'))
@@ -354,7 +354,7 @@ class EntityCrudTest extends TestCase
 
     public function test_the_edit_form_is_bound_to_the_saved_notes(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
         $entity = Entity::factory()->create(['notes' => 'Entity notes']);
 
         $this->get(route('entities.index'))

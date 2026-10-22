@@ -2,7 +2,6 @@
 
 namespace Entities13\Tests\Unit\Validation;
 
-use App\Models\User;
 use Illuminate\Routing\Route;
 use Entities13\Tests\TestCase;
 use Illuminate\Auth\Access\Gate;
@@ -11,6 +10,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Validation\Rules\Unique;
 use Entities13\Policies\EntityTypePolicy;
 use Basics13\Support\Validation\MaxLength;
+use Basics13\Support\Testing\PermissionsActor;
 use Entities13\Http\Requests\EntityTypeRequest;
 use Illuminate\Contracts\Auth\Access\Gate as GateContract;
 
@@ -34,10 +34,17 @@ class EntityTypeRequestTest extends TestCase
         $this->app->instance(GateContract::class, $gate);
     }
 
+    public function test_authorize_needs_the_create_permission(): void
+    {
+        $request = new EntityTypeRequest;
+        $request->setUserResolver(static fn (): PermissionsActor => PermissionsActor::holding(['entity_types.view']));
+        $this->assertFalse($request->authorize());
+    }
+
     public function test_authorize_returns_true_when_creating(): void
     {
         $request = new EntityTypeRequest;
-        $request->setUserResolver(static fn (): User => new User);
+        $request->setUserResolver(static fn (): PermissionsActor => PermissionsActor::holding(['entity_types.manage']));
         $this->assertTrue($request->authorize());
     }
 

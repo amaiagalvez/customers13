@@ -13,12 +13,12 @@ class EntityArchivedTest extends TestCase
 
     public function test_archived_entities_are_not_shown_in_the_active_list(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         Entity::factory()->archived()->create(['name' => 'Dormant entity']);
         Entity::factory()->create(['name' => 'Active entity']);
@@ -30,12 +30,12 @@ class EntityArchivedTest extends TestCase
 
     public function test_archived_entities_are_searchable_by_name(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $this->travelTo('2026-10-02 12:30:00');
         $updatedEntity = Entity::factory()->archived()->create(['name' => 'Alpha Dormant']);
@@ -54,12 +54,12 @@ class EntityArchivedTest extends TestCase
     public function test_entity_can_be_archived_and_reactivated(): void
     {
         $entity = Entity::factory()->create();
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $this->patch(route('entities.archive', $entity))
             ->assertRedirect(route('entities.index'));
@@ -73,12 +73,12 @@ class EntityArchivedTest extends TestCase
     public function test_restoring_a_trashed_archived_entity_preserves_its_archived_state(): void
     {
         $entity = Entity::factory()->archived()->trashed()->create();
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         $this->patch(route('entities.trash.restore', $entity->id))
             ->assertRedirect(route('entities.trash.index'));

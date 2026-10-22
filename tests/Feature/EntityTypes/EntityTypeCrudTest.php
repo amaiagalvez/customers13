@@ -25,7 +25,7 @@ class EntityTypeCrudTest extends TestCase
 
     public function test_unverified_users_cannot_create_entity_types(): void
     {
-        $user = User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused']);
+        $user = $this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused']));
 
         $this->actingAs($user)
             ->post(route('entity-types.store'), ['name_eu' => 'Unverified type'])
@@ -383,11 +383,11 @@ class EntityTypeCrudTest extends TestCase
 
     private function user(): User
     {
-        return User::create([
+        return $this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]);
+        ]));
     }
 }

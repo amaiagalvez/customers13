@@ -25,12 +25,12 @@ class EntityIntegrationTest extends TestCase
 
         $entity = Entity::factory()->create();
 
-        $response = $this->actingAs(User::create([
+        $response = $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]))->get(route('entities.index'));
+        ])))->get(route('entities.index'));
 
         $response->assertOk();
         $response->assertSee('data-test="entity-archive-'.$entity->id.'"', false);

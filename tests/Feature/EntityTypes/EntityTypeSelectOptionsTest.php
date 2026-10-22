@@ -83,11 +83,11 @@ class EntityTypeSelectOptionsTest extends TestCase
 
     private function user(): User
     {
-        return User::create([
+        return $this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]);
+        ]));
     }
 }

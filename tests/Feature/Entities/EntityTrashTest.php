@@ -13,7 +13,7 @@ class EntityTrashTest extends TestCase
 
     public function test_entity_search_keeps_the_global_active_tab_count(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
         Entity::factory()->create(['name' => 'Matching entity']);
         Entity::factory()->create(['name' => 'Other entity']);
 
@@ -24,12 +24,12 @@ class EntityTrashTest extends TestCase
 
     public function test_trash_list_searches_deleted_entities_without_showing_live_records(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
 
         Entity::factory()->trashed()->create(['name' => 'Matching deleted entity']);
         Entity::factory()->trashed()->create(['name' => 'Other deleted entity']);
@@ -44,7 +44,7 @@ class EntityTrashTest extends TestCase
 
     public function test_entity_can_be_restored_and_permanently_deleted(): void
     {
-        $this->actingAs(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
         $entity = Entity::factory()->create();
         $entity->delete();
 
@@ -60,12 +60,12 @@ class EntityTrashTest extends TestCase
 
     public function test_restore_is_rejected_when_an_active_entity_has_reused_the_name(): void
     {
-        $this->actingAs(User::create([
+        $this->actingAs($this->admin(User::create([
             'name' => 'Test user',
             'email' => 'test@example.test',
             'password' => 'unused',
             'email_verified_at' => now(),
-        ]));
+        ])));
         $trashedEntity = Entity::factory()->create(['name' => 'Reused entity']);
         $trashedEntity->delete();
         $activeEntity = Entity::factory()->create(['name' => 'Reused entity']);

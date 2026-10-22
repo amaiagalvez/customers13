@@ -17,7 +17,7 @@ class EntityTrashTest extends DuskTestCase
 
     public function test_trash_list_searches_deleted_entities_without_showing_live_records(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         Entity::factory()->trashed()->create(['name' => 'Matching deleted entity']);
         Entity::factory()->trashed()->create(['name' => 'Other deleted entity']);
@@ -34,7 +34,7 @@ class EntityTrashTest extends DuskTestCase
 
     public function test_entity_can_be_restored_and_permanently_deleted(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entity = Entity::factory()->create(['name' => 'Entity to restore and delete']);
 
         $this->browse(function (Browser $browser) use ($user, $entity): void {
@@ -65,7 +65,7 @@ class EntityTrashTest extends DuskTestCase
 
     public function test_restore_is_rejected_when_an_active_entity_has_reused_the_name(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $trashedEntity = Entity::factory()->create(['name' => 'Reused entity']);
         $trashedEntity->delete();

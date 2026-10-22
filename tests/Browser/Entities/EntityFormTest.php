@@ -21,7 +21,7 @@ class EntityFormTest extends DuskTestCase
 
     public function test_entity_form_prefills_data_when_editing(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $entity = Entity::factory()->create([
             'name' => 'Existing entity',
             'notes' => 'Existing notes',
@@ -40,7 +40,7 @@ class EntityFormTest extends DuskTestCase
 
     public function test_entity_form_clears_when_cancelled(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
@@ -62,7 +62,7 @@ class EntityFormTest extends DuskTestCase
 
     public function test_entity_form_handles_long_notes(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $longNotes = str_repeat('Long notes content. ', 100);
 
         $this->browse(function (Browser $browser) use ($user, $longNotes): void {

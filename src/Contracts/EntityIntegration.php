@@ -4,6 +4,7 @@ namespace Entities13\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
  * The one seam between `entities13` and whatever optional package knows about a entity beyond
@@ -51,5 +52,15 @@ abstract class EntityIntegration
     public function row(Model $record): array
     {
         return [];
+    }
+
+    /**
+     * Whether this user may pick entities from the options endpoint without being allowed to list
+     * them, because another form of the integration needs an entity chosen. Only active entities
+     * are offered either way.
+     */
+    public function allowsSelectOptions(Authenticatable $user): bool
+    {
+        return false;
     }
 }

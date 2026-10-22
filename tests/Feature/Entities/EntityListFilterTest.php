@@ -128,6 +128,6 @@ class EntityListFilterTest extends TestCase
 
     private function verifiedUser(): User
     {
-        return User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]);
+        return $this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]));
     }
 }

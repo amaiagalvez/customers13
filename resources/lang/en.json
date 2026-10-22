@@ -26,5 +26,21 @@
     "Update entity": "Update entity",
     "Update entity type": "Update entity type",
     "You can pick several types.": "You can pick several types.",
-    "Your entities and their types.": "Your entities and their types."
+    "Your entities and their types.": "Your entities and their types.",
+    "entities.view": "View entities",
+    "entities.create": "Create entities",
+    "entities.edit": "Edit entities",
+    "entities.delete": "Move entities to the trash",
+    "entities.archive": "Archive and activate entities",
+    "entities.restore": "Restore entities from the trash",
+    "entities.force_delete": "Delete entities permanently",
+    "entities.manage": "Manage entities (full access)",
+    "entity_types.view": "View entity types",
+    "entity_types.create": "Create entity types",
+    "entity_types.edit": "Edit entity types",
+    "entity_types.delete": "Move entity types to the trash",
+    "entity_types.archive": "Archive and activate entity types",
+    "entity_types.restore": "Restore entity types from the trash",
+    "entity_types.force_delete": "Delete entity types permanently",
+    "entity_types.manage": "Manage entity types (full access)"
 }

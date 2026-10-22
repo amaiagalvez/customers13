@@ -27,7 +27,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_create_only_shows_active_types(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $active = EntityType::factory()->create(['name_eu' => 'Active kind']);
         $archived = EntityType::factory()->archived()->create(['name_eu' => 'Archived kind']);
         $trashed = EntityType::factory()->trashed()->create(['name_eu' => 'Trashed kind']);
@@ -46,7 +46,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_the_picker_says_so_when_there_is_no_type_to_pick(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
@@ -60,7 +60,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_the_picker_fits_a_short_list_without_scrolling(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         EntityType::factory()->count(2)->create();
 
         $this->browse(function (Browser $browser) use ($user): void {
@@ -74,7 +74,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_the_picker_scrolls_once_the_list_outgrows_the_drawer(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         EntityType::factory()->count(25)->create();
 
         $this->browse(function (Browser $browser) use ($user): void {
@@ -89,7 +89,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_a_entity_can_be_created_with_two_types_picked(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $types = EntityType::factory()->count(3)->create();
         $entityName = 'Dusk typed entity '.fake()->uuid();
 
@@ -119,7 +119,7 @@ class EntityTypePickerTest extends DuskTestCase
 
     public function test_edit_keeps_selected_archived_types_and_hides_other_archived_types(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $active = EntityType::factory()->create();
         $selectedArchived = EntityType::factory()->archived()->create();
         $otherArchived = EntityType::factory()->archived()->create();

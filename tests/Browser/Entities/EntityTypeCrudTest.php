@@ -23,7 +23,7 @@ class EntityTypeCrudTest extends DuskTestCase
 
     public function test_the_drawer_follows_the_entity_type_being_edited(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
         $first = EntityType::factory()->create($this->names('First'));
         $second = EntityType::factory()->create($this->names('Second'));
 
@@ -53,7 +53,7 @@ class EntityTypeCrudTest extends DuskTestCase
 
     public function test_an_entity_type_can_be_created_and_deleted_from_the_drawer(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Basics13\Concerns\HasRoles;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,6 +14,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 #[Fillable(['name', 'email', 'password', 'email_verified_at'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
+    use HasRoles;
+
     /**
      * @return array{email_verified_at: 'datetime'}
      */

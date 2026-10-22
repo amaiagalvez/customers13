@@ -15,7 +15,7 @@ class EntityArchivedTest extends DuskTestCase
 
     public function test_archived_entities_are_not_shown_in_the_active_list(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         Entity::factory()->archived()->create(['name' => 'Dormant entity']);
         Entity::factory()->create(['name' => 'Active entity']);
@@ -30,7 +30,7 @@ class EntityArchivedTest extends DuskTestCase
 
     public function test_archived_entities_are_searchable_by_name(): void
     {
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->travelTo('2026-10-02 12:30:00');
         $updatedEntity = Entity::factory()->archived()->create(['name' => 'Alpha Dormant']);
@@ -53,7 +53,7 @@ class EntityArchivedTest extends DuskTestCase
         // Seeding the archived state keeps this package free of the bridge: the archive *button*
         // only appears for a entity that owns projects, which is covered by EntityProjects13.
         $entity = Entity::factory()->archived()->create(['name' => 'Entity to reactivate']);
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->assertFalse($entity->active);
 
@@ -74,7 +74,7 @@ class EntityArchivedTest extends DuskTestCase
     public function test_restoring_a_trashed_archived_entity_preserves_its_archived_state(): void
     {
         $entity = Entity::factory()->archived()->trashed()->create(['name' => 'Archived and trashed']);
-        $user = $this->user();
+        $user = $this->admin();
 
         $this->browse(function (Browser $browser) use ($user, $entity): void {
             $browser->loginAs($user)
