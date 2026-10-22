@@ -70,7 +70,7 @@
         @elseif ($list['create'] && request()->boolean('create'))
             x-init="createEntityType(); $nextTick(() => $dispatch('modal-show', { name: 'entity-type-form' }))" @endif
         class="flex flex-col gap-y-2 sm:gap-y-3">
-        <x-basics13::list.page-header :list="$list" prefix="entity-type" :scope="$scope">
+        <x-basics13::list.page-header :list="$list" prefix="entity-type" :description="__('Types used to classify entities.')" :scope="$scope">
             <x-slot:actions>
                 @if ($list['create'])
                     <x-basics13::list.create-action prefix="entity-type" :label="__('New entity type')"

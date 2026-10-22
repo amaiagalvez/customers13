@@ -22,7 +22,9 @@
     "Save entity": "Bezeroa gorde",
     "Save entity type": "Bezero mota gorde",
     "Types": "Motak",
+    "Types used to classify entities.": "Bezeroak sailkatzeko motak.",
     "Update entity": "Bezeroa eguneratu",
     "Update entity type": "Bezero mota eguneratu",
-    "You can pick several types.": "Hainbat mota hauta ditzakezu."
+    "You can pick several types.": "Hainbat mota hauta ditzakezu.",
+    "Your entities and their types.": "Zure bezeroak eta haien motak."
 }

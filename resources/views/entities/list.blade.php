@@ -58,7 +58,7 @@
         @elseif ($list['create'] && request()->boolean('create'))
             x-init="createEntity(); $nextTick(() => $dispatch('modal-show', { name: 'entity-form' }))" @endif
         class="flex flex-col gap-y-2 sm:gap-y-3">
-        <x-basics13::list.page-header :list="$list" prefix="entity" :scope="$scope" :searchableFields="$searchableFields" :filters="$filters">
+        <x-basics13::list.page-header :list="$list" prefix="entity" :description="__('Your entities and their types.')" :scope="$scope" :searchableFields="$searchableFields" :filters="$filters">
             <x-slot:actions>
                 @if ($list['create'])
                     <x-basics13::list.create-action prefix="entity" :label="__('New entity')"

@@ -22,7 +22,9 @@
     "Save entity": "Enregistrer le client",
     "Save entity type": "Enregistrer le type de client",
     "Types": "Types",
+    "Types used to classify entities.": "Types servant à classer les clients.",
     "Update entity": "Mettre à jour le client",
     "Update entity type": "Mettre à jour le type de client",
-    "You can pick several types.": "Vous pouvez choisir plusieurs types."
+    "You can pick several types.": "Vous pouvez choisir plusieurs types.",
+    "Your entities and their types.": "Vos clients et leurs types."
 }
