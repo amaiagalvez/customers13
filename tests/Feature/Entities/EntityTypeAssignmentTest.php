@@ -178,21 +178,16 @@ class EntityTypeAssignmentTest extends TestCase
         Entity::creating(static function () use ($entityType): void {
             $entityType->delete();
         });
-        $this->withoutExceptionHandling();
 
-        $exception = null;
-
-        try {
-            $this->post(route('entities.store'), [
+        // Reported on the field like any other unavailable type, not as a server error.
+        $this->from(route('entities.index'))
+            ->post(route('entities.store'), [
                 'name' => 'Bezeroa',
                 'entity_type_ids' => [$entityType->id],
-            ]);
-        } catch (\RuntimeException $caught) {
-            $exception = $caught;
-        }
+            ])
+            ->assertRedirect(route('entities.index'))
+            ->assertSessionHasErrors('entity_type_ids');
 
-        $this->assertInstanceOf(\RuntimeException::class, $exception);
-        $this->assertSame('Cannot associate a deleted entity type.', $exception->getMessage());
         $this->assertDatabaseCount('ENT_entities', 0);
         $this->assertNotSoftDeleted($entityType);
     }

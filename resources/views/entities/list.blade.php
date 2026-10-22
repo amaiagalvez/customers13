@@ -124,7 +124,7 @@
                             </flux:table.row>
                         @empty
                             <x-basics13::list.empty-state :colspan="3 + (int) config('entities13.views.entity_list.count', 0)" :message="$list['emptyMessage']">
-                                @if ($list['create'] && $list['search']['value'] === '')
+                                @if ($list['create'] && ! $list['narrowed'])
                                     <flux:modal.trigger name="entity-form">
                                         <flux:button size="sm" variant="primary" icon="plus"
                                             x-on:click="createEntity()" data-test="entity-empty-create">
@@ -161,10 +161,7 @@
         <livewire:basics13.advanced-search-modal
             :fields="$searchableFields"
             :filters="$filters"
-            :scope="$scope"
-            :operatorLabels="__('basics13::messages')"
-            :fieldTypeLabels="__('basics13::messages')"
-            :groupLabels="__('basics13::messages')" />
+            :scope="$scope" />
 
         <x-basics13::list.confirm-modal prefix="entity" />
     </div>

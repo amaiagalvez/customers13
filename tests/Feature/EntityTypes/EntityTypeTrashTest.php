@@ -7,6 +7,7 @@ use Entities13\Models\Entity;
 use Entities13\Tests\TestCase;
 use Entities13\Models\EntityType;
 use Illuminate\Support\Facades\DB;
+use PHPUnit\Framework\Attributes\Group;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
@@ -137,6 +138,7 @@ class EntityTypeTrashTest extends TestCase
             ->assertSee(__('basics13::messages.cannot_force_delete_related'));
     }
 
+    #[Group('mariadb')]
     public function test_restore_converts_a_concurrent_duplicate_name_to_a_conflict(): void
     {
         if (DB::connection()->getDriverName() !== 'mysql') {

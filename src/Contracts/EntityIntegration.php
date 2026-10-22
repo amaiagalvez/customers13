@@ -43,7 +43,8 @@ abstract class EntityIntegration
     }
 
     /**
-     * Extra fields for a entity list row, merged over the base ones.
+     * Extra fields for a entity list row, merged over the base ones. `blocks_delete` set to true
+     * turns the row's delete action into an archive one, because something hangs from the entity.
      *
      * @return array<string, mixed>
      */

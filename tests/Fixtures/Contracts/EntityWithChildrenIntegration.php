@@ -31,6 +31,6 @@ class EntityWithChildrenIntegration extends EntityIntegration
     /** @return array<string, mixed> */
     public function row(Model $record): array
     {
-        return ['projects_exists' => true];
+        return ['blocks_delete' => true];
     }
 }

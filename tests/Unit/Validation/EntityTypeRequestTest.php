@@ -191,7 +191,6 @@ class EntityTypeRequestTest extends TestCase
     private function prepareForValidation(EntityTypeRequest $request): void
     {
         $method = new \ReflectionMethod($request, 'prepareForValidation');
-        $method->setAccessible(true);
         $method->invoke($request);
     }
 }

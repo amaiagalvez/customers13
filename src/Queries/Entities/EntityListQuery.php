@@ -159,7 +159,8 @@ final class EntityListQuery extends ListQueryBase
      */
     private function scoped(string $scope, Builder $query): Builder
     {
-        $this->integration->scope($query, $scope, 'entity_projects');
+        // A neutral alias: this package cannot know what an integration joins.
+        $this->integration->scope($query, $scope, 'entity_related');
 
         return $query;
     }

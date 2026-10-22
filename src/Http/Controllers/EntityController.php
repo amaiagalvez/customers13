@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
 use Entities13\Http\Requests\EntityRequest;
+use Illuminate\Validation\ValidationException;
 use Entities13\Http\Requests\EntityListRequest;
 use Entities13\Queries\Entities\EntityListQuery;
 use Entities13\Transformers\EntityListTransformer;
@@ -97,7 +98,8 @@ class EntityController extends Controller
 
     /**
      * Sync entity types after locking them to prevent a race where a type is associated
-     * after it has been soft-deleted.
+     * after it has been soft-deleted. Callers run this inside their own transaction, which holds
+     * the locks until the sync is written; a type trashed in the meantime is a validation error.
      *
      * @param  list<int>  $typeIds
      */
@@ -110,18 +112,12 @@ class EntityController extends Controller
         }
 
         // Lock the types to prevent concurrent soft-delete while we are associating them.
-        $lockedTypes = DB::transaction(static fn (): array => EntityType::withTrashed()
-            ->whereKey($typeIds)
-            ->lockForUpdate()
-            ->get()
-            ->keyBy('id')
-            ->all());
+        $lockedTypes = EntityType::withTrashed()->whereKey($typeIds)->lockForUpdate()->get();
 
-        // Ensure none of the types are soft-deleted.
-        foreach ($typeIds as $id) {
-            if (isset($lockedTypes[$id]) && $lockedTypes[$id]->trashed()) {
-                throw new \RuntimeException('Cannot associate a deleted entity type.');
-            }
+        if ($lockedTypes->contains(static fn (EntityType $type): bool => $type->trashed())) {
+            throw ValidationException::withMessages([
+                'entity_type_ids' => __('validation.exists', ['attribute' => __('Entity types')]),
+            ]);
         }
 
         $entity->entityTypes()->sync($typeIds);

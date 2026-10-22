@@ -113,7 +113,6 @@ class EntityRequestTest extends TestCase
 
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
-        $method->setAccessible(true);
         $method->invoke($request);
 
         $this->assertSame('Trimmed Name', $request->input('name'));
@@ -128,7 +127,6 @@ class EntityRequestTest extends TestCase
 
         $reflection = new \ReflectionClass($request);
         $method = $reflection->getMethod('prepareForValidation');
-        $method->setAccessible(true);
         $method->invoke($request);
 
         $this->assertSame(['array'], $request->input('name'));

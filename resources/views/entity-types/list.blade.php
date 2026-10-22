@@ -123,7 +123,7 @@
                             </flux:table.row>
                         @empty
                             <x-basics13::list.empty-state :colspan="5" :message="$list['emptyMessage']">
-                                @if ($list['create'] && $list['search']['value'] === '')
+                                @if ($list['create'] && ! $list['narrowed'])
                                     <flux:modal.trigger name="entity-type-form">
                                         <flux:button size="sm" variant="primary" icon="plus"
                                             x-on:click="createEntityType()"

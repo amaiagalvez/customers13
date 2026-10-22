@@ -16,7 +16,7 @@ class EntityListTransformer extends ListTransformer
      * Row key an integration sets when something hangs from the entity, which is what turns the
      * delete action into an archive one. Optional: without it the row is always deletable.
      */
-    private const BLOCKS_DELETE = 'projects_exists';
+    private const BLOCKS_DELETE = 'blocks_delete';
 
     public function __construct(
         private readonly ?EntityIntegration $integration = null,

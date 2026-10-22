@@ -44,6 +44,9 @@ class PackageIsolationTest extends TestCase
         "'projects.archived" => "'projects.archived",
         "'projects.trash" => "'projects.trash",
         "'projects.options'" => "'projects.options'",
+        // Payload keys and join aliases are coupling too, not only imports and routes.
+        'projects_exists' => 'projects_exists',
+        'entity_projects' => 'entity_projects',
     ];
 
     public function test_production_code_never_references_the_projects_package(): void

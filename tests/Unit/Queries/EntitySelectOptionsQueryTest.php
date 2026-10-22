@@ -19,7 +19,6 @@ class EntitySelectOptionsQueryTest extends TestCase
     public function test_the_query_answers_the_base_with_the_entity_model(): void
     {
         $method = new ReflectionMethod(EntitySelectOptionsQuery::class, 'getModelClass');
-        $method->setAccessible(true);
 
         $this->assertSame(
             Entity::class,
@@ -31,7 +30,6 @@ class EntitySelectOptionsQueryTest extends TestCase
     {
         $integration = $this->nullIntegration();
         $method = new ReflectionMethod(EntitySelectOptionsQuery::class, 'integration');
-        $method->setAccessible(true);
 
         $this->assertSame($integration, $method->invoke(new EntitySelectOptionsQuery($integration)));
     }

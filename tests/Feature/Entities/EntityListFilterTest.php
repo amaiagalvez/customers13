@@ -105,6 +105,17 @@ class EntityListFilterTest extends TestCase
             ->assertSee('href="'.e(route('entities.index', ['filters' => $filters])).'"', false);
     }
 
+    public function test_a_list_emptied_by_filters_says_nothing_matched_and_offers_no_create_shortcut(): void
+    {
+        Entity::factory()->create(['name' => 'Alpha']);
+
+        $this->actingAs($this->verifiedUser())
+            ->get(route('entities.index', ['filters' => ['name' => ['operator' => 'contains', 'value' => 'Nothing like it']]]))
+            ->assertOk()
+            ->assertSee('No records match your search.')
+            ->assertDontSee('data-test="entity-empty-create"', false);
+    }
+
     private function verifiedUser(): User
     {
         return User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()]);

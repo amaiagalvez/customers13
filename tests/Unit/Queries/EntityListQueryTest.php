@@ -81,7 +81,6 @@ class EntityListQueryTest extends TestCase
     private function searchColumns(string $scope): array
     {
         $method = new ReflectionMethod(EntityListQuery::class, 'searchColumns');
-        $method->setAccessible(true);
 
         /** @var list<string> $columns */
         $columns = $method->invoke(

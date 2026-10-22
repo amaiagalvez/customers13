@@ -32,6 +32,9 @@ abstract class TestCase extends Basics13TestCase
     {
         parent::getEnvironmentSetUp($app);
 
+        // SQLite by default; CI sets DB_CONNECTION=mysql to run the tests that need MariaDB's row
+        // locks, the same override the bridge suite has.
+        $app['config']->set('database.default', getenv('DB_CONNECTION') ?: 'sqlite');
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.compiled', dirname(__DIR__).'/storage/framework/views');
     }
