@@ -102,14 +102,16 @@ final class EntityListQuery extends ListQueryBase
                 'order' => 20,
                 'group' => 'basic',
             ],
-            'active' => [
+            // Only the trash mixes active and archived records: on the active and archived lists
+            // the status filter could only return everything or nothing.
+            ...($scope === 'trashed' ? ['active' => [
                 'column' => 'ENT_entities.active',
                 'label' => 'Entity status',
                 'type' => 'boolean',
                 'visible' => true,
                 'order' => 10,
                 'group' => 'status',
-            ],
+            ]] : []),
             'created_at' => [
                 'column' => 'ENT_entities.created_at',
                 'label' => 'Entity creation date',

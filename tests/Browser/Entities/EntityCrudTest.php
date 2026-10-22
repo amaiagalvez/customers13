@@ -111,7 +111,8 @@ class EntityCrudTest extends DuskTestCase
                 )
                 ->assertSeeIn('dialog[open]', 'Izena')
                 ->assertSeeIn('dialog[open]', 'Sortze-data')
-                ->assertSeeIn('dialog[open]', 'Egoera')
+                // The status filter is only offered in the trash.
+                ->assertDontSeeIn('dialog[open]', 'Egoera')
                 ->assertSeeIn('dialog[open]', 'Bezero motak')
                 ->assertDontSeeIn('dialog[open]', 'BASIC')
                 ->assertDontSeeIn('dialog[open]', 'DATES')
@@ -161,7 +162,7 @@ class EntityCrudTest extends DuskTestCase
 
         $this->browse(function (Browser $browser) use ($user): void {
             $browser->loginAs($user)
-                ->visit('/entities')
+                ->visit('/entities/trash')
                 ->click('[data-test="entity-advanced-search"]')
                 ->waitFor('dialog[open] #advanced-search-heading')
                 ->assertMissing('dialog[open] [wire\\:model="filters.active.value"]')
@@ -205,13 +206,14 @@ class EntityCrudTest extends DuskTestCase
 
     public function test_filter_badges_follow_the_applied_filters_and_remove_them(): void
     {
+        // The trash: the one list that offers the status filter next to the others.
         $user = $this->user();
-        $holding = Entity::factory()->create(['name' => 'Holding '.fake()->uuid()]);
-        $other = Entity::factory()->create(['name' => 'Other '.fake()->uuid()]);
+        $holding = Entity::factory()->trashed()->create(['name' => 'Holding '.fake()->uuid()]);
+        $other = Entity::factory()->trashed()->create(['name' => 'Other '.fake()->uuid()]);
 
         $this->browse(function (Browser $browser) use ($user, $holding, $other): void {
             $browser->loginAs($user)
-                ->visit('/entities')
+                ->visit('/entities/trash')
                 ->click('[data-test="entity-advanced-search"]')
                 ->waitFor('dialog[open] #advanced-search-heading')
                 ->type('dialog[open] input[wire\\:model="filters.name.value"]', 'Holding')

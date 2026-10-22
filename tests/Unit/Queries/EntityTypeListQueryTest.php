@@ -45,6 +45,15 @@ class EntityTypeListQueryTest extends TestCase
         );
     }
 
+    public function test_the_list_offers_no_advanced_filters_in_any_state(): void
+    {
+        $query = new EntityTypeListQuery($this->nullIntegration());
+
+        foreach (['active', 'archived', 'trashed'] as $scope) {
+            $this->assertSame([], $query->searchableFields($scope));
+        }
+    }
+
     /**
      * A type is searched by its four names, and the trashed list also matches the delete date while
      * the archived one matches the update date: the dates are the extra column those lists show.

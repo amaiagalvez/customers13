@@ -34,6 +34,11 @@ class EntitySelectOptionsQueryTest extends TestCase
         $this->assertSame($integration, $method->invoke(new EntitySelectOptionsQuery($integration)));
     }
 
+    public function test_the_select_options_offer_no_advanced_filters(): void
+    {
+        $this->assertSame([], (new EntitySelectOptionsQuery($this->nullIntegration()))->searchableFields('active'));
+    }
+
     private function nullIntegration(): EntityIntegration
     {
         return new class extends EntityIntegration {};

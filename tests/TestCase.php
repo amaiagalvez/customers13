@@ -5,7 +5,6 @@ namespace Entities13\Tests;
 use App\Models\User;
 use Flux\FluxServiceProvider;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Route;
 use Basics13\Tests\TestCase as Basics13TestCase;
 use Basics13\Support\Testing\ValidatesFormRequests;
 use Entities13\ServiceProvider as entities13ServiceProvider;
@@ -37,13 +36,6 @@ abstract class TestCase extends Basics13TestCase
         $app['config']->set('database.default', getenv('DB_CONNECTION') ?: 'sqlite');
         $app['config']->set('auth.providers.users.model', User::class);
         $app['config']->set('view.compiled', dirname(__DIR__).'/storage/framework/views');
-    }
-
-    protected function defineRoutes($router): void
-    {
-        parent::defineRoutes($router);
-
-        Route::get('projects', static fn (): string => 'Projects')->name('projects.index');
     }
 
     protected function setUp(): void

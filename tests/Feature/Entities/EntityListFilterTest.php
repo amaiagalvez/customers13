@@ -57,24 +57,34 @@ class EntityListFilterTest extends TestCase
 
     public function test_filter_badges_link_to_the_list_without_their_filter(): void
     {
-        Entity::factory()->create(['name' => 'Holding entity']);
+        // The trash, the one list that offers the status filter next to the others.
+        Entity::factory()->trashed()->create(['name' => 'Holding entity']);
         $filters = [
             'name' => ['operator' => 'contains', 'value' => 'holding'],
             'active' => ['operator' => 'is_true'],
         ];
 
         $response = $this->actingAs($this->verifiedUser())
-            ->get(route('entities.index', ['search' => 'hold', 'page' => 2, 'filters' => $filters]))
+            ->get(route('entities.trash.index', ['search' => 'hold', 'page' => 2, 'filters' => $filters]))
             ->assertOk()
             ->assertSee(__('basics13::messages.operator_is_true'))
             ->assertDontSee('data-count-display', false);
 
-        $withoutName = route('entities.index', ['search' => 'hold', 'filters' => ['active' => $filters['active']]]);
-        $withoutActive = route('entities.index', ['search' => 'hold', 'filters' => ['name' => $filters['name']]]);
+        $withoutName = route('entities.trash.index', ['search' => 'hold', 'filters' => ['active' => $filters['active']]]);
+        $withoutActive = route('entities.trash.index', ['search' => 'hold', 'filters' => ['name' => $filters['name']]]);
 
         $response->assertSee('href="'.e($withoutName).'"', false)
             ->assertSee('href="'.e($withoutActive).'"', false)
-            ->assertSee('href="'.e(route('entities.index', ['search' => 'hold'])).'"', false);
+            ->assertSee('href="'.e(route('entities.trash.index', ['search' => 'hold'])).'"', false);
+    }
+
+    public function test_the_status_filter_is_only_offered_in_the_trash(): void
+    {
+        $this->actingAs($this->verifiedUser());
+
+        $this->get(route('entities.index'))->assertDontSee('data-test="active-advanced-search-operator"', false);
+        $this->get(route('entities.archived.index'))->assertDontSee('data-test="active-advanced-search-operator"', false);
+        $this->get(route('entities.trash.index'))->assertSee('data-test="active-advanced-search-operator"', false);
     }
 
     public function test_state_tab_counts_ignore_the_active_filters(): void
@@ -112,7 +122,7 @@ class EntityListFilterTest extends TestCase
         $this->actingAs($this->verifiedUser())
             ->get(route('entities.index', ['filters' => ['name' => ['operator' => 'contains', 'value' => 'Nothing like it']]]))
             ->assertOk()
-            ->assertSee('No records match your search.')
+            ->assertSee(__('basics13::messages.no_matching_records'))
             ->assertDontSee('data-test="entity-empty-create"', false);
     }
 
