@@ -140,7 +140,7 @@
         @endfragment
 
         @if ($list['create'])
-            <flux:modal name="entity-form" aria-labelledby="entity-form-heading" variant="flyout"
+            <flux:modal name="entity-form" aria-labelledby="entity-form-heading" flyout variant="floating"
                 position="right"
                 x-on:cancel.prevent="window.requestTrackedModalClose($el)"
                 class="form-drawer max-w-none">
