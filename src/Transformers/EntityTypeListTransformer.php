@@ -57,6 +57,16 @@ class EntityTypeListTransformer extends ListTransformer
         return $record->only(['id', 'name_eu', 'name_es', 'name_fr', 'name_en', 'notes']);
     }
 
+    /**
+     * A type has no single name: it is named by its Basque one, the only required translation.
+     *
+     * @param  EntityType  $record
+     */
+    protected function recordName(Model $record): string
+    {
+        return $record->name_eu;
+    }
+
     protected function resourceLabel(): string
     {
         return __('Entity types');
