@@ -79,7 +79,7 @@ class EntityController extends Controller
         EntitySelectOptionsQuery $query,
     ): JsonResponse {
         return response()->json([
-            'results' => $query->search($request->search()),
+            'results' => $query->search($request->search(), $request->user(), $request->context()),
         ]);
     }
 

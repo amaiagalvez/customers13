@@ -63,4 +63,15 @@ abstract class EntityIntegration
     {
         return false;
     }
+
+    /**
+     * Narrow the entities the options endpoint offers this user in this context (see
+     * SearchableSelectOptionsRequest::context()). Only active entities reach it.
+     *
+     * @param  Builder<covariant Model>  $query
+     */
+    public function scopeSelectOptions(Builder $query, Authenticatable $user, string $context): void
+    {
+        //
+    }
 }

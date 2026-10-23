@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
 use Entities13\Contracts\EntityIntegration;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 /**
  * @extends ListQueryBase<Entity>
@@ -18,12 +19,13 @@ final class EntitySelectOptionsQuery extends ListQueryBase
     /**
      * @return Collection<int, array{id: int, text: string}>
      */
-    public function search(string $search): Collection
+    public function search(string $search, ?Authenticatable $user = null, string $context = ''): Collection
     {
         $pattern = $this->searchPattern($search);
 
         return Entity::query()
             ->where('active', true)
+            ->when($user !== null, fn (Builder $query) => $this->integration->scopeSelectOptions($query, $user, $context))
             ->when($search !== '', fn (Builder $query) => $query->whereRaw(
                 'ENT_entities.name LIKE ? ESCAPE \''.self::LIKE_ESCAPE.'\'',
                 [$pattern],
