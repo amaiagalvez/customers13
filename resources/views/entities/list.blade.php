@@ -67,13 +67,7 @@
                 <x-basics13::list.excel-export
                     prefix="entity"
                     :route="route('entities.export')"
-                    :columnDefinitions="[
-                        ['key' => 'id', 'label' => __('ID')],
-                        ['key' => 'name', 'label' => __('Name')],
-                        ['key' => 'notes', 'label' => __('Notes')],
-                        ['key' => 'active', 'label' => __('Status'), 'transformer' => fn ($e) => $e->active ? __('basics13::messages.active_label') : __('basics13::messages.inactive_label')],
-                        ['key' => 'created_at', 'label' => __('Created at')],
-                    ]"
+                    :scope="$scope"
                 />
             </x-slot:actions>
         </x-basics13::list.page-header>

@@ -54,7 +54,7 @@ class EntityController extends Controller
     ): BinaryFileResponse {
         $search = $request->search();
         $filters = $request->filters() ?? [];
-        $scope = $request->query('scope', 'active');
+        $scope = $request->scope();
 
         $queryBuilder = $query->filteredQuery($search, $filters, $scope);
 
@@ -68,11 +68,10 @@ class EntityController extends Controller
 
         return (new ExcelExportService(
             query: $queryBuilder,
-            filters: $filters,
             title: 'Entities Export',
             columnDefinitions: $columnDefinitions,
             maxRows: 50000,
-        ))->download('entities_export_'.now()->format('Y-m-d_H-i-s').'.xlsx');
+        ))->download(ExcelExportService::fileName(__('Entities'), $scope));
     }
 
     public function selectOptions(
