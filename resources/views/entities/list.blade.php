@@ -58,17 +58,17 @@
         @elseif ($list['create'] && request()->boolean('create'))
             x-init="createEntity(); $nextTick(() => $dispatch('modal-show', { name: 'entity-form' }))" @endif
         class="flex flex-col gap-y-2 sm:gap-y-3">
-        <x-basics13::list.page-header :list="$list" prefix="entity" :description="__('Your entities and their types.')" :scope="$scope" :searchableFields="$searchableFields" :filters="$filters">
+        <x-basics13::list.page-header :list="$list" prefix="entity" :description="__('Your entities and their types.')">
             <x-slot:actions>
-                @if ($list['create'])
-                    <x-basics13::list.create-action prefix="entity" :label="__('New entity')"
-                        click="createEntity()" />
-                @endif
                 <x-basics13::list.excel-export
                     prefix="entity"
                     :route="route('entities.export')"
                     :scope="$scope"
                 />
+                @if ($list['create'])
+                    <x-basics13::list.create-action prefix="entity" :label="__('New entity')"
+                        click="createEntity()" />
+                @endif
             </x-slot:actions>
         </x-basics13::list.page-header>
 
@@ -76,9 +76,11 @@
 
         @fragment('list-results')
             <x-basics13::list.searchable-results :search="$list['search']" :total="$entities->total()" :scope="$scope" :filters="$filters">
-                <x-basics13::list.search :search="$list['search']" prefix="entity" />
-
                 <x-basics13::list.table prefix="entity" :paginator="$entities">
+                    <x-slot:toolbar>
+                        <x-basics13::list.search :search="$list['search']" prefix="entity" :scope="$scope" :searchableFields="$searchableFields" :filters="$filters" />
+                    </x-slot:toolbar>
+
                     <flux:table.columns>
                         <flux:table.column scope="col">{{ __('Name') }}</flux:table.column>
                         <flux:table.column scope="col">{{ __('Types') }}</flux:table.column>

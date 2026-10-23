@@ -44,5 +44,6 @@
     "entity_types.archive": "Archive and activate entity types",
     "entity_types.restore": "Restore entity types from the trash",
     "entity_types.force_delete": "Delete entity types permanently",
-    "entity_types.manage": "Manage entity types (full access)"
+    "entity_types.manage": "Manage entity types (full access)",
+    "Created at": "Created at"
 }

@@ -70,7 +70,7 @@
         @elseif ($list['create'] && request()->boolean('create'))
             x-init="createEntityType(); $nextTick(() => $dispatch('modal-show', { name: 'entity-type-form' }))" @endif
         class="flex flex-col gap-y-2 sm:gap-y-3">
-        <x-basics13::list.page-header :list="$list" prefix="entity-type" :description="__('Types used to classify entities.')" :scope="$scope">
+        <x-basics13::list.page-header :list="$list" prefix="entity-type" :description="__('Types used to classify entities.')">
             <x-slot:actions>
                 @if ($list['create'])
                     <x-basics13::list.create-action prefix="entity-type" :label="__('New entity type')"
@@ -83,9 +83,11 @@
 
         @fragment('list-results')
             <x-basics13::list.searchable-results :search="$list['search']" :total="$entityTypes->total()" :scope="$scope">
-                <x-basics13::list.search :search="$list['search']" prefix="entity-type" />
-
                 <x-basics13::list.table prefix="entity-type" :paginator="$entityTypes">
+                    <x-slot:toolbar>
+                        <x-basics13::list.search :search="$list['search']" prefix="entity-type" :scope="$scope" />
+                    </x-slot:toolbar>
+
                     <flux:table.columns>
                         <flux:table.column scope="col">{{ __('Name (eu)') }}</flux:table.column>
                         <flux:table.column scope="col">{{ __('Name (es)') }}</flux:table.column>
