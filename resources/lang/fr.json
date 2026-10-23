@@ -8,6 +8,8 @@
     "Entity status": "Statut",
     "Entity types": "Types de client",
     "Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.": "« Est égal à » affiche les clients ayant au moins un des types choisis ; « n’est pas égal à », ceux qui n’en ont aucun.",
+    "ID": "ID",
+    "Status": "Statut",
     "Entities": "Clients",
     "Edit entity": "Modifier le client",
     "Edit entity type": "Modifier le type de client",

@@ -8,6 +8,8 @@
     "Entity status": "Status",
     "Entity types": "Entity types",
     "Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.": "Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.",
+    "ID": "ID",
+    "Status": "Status",
     "Entities": "Entities",
     "Edit entity": "Edit entity",
     "Edit entity type": "Edit entity type",

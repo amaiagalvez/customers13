@@ -16,6 +16,7 @@ Route::middleware(['web', 'auth', 'verified'])->group(function () {
     Route::patch('entities/trash/{entity}', [EntityTrashController::class, 'restore'])->whereNumber('entity')->name('entities.trash.restore');
     Route::delete('entities/trash/{entity}', [EntityTrashController::class, 'destroy'])->whereNumber('entity')->name('entities.trash.destroy');
     Route::get('entities/options', [EntityController::class, 'selectOptions'])->name('entities.options');
+    Route::get('entities/export', [EntityController::class, 'export'])->name('entities.export');
     Route::resource('entities', EntityController::class)->only(['index', 'store', 'update', 'destroy']);
 
     Route::get('entity-types/archived', [EntityTypeArchivedController::class, 'index'])->name('entity-types.archived.index');

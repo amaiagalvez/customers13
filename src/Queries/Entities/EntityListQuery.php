@@ -13,6 +13,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
  * @extends ListQueryBase<Entity>
  *
  * @phpstan-import-type SearchFilters from ListQueryBase
+ * @phpstan-import-type SearchFields from ListQueryBase
  */
 final class EntityListQuery extends ListQueryBase
 {
@@ -80,7 +81,7 @@ final class EntityListQuery extends ListQueryBase
      * Get the searchable field definitions for the current scope.
      *
      * @param  string  $scope  One of 'active', 'archived', 'trashed'
-     * @return array<string, array{column: string, label: string, type: string, operators?: array<int,string>, default_operator?: string, visible?: bool, order?: int, group?: string, nullable?: bool, placeholder?: string, help?: string, condition?: callable, options?: array<int,string>|callable, multiple?: bool, relation?: string}>
+     * @return SearchFields
      */
     public function searchableFields(string $scope): array
     {
@@ -163,6 +164,37 @@ final class EntityListQuery extends ListQueryBase
     {
         // A neutral alias: this package cannot know what an integration joins.
         $this->integration->scope($query, $scope, 'entity_related');
+
+        return $query;
+    }
+
+    /**
+     * Get the filtered query builder for export (without pagination).
+     *
+     * @param  SearchFilters  $filters
+     * @return Builder<Entity>
+     */
+    public function filteredQuery(string $search, array $filters = [], string $scope = 'active'): Builder
+    {
+        // The 'active' filter only exists for the 'trashed' scope; remove it for other scopes
+        // to avoid ambiguity with the joined entity's 'active' column.
+        if ($scope !== 'trashed') {
+            unset($filters['active']);
+        }
+
+        $query = match ($scope) {
+            'archived' => $this->scoped(self::SCOPE_ARCHIVED, Entity::query()->where('ENT_entities.active', false)->with('entityTypes')->orderBy('ENT_entities.name')->orderBy('ENT_entities.id')),
+            'trashed' => $this->scoped(self::SCOPE_TRASHED, Entity::onlyTrashed()->with('entityTypes')->latest('deleted_at')->orderBy('id')),
+            default => $this->scoped(self::SCOPE_ACTIVE, Entity::query()->where('ENT_entities.active', true)->with('entityTypes')->orderBy('ENT_entities.name')->orderBy('ENT_entities.id')),
+        };
+
+        /** @phpstan-ignore argument.type */
+        $this->whereMatches($query, $search, $this->searchColumns($scope, ['ENT_entities.name']));
+
+        if ($filters !== []) {
+            $searchableFields = $this->searchableFields($scope);
+            $this->applyFilters($query, $filters, $searchableFields, $scope);
+        }
 
         return $query;
     }

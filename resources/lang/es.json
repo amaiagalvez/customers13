@@ -8,6 +8,8 @@
     "Entity status": "Estado",
     "Entity types": "Tipos de cliente",
     "Equals shows the entities holding at least one of the selected types; not equals, those holding none of them.": "«Es igual a» muestra los clientes que tienen al menos uno de los tipos elegidos; «no es igual a», los que no tienen ninguno.",
+    "ID": "ID",
+    "Status": "Estado",
     "Entities": "Clientes",
     "Edit entity": "Editar cliente",
     "Edit entity type": "Editar tipo de cliente",

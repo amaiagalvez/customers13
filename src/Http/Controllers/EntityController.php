@@ -11,12 +11,14 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Database\QueryException;
 use Basics13\Http\Controllers\Controller;
 use Entities13\Http\Requests\EntityRequest;
+use Basics13\Support\Excel\ExcelExportService;
 use Illuminate\Validation\ValidationException;
 use Entities13\Http\Requests\EntityListRequest;
 use Entities13\Queries\Entities\EntityListQuery;
 use Entities13\Transformers\EntityListTransformer;
 use Basics13\Support\Database\UniqueConstraintViolation;
 use Entities13\Http\Requests\EntitySelectOptionsRequest;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Entities13\Queries\Entities\EntitySelectOptionsQuery;
 
 class EntityController extends Controller
@@ -44,6 +46,33 @@ class EntityController extends Controller
             'filters' => $filters,
             'scope' => 'active',
         ]);
+    }
+
+    public function export(
+        EntityListRequest $request,
+        EntityListQuery $query,
+    ): BinaryFileResponse {
+        $search = $request->search();
+        $filters = $request->filters() ?? [];
+        $scope = $request->query('scope', 'active');
+
+        $queryBuilder = $query->filteredQuery($search, $filters, $scope);
+
+        $columnDefinitions = [
+            ['key' => 'id', 'label' => __('ID')],
+            ['key' => 'name', 'label' => __('Name')],
+            ['key' => 'notes', 'label' => __('Notes')],
+            ['key' => 'active', 'label' => __('Status'), 'transformer' => fn ($e) => $e->active ? __('basics13::messages.active_label') : __('basics13::messages.inactive_label')],
+            ['key' => 'created_at', 'label' => __('Created at')],
+        ];
+
+        return (new ExcelExportService(
+            query: $queryBuilder,
+            filters: $filters,
+            title: 'Entities Export',
+            columnDefinitions: $columnDefinitions,
+            maxRows: 50000,
+        ))->download('entities_export_'.now()->format('Y-m-d_H-i-s').'.xlsx');
     }
 
     public function selectOptions(
