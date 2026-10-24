@@ -45,5 +45,6 @@
     "entity_types.restore": "Restaurar tipos de cliente de la papelera",
     "entity_types.force_delete": "Eliminar tipos de cliente definitivamente",
     "entity_types.manage": "Gestionar tipos de cliente (acceso total)",
-    "Created at": "Fecha de creación"
+    "Created at": "Fecha de creación",
+    "Data": "Datos"
 }

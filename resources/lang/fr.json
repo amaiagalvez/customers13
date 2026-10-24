@@ -45,5 +45,6 @@
     "entity_types.restore": "Restaurer des types de client de la corbeille",
     "entity_types.force_delete": "Supprimer définitivement des types de client",
     "entity_types.manage": "Gérer les types de client (accès complet)",
-    "Created at": "Date de création"
+    "Created at": "Date de création",
+    "Data": "Données"
 }

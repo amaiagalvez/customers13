@@ -45,5 +45,6 @@
     "entity_types.restore": "Leheneratu bezero motak zakarrontzitik",
     "entity_types.force_delete": "Ezabatu bezero motak betiko",
     "entity_types.manage": "Kudeatu bezero motak (sarbide osoa)",
-    "Created at": "Sortze-data"
+    "Created at": "Sortze-data",
+    "Data": "Datuak"
 }
