@@ -70,6 +70,36 @@ class EntityCrudTest extends TestCase
         $this->assertSoftDeleted($entity);
     }
 
+    public function test_update_returns_to_the_list_page_the_user_came_from(): void
+    {
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
+        $entity = Entity::query()->create(['name' => 'Ane Bezeroa']);
+        $listUrl = route('entities.index', ['page' => 23, 'search' => 'Ane']);
+
+        $this->from($listUrl)
+            ->put(route('entities.update', $entity), ['name' => 'Jon Bezeroa'])
+            ->assertRedirect($listUrl);
+
+        $this->from(route('dashboard'))
+            ->put(route('entities.update', $entity), ['name' => 'Miren Bezeroa'])
+            ->assertRedirect(route('entities.index'));
+    }
+
+    public function test_delete_returns_to_the_list_page_and_an_emptied_page_shows_the_last_one(): void
+    {
+        $this->actingAs($this->admin(User::create(['name' => 'Test user', 'email' => 'test@example.test', 'password' => 'unused', 'email_verified_at' => now()])));
+        $entity = Entity::query()->create(['name' => 'Ane Bezeroa']);
+        $listUrl = route('entities.index', ['page' => 2]);
+
+        $this->from($listUrl)
+            ->delete(route('entities.destroy', $entity))
+            ->assertRedirect($listUrl);
+
+        Entity::query()->create(['name' => 'Jon Bezeroa']);
+
+        $this->get($listUrl)->assertOk()->assertSee('Jon Bezeroa');
+    }
+
     public function test_entity_store_persists_only_validated_attributes(): void
     {
         $user = $this->actingAs($this->admin(User::create([

@@ -107,7 +107,7 @@ class EntityController extends Controller
             return response()->json($entity->only(['id', 'name']), 201);
         }
 
-        return to_route('entities.index')->with('status', __('basics13::messages.created'));
+        return $this->backToList('entities.index')->with('status', __('basics13::messages.created'));
     }
 
     public function update(EntityRequest $request, Entity $entity): RedirectResponse
@@ -121,7 +121,7 @@ class EntityController extends Controller
             UniqueConstraintViolation::rethrowAsValidationError($exception);
         }
 
-        return to_route('entities.index')->with('status', __('basics13::messages.updated'));
+        return $this->backToList('entities.index')->with('status', __('basics13::messages.updated'));
     }
 
     /**
@@ -160,11 +160,11 @@ class EntityController extends Controller
         $deleted = DB::transaction(static fn (): bool => $entity->delete() !== false);
 
         if (! $deleted) {
-            return to_route('entities.index')
+            return $this->backToList('entities.index')
                 ->with('error', __('Cannot be deleted while it has related records.'));
         }
 
-        return to_route('entities.index')->with('status', __('basics13::messages.moved_to_trash'));
+        return $this->backToList('entities.index')->with('status', __('basics13::messages.moved_to_trash'));
     }
 
     /**

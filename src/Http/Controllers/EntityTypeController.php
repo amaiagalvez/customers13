@@ -66,7 +66,7 @@ class EntityTypeController extends Controller
             return response()->json($entityType->only(['id', 'name_eu']), 201);
         }
 
-        return to_route('entity-types.index')->with('status', __('basics13::messages.created'));
+        return $this->backToList('entity-types.index')->with('status', __('basics13::messages.created'));
     }
 
     public function update(EntityTypeRequest $request, EntityType $entityType): RedirectResponse
@@ -77,7 +77,7 @@ class EntityTypeController extends Controller
             $this->failOnDuplicatedName($exception);
         }
 
-        return to_route('entity-types.index')->with('status', __('basics13::messages.updated'));
+        return $this->backToList('entity-types.index')->with('status', __('basics13::messages.updated'));
     }
 
     public function destroy(EntityType $entityType): RedirectResponse
@@ -89,11 +89,11 @@ class EntityTypeController extends Controller
         $deleted = DB::transaction(static fn (): bool => $entityType->delete() !== false);
 
         if (! $deleted) {
-            return to_route('entity-types.index')
+            return $this->backToList('entity-types.index')
                 ->with('error', __('basics13::messages.cannot_delete_related'));
         }
 
-        return to_route('entity-types.index')->with('status', __('basics13::messages.moved_to_trash'));
+        return $this->backToList('entity-types.index')->with('status', __('basics13::messages.moved_to_trash'));
     }
 
     /**
@@ -122,7 +122,7 @@ class EntityTypeController extends Controller
             ], 409);
         }
 
-        return to_route('entity-types.index')
+        return $this->backToList('entity-types.index')
             ->withInput()
             ->with('deleted_entity_type_conflict', $payload);
     }
