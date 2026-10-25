@@ -40,7 +40,7 @@
                 last_name_2: '',
                 document_number: '',
                 lang: '',
-                entity_id: '',
+                entity_id: @js((string) (request()->integer('entity_id') ?: '')),
                 person_type_ids: [],
                 notes: '',
                 context: 'create',

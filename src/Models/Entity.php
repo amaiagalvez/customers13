@@ -87,6 +87,16 @@ class Entity extends Model
     }
 
     /**
+     * The persons of the entity that are not archived: the ones its edit form lists.
+     *
+     * @return HasMany<Person, $this>
+     */
+    public function activePersons(): HasMany
+    {
+        return $this->persons()->where('active', true);
+    }
+
+    /**
      * An entity that has persons cannot be dropped, not even when those persons are in the trash.
      * The permanent delete is refused by the foreign key of the persons table; this hook covers the
      * soft delete, and takes the row lock in a transaction of its own that TransactionalDelete keeps

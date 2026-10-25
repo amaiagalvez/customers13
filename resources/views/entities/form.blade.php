@@ -2,10 +2,6 @@
     // The form is only rendered from the active list, which is the only state that passes the
     // selectable types in.
     $entityTypes = $entityTypes ?? collect();
-    // The entity being edited (if any)
-    $editingEntity = $form['id'] ?? null;
-    // Persons panel is shown only when editing an existing entity
-    $showPersonsPanel = $editingEntity !== null;
 @endphp
 
 <x-basics13::forms.tracked-resource prefix="entity" context-field="_entity_form" id-field="_entity_id">
@@ -69,10 +65,5 @@
     </flux:field>
 </x-basics13::forms.tracked-resource>
 
-@if ($showPersonsPanel)
-    @php
-        // Load the entity with persons for the panel
-        $entity = \Entities13\Models\Entity::with('persons.personTypes')->find($editingEntity);
-    @endphp
-    @include('entities13::entities.persons-panel', ['entity' => $entity])
-@endif
+{{-- Shown only while an existing entity is being edited (`form.id`), with the persons it carries. --}}
+@include('entities13::entities.persons-panel')

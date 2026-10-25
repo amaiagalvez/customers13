@@ -73,6 +73,8 @@ final class EntityListTransformerTest extends TestCase
     {
         $record = Entity::factory()->make(['id' => 1]);
         $record->setRelation('entityTypes', collect());
+        // The list query loads the active persons; a record without them has none to show.
+        $record->setRelation('activePersons', collect());
 
         return new LengthAwarePaginator([$record], 1, 15);
     }

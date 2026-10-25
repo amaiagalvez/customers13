@@ -3,6 +3,7 @@
 namespace Entities13\Transformers;
 
 use Entities13\Models\Entity;
+use Entities13\Models\Person;
 use Illuminate\Database\Eloquent\Model;
 use Basics13\Transformers\ListTransformer;
 use Entities13\Contracts\EntityIntegration;
@@ -78,6 +79,15 @@ class EntityListTransformer extends ListTransformer
                 ->pluck('id')
                 ->map(static fn (int $id): string => (string) $id)
                 ->all()),
+            // The edit drawer lists these persons, so the panel needs no request of its own.
+            'persons' => $record->activePersons->map(fn (Person $person): array => [
+                'id' => $person->id,
+                'name' => $person->getFullName(),
+                'types' => $person->personTypes->map(fn ($type) => [
+                    'name' => $type->name_eu,
+                    'active' => $type->active,
+                ])->values()->all(),
+            ])->values()->all(),
         ];
     }
 

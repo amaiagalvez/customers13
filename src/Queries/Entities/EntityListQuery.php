@@ -37,7 +37,7 @@ final class EntityListQuery extends ListQueryBase
     public function active(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withPersonsCount($this->baseQuery(self::SCOPE_ACTIVE)->with('entityTypes')),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_ACTIVE)->with(['entityTypes', 'activePersons.personTypes'])),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_ACTIVE),
             filters: $filters,
@@ -52,7 +52,7 @@ final class EntityListQuery extends ListQueryBase
     public function archived(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withPersonsCount($this->baseQuery(self::SCOPE_ARCHIVED)->with('entityTypes')),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_ARCHIVED)->with(['entityTypes', 'activePersons.personTypes'])),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_ARCHIVED),
             filters: $filters,
@@ -67,7 +67,7 @@ final class EntityListQuery extends ListQueryBase
     public function trashed(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->withPersonsCount($this->baseQuery(self::SCOPE_TRASHED)->with('entityTypes')),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_TRASHED)->with(['entityTypes', 'activePersons.personTypes'])),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_TRASHED),
             filters: $filters,
