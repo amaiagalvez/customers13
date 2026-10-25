@@ -108,13 +108,8 @@ class PersonType extends Model
     protected static function booted(): void
     {
         static::deleting(static function (self $personType): bool {
-            $locked = DB::transaction(static fn (): self => self::withTrashed()
-                ->whereKey($personType->getKey())
-                ->lockForUpdate()
-                ->firstOrFail());
-
             return ! DB::table('ENT_person_person_type')
-                ->where('person_type_id', $locked->getKey())
+                ->where('person_type_id', $personType->getKey())
                 ->exists();
         });
     }

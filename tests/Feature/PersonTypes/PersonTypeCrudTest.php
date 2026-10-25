@@ -97,6 +97,17 @@ class PersonTypeCrudTest extends TestCase
         $this->assertDatabaseHas('ENT_person_types', ['id' => $type->id, 'deleted_at' => null]);
     }
 
+    public function test_cannot_delete_person_type_used_only_by_trashed_person(): void
+    {
+        $type = PersonType::factory()->create();
+        Person::factory()->withTypes([$type])->create()->delete();
+
+        $response = $this->delete(route('person-types.destroy', $type));
+
+        $response->assertSessionHas('error');
+        $this->assertDatabaseHas('ENT_person_types', ['id' => $type->id, 'deleted_at' => null]);
+    }
+
     public function test_cannot_create_person_type_with_duplicate_name_eu(): void
     {
         PersonType::factory()->create(['name_eu' => 'Duplicado']);

@@ -95,13 +95,8 @@ class EntityType extends Model
     protected static function booted(): void
     {
         static::deleting(static function (self $entityType): bool {
-            $locked = DB::transaction(static fn (): self => self::withTrashed()
-                ->whereKey($entityType->getKey())
-                ->lockForUpdate()
-                ->firstOrFail());
-
             return ! DB::table('ENT_entity_entity_type')
-                ->where('entity_type_id', $locked->getKey())
+                ->where('entity_type_id', $entityType->getKey())
                 ->exists();
         });
     }
