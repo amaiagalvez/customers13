@@ -7,6 +7,7 @@ use Entities13\Tests\TestCase;
 use Illuminate\Support\Facades\DB;
 use Basics13\Support\NavigationMenu;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Entities13\Database\Seeders\EntitiesAccessSeeder;
 
 class DataMenuSeedTest extends TestCase
 {
@@ -16,8 +17,7 @@ class DataMenuSeedTest extends TestCase
     {
         $counts = [DB::table('BAS_menus')->count(), DB::table('BAS_menu_permission')->count()];
 
-        $migration = require dirname(__DIR__, 3).'/database/migrations/2026_10_24_000010_seed_data_menus.php';
-        $migration->up();
+        $this->seed(EntitiesAccessSeeder::class);
 
         $this->assertSame($counts, [DB::table('BAS_menus')->count(), DB::table('BAS_menu_permission')->count()]);
     }

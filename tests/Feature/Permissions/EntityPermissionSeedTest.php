@@ -7,6 +7,7 @@ use Entities13\Tests\TestCase;
 use Basics13\Models\Permission;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Entities13\Database\Seeders\EntitiesAccessSeeder;
 
 class EntityPermissionSeedTest extends TestCase
 {
@@ -27,8 +28,7 @@ class EntityPermissionSeedTest extends TestCase
     {
         $counts = [DB::table('BAS_permissions')->count(), DB::table('BAS_permission_role')->count()];
 
-        $migration = require dirname(__DIR__, 3).'/database/migrations/2026_10_23_000000_seed_entity_permissions.php';
-        $migration->up();
+        $this->seed(EntitiesAccessSeeder::class);
 
         $this->assertSame($counts, [DB::table('BAS_permissions')->count(), DB::table('BAS_permission_role')->count()]);
     }
