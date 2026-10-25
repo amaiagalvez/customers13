@@ -84,6 +84,20 @@ class PersonListFilterTest extends TestCase
         $response->assertDontSee('Maria');
     }
 
+    public function test_a_person_type_filter_without_a_value_filters_nothing(): void
+    {
+        $type = PersonType::factory()->create(['name_eu' => 'Type A']);
+
+        Person::factory()->withTypes([$type])->create(['name' => 'Ander']);
+        Person::factory()->create(['name' => 'Maria']);
+
+        $response = $this->get(route('persons.index', ['filters' => ['person_type_ids' => ['operator' => 'equals', 'value' => ['']]]]));
+
+        $response->assertOk();
+        $response->assertSee('Ander');
+        $response->assertSee('Maria');
+    }
+
     public function test_can_filter_persons_by_person_type_not_equals(): void
     {
         $type1 = PersonType::factory()->create(['name_eu' => 'Type A']);

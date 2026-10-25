@@ -95,4 +95,11 @@ final class PersonListTransformerTest extends TestCase
     {
         return new LengthAwarePaginator([$person], 1, 15);
     }
+
+    public function test_a_person_has_no_force_delete_hint(): void
+    {
+        $transformer = new PersonListTransformer;
+
+        $this->assertSame('', (new \ReflectionMethod($transformer, 'getForceDeleteBlockHint'))->invoke($transformer, new Person));
+    }
 }
