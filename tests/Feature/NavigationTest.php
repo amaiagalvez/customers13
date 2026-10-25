@@ -44,8 +44,15 @@ class NavigationTest extends TestCase
      */
     private function dataLinks(Authenticatable $user): array
     {
-        $data = collect(NavigationMenu::for($user))->firstWhere('item.key', 'data');
+        $group = collect(NavigationMenu::for($user))->firstWhere('item.key', 'entities13');
+        $links = [];
 
-        return array_column($data['children'] ?? [], 'key');
+        foreach ($group['children'] ?? [] as $child) {
+            foreach ($child['children'] === [] ? [$child] : $child['children'] as $link) {
+                $links[] = $link['item']['key'];
+            }
+        }
+
+        return $links;
     }
 }

@@ -80,7 +80,7 @@
     "person_types.force_delete": "Supprimer définitivement des types de personne",
     "person_types.manage": "Gérer les types de personne (accès complet)",
     "Created at": "Date de création",
-    "Data": "Données",
+    "Entities package": "Entités",
     "Document number": "Numéro de document",
     "Physical persons linked to entities.": "Personnes physiques liées aux clients.",
     "Hold Ctrl or Cmd to pick more than one type.": "Maintenez Ctrl ou Cmd pour choisir plusieurs types.",
