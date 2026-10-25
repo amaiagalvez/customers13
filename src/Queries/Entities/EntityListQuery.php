@@ -8,6 +8,7 @@ use Basics13\Queries\ListQueryBase;
 use Illuminate\Database\Eloquent\Builder;
 use Entities13\Contracts\EntityIntegration;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 /**
  * @extends ListQueryBase<Entity>
@@ -36,7 +37,7 @@ final class EntityListQuery extends ListQueryBase
     public function active(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->baseQuery(self::SCOPE_ACTIVE)->with('entityTypes'),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_ACTIVE)->with('entityTypes')),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_ACTIVE),
             filters: $filters,
@@ -51,7 +52,7 @@ final class EntityListQuery extends ListQueryBase
     public function archived(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->baseQuery(self::SCOPE_ARCHIVED)->with('entityTypes'),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_ARCHIVED)->with('entityTypes')),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_ARCHIVED),
             filters: $filters,
@@ -66,7 +67,7 @@ final class EntityListQuery extends ListQueryBase
     public function trashed(string $search, array $filters = []): LengthAwarePaginator
     {
         return $this->paginate(
-            $this->baseQuery(self::SCOPE_TRASHED)->with('entityTypes'),
+            $this->withPersonsCount($this->baseQuery(self::SCOPE_TRASHED)->with('entityTypes')),
             $search,
             searchColumns: $this->searchColumnsFor(self::SCOPE_TRASHED),
             filters: $filters,
@@ -203,6 +204,22 @@ final class EntityListQuery extends ListQueryBase
      */
     public function filteredQuery(string $search, array $filters = [], string $scope = self::SCOPE_ACTIVE): Builder
     {
-        return $this->filtered($this->baseQuery($scope), $search, $this->searchColumnsFor($scope), $filters, $scope);
+        return $this->filtered($this->withPersonsCount($this->baseQuery($scope)), $search, $this->searchColumnsFor($scope), $filters, $scope);
+    }
+
+    /**
+     * How many persons hold the entity, deleted ones included: an entity in the trash keeps the
+     * persons that held it, and that count is what the list needs to know before it offers to
+     * delete an entity instead of archiving it.
+     *
+     * @param  Builder<Entity>  $query
+     * @return Builder<Entity>
+     */
+    private function withPersonsCount(Builder $query): Builder
+    {
+        return $query->withCount([
+            'persons' => fn (Builder $persons): Builder => $persons
+                ->withoutGlobalScope(SoftDeletingScope::class),
+        ]);
     }
 }

@@ -10,5 +10,7 @@ class EntitiesDevelopSeeder extends Seeder
     {
         $this->call(DevelopEntitySeeder::class);
         $this->call(DevelopEntityTypeSeeder::class);
+        $this->call(DevelopPersonTypeSeeder::class);
+        $this->call(DevelopPersonSeeder::class);
     }
 }

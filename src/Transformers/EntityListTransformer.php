@@ -45,7 +45,8 @@ class EntityListTransformer extends ListTransformer
     {
         $extra = $this->integrationRow($record);
 
-        return $extra[self::BLOCKS_DELETE] ?? false;
+        // Block delete if the integration says so (projects) OR if the entity has persons
+        return ($extra[self::BLOCKS_DELETE] ?? false) || (int) $record->getAttribute('persons_count') > 0;
     }
 
     protected function getForceDeleteBlockCondition(Model $record): bool
