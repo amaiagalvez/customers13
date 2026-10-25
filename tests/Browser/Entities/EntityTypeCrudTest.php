@@ -3,6 +3,8 @@
 namespace Entities13\Tests\Browser\Entities;
 
 use Laravel\Dusk\Browser;
+use Basics13\Enums\Language;
+use Basics13\Models\Setting;
 use Entities13\Models\EntityType;
 use Entities13\Tests\DuskTestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
@@ -20,6 +22,16 @@ class EntityTypeCrudTest extends DuskTestCase
     private const SUBMIT_SELECTOR = 'dialog[open] [data-test="entity-type-submit"]';
 
     private const STATUS_SELECTOR = '[data-test="entity-type-status"]';
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // The form only shows the translations the `languages` setting enables; this test needs
+        // all four.
+        Setting::query()->where('package', 'basics13')->where('variable', 'languages')
+            ->update(['value' => implode(',', Language::codes())]);
+    }
 
     public function test_the_drawer_follows_the_entity_type_being_edited(): void
     {
