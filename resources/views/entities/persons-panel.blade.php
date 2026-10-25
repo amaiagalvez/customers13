@@ -1,6 +1,6 @@
 @php
     // The persons panel is only shown when the user has persons.view permission
-    $canViewPersons = auth()->user()?->can('persons.view') ?? false;
+    $canViewPersons = auth()->user()?->can('viewAny', \Entities13\Models\Person::class) ?? false;
     $persons = $entity->persons()->where('active', true)->with('personTypes')->get();
 @endphp
 
@@ -51,7 +51,8 @@
                         @endif
                     </div>
                     @if (auth()->user()?->can('update', $person))
-                        <flux:button size="xs" variant="ghost" icon="edit"
+                        <flux:button size="xs" variant="ghost" icon="pencil-square"
+                            aria-label="{{ __('Edit person') }}"
                             x-on:click="editPerson({{ $person->id }})"
                             class="text-zinc-600 hover:text-brand-700 dark:text-zinc-400 dark:hover:text-brand-400"
                             data-test="entity-person-edit-{{ $person->id }}">

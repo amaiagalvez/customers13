@@ -98,8 +98,14 @@ class Entity extends Model
         // Returning nothing when the delete may go ahead lets the other deleting listeners run:
         // the first non-null answer stops the event.
         static::deleting(static function (self $entity): ?bool {
-            // $entity is already locked by TransactionalDelete; no need to reload
-            return DB::table('ENT_persons')->where('entity_id', $entity->getKey())->exists() ? false : null;
+            // Locked here, inside the delete's transaction, so the check and the soft delete cannot
+            // interleave with another delete of the same entity.
+            $locked = DB::transaction(static fn (): self => self::withTrashed()
+                ->whereKey($entity->getKey())
+                ->lockForUpdate()
+                ->firstOrFail());
+
+            return DB::table('ENT_persons')->where('entity_id', $locked->getKey())->exists() ? false : null;
         });
     }
 }
