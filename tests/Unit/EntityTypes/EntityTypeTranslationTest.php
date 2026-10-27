@@ -12,7 +12,8 @@ class EntityTypeTranslationTest extends TestCase
     private const LOCALES = ['en', 'es', 'eu', 'fr'];
 
     /**
-     * The copy the entity type resource and the type column of the entity list show.
+     * The copy the entity type resource and the type column of the entity list show. The name
+     * labels and "Types" are shared keys basics13 translates.
      *
      * @var list<string>
      */
@@ -23,11 +24,6 @@ class EntityTypeTranslationTest extends TestCase
         'Save entity type',
         'Update entity type',
         'No entity types yet.',
-        'Name (eu)',
-        'Name (es)',
-        'Name (fr)',
-        'Name (en)',
-        'Types',
         'Hold Ctrl or Cmd to pick more than one type.',
     ];
 
