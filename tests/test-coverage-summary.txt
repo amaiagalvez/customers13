@@ -82,3 +82,9 @@ Tests: 416, Assertions: 2233, Skipped: 1.
 Classes: 98.15% (53/54)
 Methods: 99.62% (264/265)
 Lines:   99.92% (1186/1187)
+Executed at: 2026-10-27 19:36:11 CET
+Time: 02:25.291, Memory: 101.00 MB
+Tests: 424, Assertions: 2206, Skipped: 1.
+Classes: 98.15% (53/54)
+Methods: 99.62% (265/266)
+Lines:   99.92% (1199/1200)
